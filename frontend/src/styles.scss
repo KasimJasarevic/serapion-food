@@ -1,0 +1,84 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/regular";
+@import "@fortawesome/fontawesome-free/scss/solid";
+@import "@fortawesome/fontawesome-free/scss/brands";
+
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap");
+
+.btn {
+  @apply font-semibold
+          shadow-sm
+          text-xs
+          py-2
+          px-4
+          rounded-md
+          transition
+          duration-300
+          cursor-pointer;
+}
+
+.btn-primary {
+  @apply bg-serapion-blue-300
+          text-serapion-white
+          hover:bg-serapion-purple;
+}
+
+.btn-secondary {
+  @apply bg-serapion-grey-200
+          text-serapion-white
+          hover:bg-serapion-purple;
+}
+
+.btn-accent {
+  @apply bg-serapion-green
+          text-serapion-white
+          hover:bg-serapion-purple;
+}
+
+.btn-warn {
+  @apply bg-serapion-yellow
+          text-serapion-white
+          hover:bg-serapion-purple;
+}
+
+.card {
+  @apply px-2 py-4 bg-serapion-white rounded-md;
+}
+
+.link-primary {
+  @apply text-serapion-blue-300 hover:text-serapion-purple;
+}
+
+.places-hero {
+  background-image: url(./assets/images/places-raw.jpg);
+  @apply bg-serapion-blue-100 bg-cover bg-no-repeat bg-center p-52 bg-blend-overlay blur-sm z-0;
+}
+
+.orders-hero {
+  background-image: url(./assets/images/food-raw.jpg);
+  @apply bg-serapion-blue-100 bg-cover bg-no-repeat bg-center p-52 bg-blend-overlay blur-sm z-0;
+}
+
+$serapion-scrollbar: #a3abbd !default;
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $serapion-scrollbar rgba(0, 0, 0, 0.1);
+}
+
+*::-webkit-scrollbar {
+  width: 0.2rem;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: $serapion-scrollbar;
+  border-radius: 0.2rem;
+}
