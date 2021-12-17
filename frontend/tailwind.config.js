@@ -1,5 +1,5 @@
 module.exports = {
-  mode: "jit",
+  mode: "aot",
   purge: ["./src/**/*.{ts,html}"],
   darkMode: "class",
   theme: {

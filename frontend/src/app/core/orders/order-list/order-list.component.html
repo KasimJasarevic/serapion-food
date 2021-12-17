@@ -1,0 +1,39 @@
+<div class="lg:-mt-80 p-4 grid grid-cols-1 gap-2 lg:grid-cols-2 lg:gap-4 z-10">
+  <!-- ORDER -->
+  <div class="card flex flex-col z-10">
+    <!-- CARD HEADER -->
+    <div class="flex flex-row items-center justify-items-center z-10">
+      <div class="flex-1">
+        <h1 class="font-thin uppercase">Barok</h1>
+        <p class="text-xs text-serapion-blue-300">@John Doe</p>
+        <strong class="text-xs font-semibold">+38762225883</strong>
+        <p class="text-xs text-serapion-grey-100">Take Away</p>
+      </div>
+      <button class="btn btn-secondary">
+        <i class="fas fa-globe fa-xs pr-1"></i> Visit
+      </button>
+    </div>
+    <!-- CARD HEADER END -->
+
+    <!-- ORDER ITEMS -->
+    <app-order-items></app-order-items>
+    <!-- ORDER ITEMS END -->
+
+    <!-- ORDER COMMENTS -->
+    <app-order-chat></app-order-chat>
+    <!-- ORDER COMMENTS END -->
+
+    <!-- SUBMIT BUTTONS -->
+    <div class="pt-8 flex flex-row-reverse justify-between items-center">
+      <button class="btn btn-primary w-1/2 ml-1">
+        <i class="fas fa-check pr-1"></i> Confirm
+      </button>
+      <button class="btn btn-secondary w-1/2">
+        <i class="fas fa-times pr-1"></i> Close
+      </button>
+    </div>
+    <!-- SUBMIT BUTTONS END -->
+  </div>
+
+  <!--ORDER END -->
+</div>

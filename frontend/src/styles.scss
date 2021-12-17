@@ -53,15 +53,6 @@
   @apply text-serapion-blue-300 hover:text-serapion-purple;
 }
 
-.places-hero {
-  background-image: url(./assets/images/places-raw.jpg);
-  @apply bg-serapion-blue-100 bg-cover bg-no-repeat bg-center p-52 bg-blend-overlay blur-sm z-0;
-}
-
-.orders-hero {
-  background-image: url(./assets/images/food-raw.jpg);
-  @apply bg-serapion-blue-100 bg-cover bg-no-repeat bg-center p-52 bg-blend-overlay blur-sm z-0;
-}
 
 $serapion-scrollbar: #a3abbd !default;
 
