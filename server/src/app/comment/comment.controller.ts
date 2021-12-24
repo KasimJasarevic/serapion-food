@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('comment')
+@Controller('comments')
 export class CommentController {}

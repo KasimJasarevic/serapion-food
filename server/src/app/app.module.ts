@@ -6,10 +6,20 @@ import { CommentModule } from './comment/comment.module';
 import { OrderModule } from './order/order.module';
 import { OrderItemModule } from './order-item/order-item.module';
 import { UserOrderItemModule } from './user-order-item/user-order-item.module';
+import { ConfigModule } from '@nestjs/config';
+import { MainConfig } from 'src/main.config';
+import { DatabaseConfig } from 'src/database.config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [MainConfig],
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useClass: DatabaseConfig,
+    }),
     UserModule,
     RestaurantModule,
     CommentModule,

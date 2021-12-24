@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('order-item')
+@Controller('order-items')
 export class OrderItemController {}
