@@ -1,12 +1,13 @@
 import {
   Column,
   Entity,
+  JoinColumn,
+  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderEntity } from '../order/order.entity';
-import { UserOrderItemEntity } from '../user-order-item/user-order-item.entity';
+import { UserEntity } from '../user/user.entity';
 
 @Entity({ name: 'order_item' })
 export class OrderItemEntity {
@@ -17,14 +18,9 @@ export class OrderItemEntity {
   name: string;
 
   @ManyToOne(() => OrderEntity, (order) => order.orderItems)
+  @JoinColumn({ name: 'order_id' })
   order: OrderEntity;
 
-  // @ManyToMany(() => UserEntity, (user) => user.orderedItems)
-  // users: UserEntity[];
-
-  @OneToMany(
-    () => UserOrderItemEntity,
-    (orderedItems) => orderedItems.orderItem,
-  )
-  orderedItems: UserOrderItemEntity[];
+  @ManyToMany(() => UserEntity, (user) => user.orderedItems)
+  users: UserEntity[];
 }

@@ -1,7 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommentEntity } from '../comment/comment.entity';
+import { OrderItemEntity } from '../order-item/order-item.entity';
 import { OrderEntity } from '../order/order.entity';
-import { UserOrderItemEntity } from '../user-order-item/user-order-item.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
@@ -26,18 +33,30 @@ export class UserEntity {
   @Column({ name: 'google_id' })
   googleId: string;
 
+  @Column({
+    name: 'last_order',
+    nullable: true,
+    type: 'timestamp',
+  })
+  lastOrder: string;
+
   @OneToMany(() => CommentEntity, (comment) => comment.user)
   comments: CommentEntity[];
 
   @OneToMany(() => OrderEntity, (order) => order.user)
   orders: OrderEntity[];
 
-  // @ManyToMany(() => OrderItemEntity, (orderItems) => orderItems.users)
-  // @JoinTable({
-  //   name: 'order_item_user',
-  // })
-  // orderedItems: OrderItemEntity[];
-
-  @OneToMany(() => UserOrderItemEntity, (orderedItems) => orderedItems.user)
-  orderedItems: UserOrderItemEntity[];
+  @ManyToMany(() => OrderItemEntity, (orderItems) => orderItems.users)
+  @JoinTable({
+    name: 'order_item_user',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'order_item_id',
+      referencedColumnName: 'id',
+    },
+  })
+  orderedItems: OrderItemEntity[];
 }

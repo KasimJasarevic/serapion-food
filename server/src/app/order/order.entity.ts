@@ -42,10 +42,11 @@ export class OrderEntity {
   comments: CommentEntity[];
 
   @OneToOne(() => RestaurantEntity, (restaurant) => restaurant.order)
-  @JoinColumn()
+  @JoinColumn({ name: 'restaurant_id' })
   restaurant: RestaurantEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.orders)
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   @OneToMany(() => OrderItemEntity, (orderItem) => orderItem.order)

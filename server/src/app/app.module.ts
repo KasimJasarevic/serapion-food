@@ -5,7 +5,6 @@ import { RestaurantModule } from './restaurant/restaurant.module';
 import { CommentModule } from './comment/comment.module';
 import { OrderModule } from './order/order.module';
 import { OrderItemModule } from './order-item/order-item.module';
-import { UserOrderItemModule } from './user-order-item/user-order-item.module';
 import { ConfigModule } from '@nestjs/config';
 import { MainConfig } from 'src/main.config';
 import { DatabaseConfig } from 'src/database.config';
@@ -25,7 +24,6 @@ import { DatabaseConfig } from 'src/database.config';
     CommentModule,
     OrderModule,
     OrderItemModule,
-    UserOrderItemModule,
   ],
 })
 export class AppModule {}

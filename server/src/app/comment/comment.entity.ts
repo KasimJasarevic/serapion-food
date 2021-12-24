@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { OrderEntity } from '../order/order.entity';
 import { UserEntity } from '../user/user.entity';
 
@@ -20,8 +26,10 @@ export class CommentEntity {
   commentedOn: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.comments)
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   @ManyToOne(() => OrderEntity, (order) => order.comments)
+  @JoinColumn({ name: 'order_id' })
   order: OrderEntity;
 }
