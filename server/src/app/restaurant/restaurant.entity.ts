@@ -9,10 +9,16 @@ export class RestaurantEntity {
   @Column({ name: 'name' })
   name: string;
 
-  @Column({ name: 'menu' })
+  @Column({
+    name: 'menu',
+    nullable: true,
+  })
   menu: string;
 
-  @Column({ name: 'phone_number' })
+  @Column({
+    name: 'phone_number',
+    nullable: true,
+  })
   phoneNumber: string;
 
   @OneToOne(() => OrderEntity, (order) => order.restaurant)

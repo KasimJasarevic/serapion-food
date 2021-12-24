@@ -14,7 +14,10 @@ export class UserEntity {
   @Column({ name: 'last_name' })
   lastName: string;
 
-  @Column({ name: 'photo' })
+  @Column({
+    name: 'photo',
+    nullable: true,
+  })
   photo: string;
 
   @Column({ name: 'email' })
