@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinTable,
@@ -11,7 +12,7 @@ import { OrderItemEntity } from '../order-item/order-item.entity';
 import { OrderEntity } from '../order/order.entity';
 
 @Entity({ name: 'user' })
-export class UserEntity {
+export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -38,7 +39,7 @@ export class UserEntity {
     nullable: true,
     type: 'timestamp',
   })
-  lastOrder: string;
+  lastOrder: Date;
 
   @OneToMany(() => CommentEntity, (comment) => comment.user)
   comments: CommentEntity[];

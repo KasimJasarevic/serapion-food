@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { UserDTO } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -7,17 +8,12 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  findAll() {
-    return `Hello from Users!`;
+  getAll(): Observable<UserDTO[]> {
+    return this.userService.getAll();
   }
 
   @Get(':userId')
-  findOne(@Param('userId') userId: number) {
-    return `Hello from User(${userId})`;
-  }
-
-  @Post()
-  createUser(): Observable<string> {
-    return this.userService.createUser();
+  getOne(@Param('userId') userId: number): Observable<UserDTO> {
+    return this.userService.getOne(userId);
   }
 }

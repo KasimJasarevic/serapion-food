@@ -1,6 +1,9 @@
 export const MainConfig = () => ({
   port: Number(process.env.PORT),
-  jwtSecret: process.env.JWT_SECRET,
+  googleClientId: process.env.GOOGLE_CLIENT_ID,
+  googleClientExpiresIn: Number(process.env.GOOGLE_CLIENT_EXPIRES_IN),
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  googleClientCallback: process.env.GOOGLE_CALLBACK,
   database: {
     type: 'mysql',
     host: process.env.DB_HOST,

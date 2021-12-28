@@ -1,8 +1,14 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { OrderEntity } from '../order/order.entity';
 
 @Entity({ name: 'restaurant' })
-export class RestaurantEntity {
+export class RestaurantEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

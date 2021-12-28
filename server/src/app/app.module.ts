@@ -8,6 +8,7 @@ import { OrderItemModule } from './order-item/order-item.module';
 import { ConfigModule } from '@nestjs/config';
 import { MainConfig } from 'src/main.config';
 import { DatabaseConfig } from 'src/database.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { DatabaseConfig } from 'src/database.config';
     CommentModule,
     OrderModule,
     OrderItemModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
