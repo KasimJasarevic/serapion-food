@@ -13,7 +13,9 @@ export class AuthController {
 
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
-  async signInWithGoogleRedirect(@Req() req) {
-    return this.authService.signInWithGoogle(req);
+  signInWithGoogleRedirect(@Req() req) {
+    this.authService
+      .signInWithGoogle(req)
+      .subscribe((token) => console.log(token.access_token));
   }
 }
