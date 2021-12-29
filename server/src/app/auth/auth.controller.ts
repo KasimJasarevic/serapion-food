@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Req, Get } from '@nestjs/common';
+import { Controller, UseGuards, Req, Get, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 
@@ -13,9 +13,16 @@ export class AuthController {
 
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
-  signInWithGoogleRedirect(@Req() req) {
-    this.authService
-      .signInWithGoogle(req)
-      .subscribe((token) => console.log(token.access_token));
+  signInWithGoogleRedirect(@Req() req, @Res() res) {
+    this.authService.signInWithGoogle(req).subscribe((user) => {
+      const token: string = user.access_token;
+      if (token) res.redirect('http://localhost:4200/login/' + token);
+    });
+  }
+
+  @Get('protected')
+  @UseGuards(AuthGuard('jwt'))
+  protectedResource() {
+    return 'JWT is working!';
   }
 }

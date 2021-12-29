@@ -42,11 +42,13 @@ export class OrderEntity extends BaseEntity {
   @OneToMany(() => CommentEntity, (comment) => comment.order)
   comments: CommentEntity[];
 
-  @OneToOne(() => RestaurantEntity, (restaurant) => restaurant.order)
+  @OneToOne(() => RestaurantEntity, (restaurant) => restaurant.order, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'restaurant_id' })
   restaurant: RestaurantEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.orders)
+  @ManyToOne(() => UserEntity, (user) => user.orders, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 

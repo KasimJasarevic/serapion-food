@@ -26,11 +26,13 @@ export class CommentEntity extends BaseEntity {
   })
   commentedOn: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.comments)
+  @ManyToOne(() => UserEntity, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => OrderEntity, (order) => order.comments)
+  @ManyToOne(() => OrderEntity, (order) => order.comments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'order_id' })
   order: OrderEntity;
 }

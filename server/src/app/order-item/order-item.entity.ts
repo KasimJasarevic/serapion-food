@@ -18,7 +18,9 @@ export class OrderItemEntity extends BaseEntity {
   @Column()
   name: string;
 
-  @ManyToOne(() => OrderEntity, (order) => order.orderItems)
+  @ManyToOne(() => OrderEntity, (order) => order.orderItems, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'order_id' })
   order: OrderEntity;
 

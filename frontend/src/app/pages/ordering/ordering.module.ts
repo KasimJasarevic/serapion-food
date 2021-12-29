@@ -8,6 +8,7 @@ import { OrderListComponent } from './components/orders/order-list/order-list.co
 import { PlaceListComponent } from './components/places/place-list/place-list.component';
 import { OrderChatComponent } from './components/orders/order-list/order-chat/order-chat.component';
 import { OrderItemsComponent } from './components/orders/order-list/order-items/order-items.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,6 @@ import { OrderItemsComponent } from './components/orders/order-list/order-items/
     OrderChatComponent,
     OrderItemsComponent,
   ],
-  imports: [CommonModule, OrderingRoutingModule],
+  imports: [CommonModule, OrderingRoutingModule, FormsModule],
 })
 export class OrderingModule {}
