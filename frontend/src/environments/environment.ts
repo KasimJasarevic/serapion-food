@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   notificationId: 'bcec16d0-efd7-49da-9101-5f900d3a3fa4',
+  signal_one_api_key: 'NTk0NjJhODctYTBmNS00YzlkLTg0NDUtMjE3MTEyMjY5ZTA3',
   api_url: 'api'
 };
 

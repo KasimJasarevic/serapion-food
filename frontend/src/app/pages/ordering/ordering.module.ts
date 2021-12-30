@@ -10,6 +10,8 @@ import { OrderChatComponent } from './components/orders/order-list/order-chat/or
 import { OrderItemsComponent } from './components/orders/order-list/order-items/order-items.component';
 import { FormsModule } from '@angular/forms';
 import { PlaceFormComponent } from './components/places/place-form/place-form.component';
+import {OneSignalService} from "onesignal-ngx";
+import {NotificationService} from "../../core/services/notification.service";
 
 @NgModule({
   declarations: [
@@ -24,4 +26,8 @@ import { PlaceFormComponent } from './components/places/place-form/place-form.co
   ],
   imports: [CommonModule, OrderingRoutingModule, FormsModule],
 })
-export class OrderingModule {}
+export class OrderingModule {
+  constructor(private _notificationService: NotificationService) {
+    this._notificationService.init();
+  }
+}

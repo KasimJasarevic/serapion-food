@@ -11,7 +11,7 @@
         hover:bg-serapion-blue-300 hover:text-serapion-white
       "
     >
-      <div class="flex flex-row justify-between items-center text-sm font-thin">
+      <div class="flex flex-row justify-between items-center text-sm font-thin" (click)="openRestaurant(place.name)">
         <span class="uppercase">{{ place.name }}</span>
       </div>
       <strong class="text-xs font-semibold">{{ place.phoneNumber }}</strong>

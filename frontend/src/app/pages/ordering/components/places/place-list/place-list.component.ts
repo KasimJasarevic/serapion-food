@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IPlace } from '../models/place.model';
 import { PlaceService } from '../services/place.service';
+import {NotificationService} from "../../../../../core/services/notification.service";
 
 @Component({
   selector: 'app-place-list',
@@ -11,7 +12,8 @@ import { PlaceService } from '../services/place.service';
 export class PlaceListComponent implements OnInit, OnDestroy {
   places$: Observable<IPlace[]>;
 
-  constructor(private _placeService: PlaceService) {
+  constructor(private _placeService: PlaceService,
+              private _notificationService: NotificationService) {
     // this.places$ = this._placeService.places$;
     // this.places$ = this._placeService.getPlacesS$();
     this.places$ = this._placeService.getAllPlaces();
@@ -25,5 +27,9 @@ export class PlaceListComponent implements OnInit, OnDestroy {
   // Ruzno rjesenje!!!!
   ngOnDestroy(): void {
     // if (this._sub) this._sub.unsubscribe();
+  }
+
+  openRestaurant(name: string) {
+    this._notificationService.sendLastCall(name);
   }
 }

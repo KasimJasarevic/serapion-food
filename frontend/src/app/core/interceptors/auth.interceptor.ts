@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -6,21 +6,22 @@ import {
   HttpInterceptor,
   HTTP_INTERCEPTORS,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { UserService } from '../services/user.service';
-import { LocalStorageTypes } from '../enums/local-storage-types';
+import {Observable} from 'rxjs';
+import {LocalStorageTypes} from '../enums/local-storage-types';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor() {}
+  constructor() {
+  }
 
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     const isApiReq = request.url.includes('api/');
+    const isSignalOneRequest = request.url.includes('onesignal.com/api');
 
-    if (isApiReq) {
+    if (isApiReq && !isSignalOneRequest) {
       const token = localStorage.getItem(
         LocalStorageTypes.FOOD_ORDERING_AUTH_TOKEN
       );
