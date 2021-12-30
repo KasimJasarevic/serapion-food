@@ -1,7 +1,12 @@
 <!-- PLACES HEADER -->
 <div class="flex flex-row items-center p-4 bg-serapion-white z-50">
-  <div class="flex-1 uppercase font-thin text-lg">Places</div>
-  <div class="btn btn-primary mr-2" (click)="showModal = !showModal">
+  <div class="flex-1 uppercase font-thin text-lg">Restaurants</div>
+<!--  <div class="btn btn-primary mr-2" (click)="showModal = !showModal">-->
+<!--    <i class="fas fa-plus fa-xs pr-1"></i>-->
+<!--    New-->
+<!--  </div>-->
+
+  <div class="btn btn-primary mr-2" (click)="openPlacesDialog()">
     <i class="fas fa-plus fa-xs pr-1"></i>
     New
   </div>
@@ -27,7 +32,7 @@
         focus:outline-none focus:border-serapion-blue-300
       "
       type="text"
-      placeholder="Filter places..."
+      placeholder="Filter restaurants..."
     />
     <label
       class="absolute left-0 top-1/2 -mt-2 peer-focus:text-serapion-blue-300"

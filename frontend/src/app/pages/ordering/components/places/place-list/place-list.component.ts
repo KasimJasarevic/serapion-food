@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IPlace } from '../models/place.model';
 import { PlaceService } from '../services/place.service';
 
@@ -10,20 +10,20 @@ import { PlaceService } from '../services/place.service';
 })
 export class PlaceListComponent implements OnInit, OnDestroy {
   places$: Observable<IPlace[]>;
-  private _sub: Subscription | undefined;
 
   constructor(private _placeService: PlaceService) {
     // this.places$ = this._placeService.places$;
-    this.places$ = this._placeService.getPlacesS$();
+    // this.places$ = this._placeService.getPlacesS$();
+    this.places$ = this._placeService.getAllPlaces();
     // this._sub = _placeService.getAllPlaces().subscribe();
   }
 
   ngOnInit(): void {
-    this._sub = this._placeService.getAllPlaces().subscribe();
+    // this._sub = this._placeService.getAllPlaces().subscribe();
   }
 
   // Ruzno rjesenje!!!!
   ngOnDestroy(): void {
-    if (this._sub) this._sub.unsubscribe();
+    // if (this._sub) this._sub.unsubscribe();
   }
 }

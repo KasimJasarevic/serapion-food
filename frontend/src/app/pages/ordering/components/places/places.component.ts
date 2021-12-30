@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { UserService } from 'src/app/core/services/user.service';
-import { IPlace } from './models/place.model';
-import { PlaceService } from './services/place.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {NgForm} from '@angular/forms';
+import {Router} from '@angular/router';
+import {Subscription} from 'rxjs';
+import {UserService} from 'src/app/core/services/user.service';
+import {IPlace} from './models/place.model';
+import {PlaceService} from './services/place.service';
 
 @Component({
   selector: 'app-places',
@@ -19,9 +19,11 @@ export class PlacesComponent implements OnInit, OnDestroy {
     private _userService: UserService,
     private _router: Router,
     private _placeService: PlaceService
-  ) {}
+  ) {
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   logout() {
     this._userService.removeUser();
@@ -43,6 +45,13 @@ export class PlacesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this._sub) {
       this._sub.unsubscribe();
+    }
+  }
+
+  // ID exist - fetch restaurant with specific ID and populate fields
+  openPlacesDialog(id?: number) {
+    if (!id) {
+      // Open dialog
     }
   }
 }

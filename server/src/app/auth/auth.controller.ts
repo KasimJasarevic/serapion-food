@@ -19,10 +19,4 @@ export class AuthController {
       if (token) res.redirect('http://localhost:4200/login/' + token);
     });
   }
-
-  @Get('protected')
-  @UseGuards(AuthGuard('jwt'))
-  protectedResource() {
-    return 'JWT is working!';
-  }
 }

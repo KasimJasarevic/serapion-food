@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { LandingComponent } from './components/landing/landing.component';
+import {PlaceFormComponent} from "./components/places/place-form/place-form.component";
 
 const routes: Routes = [
   {
@@ -9,6 +10,14 @@ const routes: Routes = [
     component: LandingComponent,
     canActivate: [AuthGuard],
   },
+  {
+    path: 'restaurant/add',
+    component: PlaceFormComponent
+  },
+  {
+    path: 'restaurant/edit/:id',
+    component: PlaceFormComponent
+  }
 ];
 
 @NgModule({

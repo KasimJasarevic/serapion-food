@@ -9,6 +9,7 @@ import { PlaceListComponent } from './components/places/place-list/place-list.co
 import { OrderChatComponent } from './components/orders/order-list/order-chat/order-chat.component';
 import { OrderItemsComponent } from './components/orders/order-list/order-items/order-items.component';
 import { FormsModule } from '@angular/forms';
+import { PlaceFormComponent } from './components/places/place-form/place-form.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { FormsModule } from '@angular/forms';
     PlaceListComponent,
     OrderChatComponent,
     OrderItemsComponent,
+    PlaceFormComponent,
   ],
   imports: [CommonModule, OrderingRoutingModule, FormsModule],
 })

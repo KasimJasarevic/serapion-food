@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { LocalStorageTypes } from 'src/app/core/enums/local-storage-types';
-import { IUser } from 'src/app/core/models/user.model';
-import { UserService } from 'src/app/core/services/user.service';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {LocalStorageTypes} from 'src/app/core/enums/local-storage-types';
+import {IUser} from 'src/app/core/models/user.model';
+import {UserService} from 'src/app/core/services/user.service';
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'app-login',
@@ -17,7 +19,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private _activatedRoute: ActivatedRoute,
     private _router: Router,
-    private _userService: UserService
+    private _userService: UserService,
+    private _httpClient: HttpClient
   ) {
     this.errorMessage = null;
     this._activatedRoute.paramMap.subscribe((params) => {
@@ -56,10 +59,13 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   googleSignIn() {
-    window.location.href =
-      'https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=895104585556-t3i4u6236nkjhjf4cnr3ua81l9dq7kt0.apps.googleusercontent.com';
+    if (!environment.production) {
+      window.location.href =
+        'https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=895104585556-t3i4u6236nkjhjf4cnr3ua81l9dq7kt0.apps.googleusercontent.com';
+    }
   }
 }

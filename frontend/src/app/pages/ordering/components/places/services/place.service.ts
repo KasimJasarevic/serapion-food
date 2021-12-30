@@ -48,17 +48,21 @@ export class PlaceService {
     return obs;
   }
 
+  // getAllPlaces(): Observable<IPlace[]> {
+  //   const obs = this._http
+  //     .get<IPlace[]>('/api/restaurants')
+  //     .pipe(
+  //       tap((places: IPlace[]) => {
+  //         this._placesS$.next(places);
+  //       })
+  //     );
+  //
+  //   obs.subscribe((places: IPlace[]) => this._placesSub$.next(places));
+  //
+  //   return obs;
+  // }
+
   getAllPlaces(): Observable<IPlace[]> {
-    const obs = this._http
-      .get<IPlace[]>('http://localhost:3000/restaurants')
-      .pipe(
-        tap((places: IPlace[]) => {
-          this._placesS$.next(places);
-        })
-      );
-
-    obs.subscribe((places: IPlace[]) => this._placesSub$.next(places));
-
-    return obs;
+    return this._http.get<IPlace[]>('api/restaurants');
   }
 }

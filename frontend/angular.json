@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": "475c450a-86b4-484e-a70f-6b29f6330248"
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -28,7 +31,9 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/OneSignalSDKWorker.js",
+              "src/OneSignalSDKUpdaterWorker.js"
             ],
             "styles": [
               "src/styles.scss"
@@ -75,6 +80,7 @@
               "browserTarget": "order-app-redesign:build:production"
             },
             "development": {
+              "proxyConfig": "./proxy.conf.json",
               "browserTarget": "order-app-redesign:build:development"
             }
           },

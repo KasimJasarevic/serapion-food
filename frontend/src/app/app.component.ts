@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {OneSignalService} from "./core/services/one-signal.service";
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'order-app-redesign';
+
+  constructor(private _oneSignal: OneSignalService) {
+    this._oneSignal.onInit();
+  }
 }

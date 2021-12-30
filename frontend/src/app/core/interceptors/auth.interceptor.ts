@@ -18,7 +18,7 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    const isApiReq = request.url.startsWith('http://localhost:3000');
+    const isApiReq = request.url.includes('api/');
 
     if (isApiReq) {
       const token = localStorage.getItem(
