@@ -3,10 +3,13 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": [],
+    "types": ["node"],
     "paths": {
       "@assets/*": [
         "src/assets/*"
+      ],
+      "@environments/*": [
+        "src/environments/*"
       ]
     }
   },

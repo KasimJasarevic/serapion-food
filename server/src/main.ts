@@ -1,7 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
-import { RequestMethod } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,7 +9,7 @@ async function bootstrap() {
 
   app.enableCors();
   app.setGlobalPrefix('api', {
-    exclude: [{ path: 'auth', method: RequestMethod.GET }],
+    exclude: ['auth/google/callback'],
   });
 
   await app.listen(port);
