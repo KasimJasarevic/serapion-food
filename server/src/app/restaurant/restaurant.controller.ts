@@ -5,16 +5,15 @@ import { RestaurantDTO } from './restaurant.dto';
 import { RestaurantService } from './restaurant.service';
 
 @Controller('restaurants')
+@UseGuards(AuthGuard('jwt'))
 export class RestaurantController {
   constructor(private _restaurantService: RestaurantService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
   addNewPlace(@Body() payload: RestaurantDTO): Observable<RestaurantDTO> {
     return from(this._restaurantService.addNewPlace(payload));
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   getAllPlaces(): Observable<RestaurantDTO[]> {
     return from(this._restaurantService.getAllPlaces());

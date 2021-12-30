@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  notificationId: 'bcec16d0-efd7-49da-9101-5f900d3a3fa4'
+  notificationId: 'bcec16d0-efd7-49da-9101-5f900d3a3fa4',
+  api_url: 'api'
 };
 
 /*

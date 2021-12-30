@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, Subject, take, tap } from 'rxjs';
 import { IPlace } from '../models/place.model';
+import {environment} from "../../../../../../environments/environment";
 
 @Injectable({
   providedIn: 'root',
@@ -63,6 +64,6 @@ export class PlaceService {
   // }
 
   getAllPlaces(): Observable<IPlace[]> {
-    return this._http.get<IPlace[]>('api/restaurants');
+    return this._http.get<IPlace[]>( `${environment.api_url}/restaurants`);
   }
 }
