@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/core/services/user.service';
 import { IPlace } from './models/place.model';
 import { PlaceService } from './services/place.service';
@@ -10,8 +11,10 @@ import { PlaceService } from './services/place.service';
   templateUrl: './places.component.html',
   styleUrls: ['./places.component.scss'],
 })
-export class PlacesComponent implements OnInit {
+export class PlacesComponent implements OnInit, OnDestroy {
   showModal = false;
+  private _sub: Subscription | undefined;
+
   constructor(
     private _userService: UserService,
     private _router: Router,
@@ -32,8 +35,14 @@ export class PlacesComponent implements OnInit {
       phoneNumber: form.value.phone,
     };
 
-    this._placeService.addNewPlace(place).subscribe();
+    this._sub = this._placeService.addNewPlace(place).subscribe();
 
     this.showModal = !this.showModal;
+  }
+
+  ngOnDestroy(): void {
+    if (this._sub) {
+      this._sub.unsubscribe();
+    }
   }
 }

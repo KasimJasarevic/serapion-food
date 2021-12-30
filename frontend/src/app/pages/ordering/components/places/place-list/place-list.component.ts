@@ -10,17 +10,20 @@ import { PlaceService } from '../services/place.service';
 })
 export class PlaceListComponent implements OnInit, OnDestroy {
   places$: Observable<IPlace[]>;
-  private _sub: Subscription;
+  private _sub: Subscription | undefined;
 
   constructor(private _placeService: PlaceService) {
-    this.places$ = this._placeService.placesObs$;
-    this._sub = _placeService.getAllPlaces().subscribe();
+    // this.places$ = this._placeService.places$;
+    this.places$ = this._placeService.getPlacesS$();
+    // this._sub = _placeService.getAllPlaces().subscribe();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this._sub = this._placeService.getAllPlaces().subscribe();
+  }
 
   // Ruzno rjesenje!!!!
   ngOnDestroy(): void {
-    this._sub.unsubscribe();
+    if (this._sub) this._sub.unsubscribe();
   }
 }
