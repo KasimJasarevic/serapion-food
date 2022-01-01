@@ -1,5 +1,5 @@
 export const MainConfig = () => ({
-  port: Number(process.env.PORT),
+  port: Number(process.env.PORT) || 3000,
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientExpiresIn: Number(process.env.GOOGLE_CLIENT_EXPIRES_IN),
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -12,6 +12,6 @@ export const MainConfig = () => ({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     entities: ['dist/**/*.entity{.ts,.js}'],
-    synchronize: true,
-  },
+    synchronize: Boolean(process.env.SYNCHRONIZE_DB) || false
+  }
 });

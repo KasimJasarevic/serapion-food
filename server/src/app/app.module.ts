@@ -9,11 +9,13 @@ import { ConfigModule } from '@nestjs/config';
 import { MainConfig } from 'src/main.config';
 import { DatabaseConfig } from 'src/database.config';
 import { AuthModule } from './auth/auth.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`,
       load: [MainConfig],
     }),
     TypeOrmModule.forRootAsync({
@@ -26,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
     OrderModule,
     OrderItemModule,
     AuthModule,
+    EventsModule,
   ],
 })
 export class AppModule {}

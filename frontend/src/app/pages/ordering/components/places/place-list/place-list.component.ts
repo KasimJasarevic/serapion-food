@@ -1,8 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { IPlace } from '../models/place.model';
-import { PlaceService } from '../services/place.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Observable} from 'rxjs';
+import {IPlace} from '../models/place.model';
+import {PlaceService} from '../services/place.service';
 import {NotificationService} from "../../../../../core/services/notification.service";
+import {SubSink} from "../../../../../core/helpers/sub-sink";
+import {WebsocketMessagesService} from "../../../../../core/services/websocket-messages.service";
 
 @Component({
   selector: 'app-place-list',
@@ -10,23 +12,28 @@ import {NotificationService} from "../../../../../core/services/notification.ser
   styleUrls: ['./place-list.component.scss'],
 })
 export class PlaceListComponent implements OnInit, OnDestroy {
-  places$: Observable<IPlace[]>;
+  places: IPlace[] = [];
+  private subs = new SubSink();
 
   constructor(private _placeService: PlaceService,
+              private _websocketService: WebsocketMessagesService,
               private _notificationService: NotificationService) {
-    // this.places$ = this._placeService.places$;
-    // this.places$ = this._placeService.getPlacesS$();
-    this.places$ = this._placeService.getAllPlaces();
-    // this._sub = _placeService.getAllPlaces().subscribe();
   }
 
   ngOnInit(): void {
-    // this._sub = this._placeService.getAllPlaces().subscribe();
+    this.subs.sink = this._placeService.getAllPlaces()
+      .subscribe(places => {
+        this.places = places;
+      });
+
+    this.subs.sink = this._websocketService.onRestaurantAdded()
+      .subscribe((data: any) => {
+        this.places.push(data);
+      });
   }
 
-  // Ruzno rjesenje!!!!
   ngOnDestroy(): void {
-    // if (this._sub) this._sub.unsubscribe();
+    this.subs.unsubscribe();
   }
 
   openRestaurant(name: string) {

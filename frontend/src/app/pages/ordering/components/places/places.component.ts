@@ -1,10 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
-import {Subscription} from 'rxjs';
 import {UserService} from 'src/app/core/services/user.service';
 import {IPlace} from './models/place.model';
 import {PlaceService} from './services/place.service';
+import {WebsocketMessagesService} from "@core/services/websocket-messages.service";
+import {SubSink} from "@core/helpers/sub-sink";
 
 @Component({
   selector: 'app-places',
@@ -13,16 +14,18 @@ import {PlaceService} from './services/place.service';
 })
 export class PlacesComponent implements OnInit, OnDestroy {
   showModal = false;
-  private _sub: Subscription | undefined;
+  private subs = new SubSink();
 
   constructor(
     private _userService: UserService,
     private _router: Router,
-    private _placeService: PlaceService
+    private _placeService: PlaceService,
+    private _websocketService: WebsocketMessagesService
   ) {
   }
 
   ngOnInit(): void {
+
   }
 
   logout() {
@@ -37,15 +40,12 @@ export class PlacesComponent implements OnInit, OnDestroy {
       phoneNumber: form.value.phone,
     };
 
-    this._sub = this._placeService.addNewPlace(place).subscribe();
-
+    this._placeService.addNewPlace(place).subscribe();
     this.showModal = !this.showModal;
   }
 
   ngOnDestroy(): void {
-    if (this._sub) {
-      this._sub.unsubscribe();
-    }
+    this.subs.unsubscribe();
   }
 
   // ID exist - fetch restaurant with specific ID and populate fields

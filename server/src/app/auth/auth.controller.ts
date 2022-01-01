@@ -1,10 +1,14 @@
-import { Controller, UseGuards, Req, Get, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @UseGuards(AuthGuard('google'))
   @Get('google')
@@ -16,7 +20,12 @@ export class AuthController {
   signInWithGoogleRedirect(@Req() req, @Res() res) {
     this.authService.signInWithGoogle(req).subscribe((user) => {
       const token: string = user.access_token;
-      if (token) res.redirect('http://localhost:4200/login/' + token);
+      if (token) {
+        const redirectUrl = `${this.configService.get(
+          'LOGIN_REDIRECT',
+        )}/login/${token}`;
+        res.redirect(redirectUrl);
+      }
     });
   }
 }

@@ -48,4 +48,4 @@ Thumbs.db
 *.mov
 *.wmv
 
-/server/.env
+server/config/env/development.env
