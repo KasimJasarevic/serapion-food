@@ -9,6 +9,7 @@ import {
 import { Observable } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { LocalStorageTypes } from '../enums/local-storage-types';
+import {UserService} from "@core/services/user.service";
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,8 @@ import { LocalStorageTypes } from '../enums/local-storage-types';
 export class AuthGuard implements CanActivate {
   private _helperSerivce = new JwtHelperService();
 
-  constructor(private _router: Router) {}
+  constructor(private _router: Router,
+              private _userService: UserService) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -38,6 +40,7 @@ export class AuthGuard implements CanActivate {
     const isExpired = this._helperSerivce.isTokenExpired(token);
 
     if (isExpired) {
+      this._userService.removeUser();
       this._router.navigate(['login']);
       return false;
     }

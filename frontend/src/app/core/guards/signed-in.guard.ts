@@ -8,12 +8,16 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { LocalStorageTypes } from '../enums/local-storage-types';
+import {JwtHelperService} from "@auth0/angular-jwt";
+import {UserService} from "@core/services/user.service";
 
 @Injectable({
   providedIn: 'root',
 })
 export class SignedInGuard implements CanActivate {
-  constructor(private _router: Router) {}
+  private _helperService = new JwtHelperService();
+  constructor(private _router: Router,
+              private _userService: UserService) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -27,11 +31,18 @@ export class SignedInGuard implements CanActivate {
       LocalStorageTypes.FOOD_ORDERING_AUTH_TOKEN
     );
 
-    if (token) {
-      this._router.navigate(['']);
-      return false;
+    if (!token) {
+      return true;
     }
 
-    return true;
+    const isExpired = this._helperService.isTokenExpired(token);
+
+    if (isExpired) {
+      this._userService.removeUser();
+      return true;
+    }
+
+    this._router.navigate(['']);
+    return false;
   }
 }
