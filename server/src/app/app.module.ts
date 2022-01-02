@@ -10,6 +10,8 @@ import { MainConfig } from 'src/main.config';
 import { DatabaseConfig } from 'src/database.config';
 import { AuthModule } from './auth/auth.module';
 import { EventsModule } from './events/events.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -29,6 +31,9 @@ import { EventsModule } from './events/events.module';
     OrderItemModule,
     AuthModule,
     EventsModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'front'),
+    }),
   ],
 })
 export class AppModule {}

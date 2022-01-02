@@ -1,4 +1,11 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
@@ -22,9 +29,11 @@ export class AuthController {
       const token: string = user.access_token;
       if (token) {
         const redirectUrl = `${this.configService.get(
-          'LOGIN_REDIRECT',
+            'LOGIN_REDIRECT',
         )}/login/${token}`;
         res.redirect(redirectUrl);
+      } else {
+        throw new HttpException('Server error', 500);
       }
     });
   }
