@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {Logger, Module} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
@@ -38,7 +38,7 @@ import {CleanupDatabaseService} from "./database/cleanup-database.service";
     }),
     ScheduleModule.forRoot()
   ],
-  providers: [CleanupDatabaseService]
+  providers: [CleanupDatabaseService, Logger]
 })
 export class AppModule {
   constructor(private _cleanupDatabaseService: CleanupDatabaseService) {
