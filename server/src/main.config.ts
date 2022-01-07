@@ -12,9 +12,9 @@ export const MainConfig = () => ({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    entities: ['dist/entities/**/*{.js,.ts}'],
-    synchronize: process.env.NODE_ENV === 'production',
-    migrationsRun: process.env.NODE_ENV === 'development',
+    entities: ['dist/**/*{.js,.ts}'],
+    synchronize: process.env.NODE_ENV === 'true',
+    migrationsRun: process.env.NODE_ENV === 'true',
     migrations: ['dist/app/database/migrations/*.js'],
     cli: {
       migrationsDir: 'src/app/database/migrations',

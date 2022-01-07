@@ -17,6 +17,7 @@ export class RestaurantEntity extends BaseEntity {
 
   @Column({
     name: 'menu',
+    type: 'text',
     nullable: true,
   })
   menu: string;

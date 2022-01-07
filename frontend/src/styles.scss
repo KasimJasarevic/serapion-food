@@ -33,6 +33,12 @@
           hover:bg-serapion-purple;
 }
 
+.btn-card {
+  @apply bg-serapion-grey-100
+          text-serapion-white
+          hover:bg-serapion-yellow;
+}
+
 .btn-accent {
   @apply bg-serapion-green
           text-serapion-white
@@ -52,7 +58,6 @@
 .link-primary {
   @apply text-serapion-blue-300 hover:text-serapion-purple;
 }
-
 
 $serapion-scrollbar: #a3abbd !default;
 
