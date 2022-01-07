@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export const MainConfig = () => ({
   port: Number(process.env.PORT) || 3000,
   googleClientId: process.env.GOOGLE_CLIENT_ID,
@@ -11,7 +12,12 @@ export const MainConfig = () => ({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    entities: ['dist/**/*.entity{.ts,.js}'],
-    synchronize: Boolean(process.env.SYNCHRONIZE_DB) || false
-  }
+    entities: ['dist/entities/**/*{.js,.ts}'],
+    synchronize: process.env.NODE_ENV === 'production',
+    migrationsRun: process.env.NODE_ENV === 'development',
+    migrations: ['dist/app/database/migrations/*.js'],
+    cli: {
+      migrationsDir: 'src/app/database/migrations',
+    },
+  },
 });

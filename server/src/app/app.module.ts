@@ -1,4 +1,4 @@
-import {Logger, Module} from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
@@ -13,7 +13,7 @@ import { EventsModule } from './events/events.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ScheduleModule } from '@nestjs/schedule';
-import {CleanupDatabaseService} from "./database/cleanup-database.service";
+import { CleanupDatabaseService } from './database/cleanup-database.service';
 
 @Module({
   imports: [
@@ -36,9 +36,9 @@ import {CleanupDatabaseService} from "./database/cleanup-database.service";
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'front'),
     }),
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
   ],
-  providers: [CleanupDatabaseService, Logger]
+  providers: [CleanupDatabaseService, Logger],
 })
 export class AppModule {
   constructor(private _cleanupDatabaseService: CleanupDatabaseService) {

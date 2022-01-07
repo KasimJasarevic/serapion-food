@@ -34,6 +34,9 @@ export class UserEntity extends BaseEntity {
   @Column({ name: 'google_id' })
   googleId: string;
 
+  @Column({ name: 'subscription_id' })
+  subscriptionId: string;
+
   @Column({
     name: 'last_order',
     nullable: true,
