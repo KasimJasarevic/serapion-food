@@ -12,7 +12,7 @@ export class WebsocketMessagesService {
     return this._socket.fromEvent(WebsocketMessageTypes.COMMENT_EVENT);
   }
 
-  onOrderItemReceived() {
+  onOrderItemAdded() {
     return this._socket.fromEvent(WebsocketMessageTypes.ORDER_ITEM_EVENT);
   }
 

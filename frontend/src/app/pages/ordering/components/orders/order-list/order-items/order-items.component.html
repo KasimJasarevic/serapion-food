@@ -1,69 +1,43 @@
 <!-- ADD ITEM -->
 <div class="pt-4">
   <form
-    class="
-      relative
-      text-serapion-grey-100 text-xs
-      flex flex-col
-      lg:flex-row
-      items-center
-      justify-between
-      gap-2
-    "
+    class="relative text-serapion-grey-100 text-xs flex flex-col lg:flex-row items-center justify-between gap-2"
+    (ngSubmit)="onSubmit(f)"
+    #f="ngForm"
   >
     <div class="group w-full lg:w-2/4">
       <span
-        class="
-          absolute
-          top-1/2
-          -mt-14
-          lg:-mt-2
-          group-focus-within:text-serapion-blue-300
-        "
+        class="absolute top-1/2 -mt-14 lg:-mt-2 group-focus-within:text-serapion-blue-300"
       >
         <i class="fas fa-pizza-slice"></i>
       </span>
       <input
-        class="
-          bg-serapion-white
-          w-full
-          pl-6
-          py-2
-          border-b border-serapion-grey-100
-          focus:outline-none focus:border-serapion-blue-300
-        "
+        class="bg-serapion-white w-full pl-6 py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
         type="text"
         placeholder="e.g. Hamburger"
+        ngModel
+        name="item"
+        #item="ngModel"
       />
     </div>
     <div class="group w-full lg:w-1/4">
       <span
-        class="
-          absolute
-          top-1/2
-          -mt-4
-          lg:-mt-2
-          group-focus-within:text-serapion-blue-300
-        "
+        class="absolute top-1/2 -mt-4 lg:-mt-2 group-focus-within:text-serapion-blue-300"
       >
         <i class="fas fa-sort-numeric-up-alt"></i>
       </span>
       <input
-        class="
-          bg-serapion-white
-          w-full
-          pl-6
-          py-2
-          border-b border-serapion-grey-100
-          focus:outline-none focus:border-serapion-blue-300
-        "
+        class="bg-serapion-white w-full pl-6 py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
         type="number"
         min="1"
         placeholder="e.g. 1"
+        ngModel
+        name="amount"
+        #amount="ngModel"
       />
     </div>
     <div class="w-full py-2 lg:w-max lg:py-0">
-      <button class="btn btn-primary w-full">
+      <button class="btn btn-primary w-full" type="submit">
         <i class="fas fa-plus fa-xs pr-1"></i>
         Add
       </button>
@@ -74,264 +48,23 @@
 
 <!-- ITEMS -->
 <div class="flex flex-col justify-between">
-  <div class="pt-4 flex flex-row justify-between items-center">
-    <div class="uppercase text-xs font-thin">Pasta</div>
+  <div
+    class="pt-4 flex flex-row justify-between items-center"
+    *ngFor="let item of items"
+  >
+    <div class="uppercase text-xs font-thin">{{ item.name }}</div>
     <div class="-space-x-2 ml-auto mr-1">
       <img
-        class="
-          relative
-          z-30
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-20
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-10
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-    </div>
-    <div class="uppercase text-xs font-semibold">
-      <i class="fas fa-angle-left fa-sm pr-1 cursor-pointer"></i>
-      <span>3x</span>
-      <i class="fas fa-angle-right fa-sm pl-1 cursor-pointer"></i>
-    </div>
-  </div>
-  <div class="pt-4 flex flex-row justify-between items-center">
-    <div class="uppercase text-xs font-thin">Pizza</div>
-    <div class="-space-x-2 ml-auto mr-1">
-      <img
-        class="
-          relative
-          z-30
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-20
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-10
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
+        class="relative z-30 inline object-cover w-6 h-6 border-2 border-serapion-white rounded-full"
+        src="{{ user.photo }}"
+        alt="{{ user.firstName + ' ' + user.lastName + ' Profile Picture' }}"
+        *ngFor="let user of item.users"
       />
     </div>
 
     <div class="uppercase text-xs font-semibold">
       <i class="fas fa-angle-left fa-sm pr-1 cursor-pointer"></i>
-      <span>3x</span>
-      <i class="fas fa-angle-right fa-sm pl-1 cursor-pointer"></i>
-    </div>
-  </div>
-  <div class="pt-4 flex flex-row justify-between items-center">
-    <div class="uppercase text-xs font-thin">Quesadilla</div>
-    <div class="-space-x-2 ml-auto mr-1">
-      <img
-        class="
-          relative
-          z-30
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-20
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-10
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-    </div>
-    <div class="uppercase text-xs font-semibold">
-      <i class="fas fa-angle-left fa-sm pr-1 cursor-pointer"></i>
-      <span>3x</span>
-      <i class="fas fa-angle-right fa-sm pl-1 cursor-pointer"></i>
-    </div>
-  </div>
-  <div class="pt-4 flex flex-row justify-between items-center">
-    <div class="uppercase text-xs font-thin">Enchilada</div>
-    <div class="-space-x-2 ml-auto mr-1">
-      <img
-        class="
-          relative
-          z-30
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-20
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-10
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-    </div>
-    <div class="uppercase text-xs font-semibold">
-      <i class="fas fa-angle-left fa-sm pr-1 cursor-pointer"></i>
-      <span>3x</span>
-      <i class="fas fa-angle-right fa-sm pl-1 cursor-pointer"></i>
-    </div>
-  </div>
-  <div class="pt-4 flex flex-row justify-between items-center">
-    <div class="uppercase text-xs font-thin">Fajitas</div>
-    <div class="-space-x-2 ml-auto mr-1">
-      <img
-        class="
-          relative
-          z-30
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-20
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-      <img
-        class="
-          relative
-          z-10
-          inline
-          object-cover
-          w-6
-          h-6
-          border-2 border-serapion-white
-          rounded-full
-        "
-        src="../assets/images/avatar.jfif"
-        alt="Profile Image"
-      />
-    </div>
-    <div class="uppercase text-xs font-semibold">
-      <i class="fas fa-angle-left fa-sm pr-1 cursor-pointer"></i>
-      <span>3x</span>
+      <span>{{ item.usersCount }}x</span>
       <i class="fas fa-angle-right fa-sm pl-1 cursor-pointer"></i>
     </div>
   </div>

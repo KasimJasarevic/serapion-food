@@ -24,6 +24,6 @@ export class OrderItemEntity extends BaseEntity {
   @JoinColumn({ name: 'order_id' })
   order: OrderEntity;
 
-  @ManyToMany(() => UserEntity, (user) => user.orderedItems)
+  @ManyToMany(() => UserEntity, (user) => user.orderedItems, { cascade: true })
   users: UserEntity[];
 }
