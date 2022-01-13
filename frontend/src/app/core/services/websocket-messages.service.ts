@@ -1,13 +1,12 @@
-import {Injectable} from "@angular/core";
-import {Socket} from "ngx-socket-io";
-import {WebsocketMessageTypes} from "../enums/websocket-message.types";
+import { Injectable } from '@angular/core';
+import { Socket } from 'ngx-socket-io';
+import { WebsocketMessageTypes } from '../enums/websocket-message.types';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebsocketMessagesService {
-  constructor(private _socket: Socket) {
-  }
+  constructor(private _socket: Socket) {}
 
   onCommentReceived() {
     return this._socket.fromEvent(WebsocketMessageTypes.COMMENT_EVENT);

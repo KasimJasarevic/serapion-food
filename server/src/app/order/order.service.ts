@@ -32,6 +32,17 @@ export class OrderService {
     );
   }
 
+  getOrderByRestaurantId(id: number): Observable<OrderDTO> {
+    return from(
+      this._orderRepo
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.user', 'user')
+        .leftJoinAndSelect('order.restaurant', 'restaurant')
+        .where('restaurant.id = :id', { id: id })
+        .getOne(),
+    );
+  }
+
   addNewOrder(payload: OrderDTO): Observable<OrderDTO> {
     const order: OrderDTO = {
       user: payload.user,
@@ -41,5 +52,14 @@ export class OrderService {
     };
 
     return from(this._orderRepo.create(order).save());
+  }
+
+  deleteOrderById(restaurantId: number) {
+    this._orderRepo
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.restaurant', 'restaurant')
+      .delete()
+      .where('restaurant.id = :id', { id: restaurantId })
+      .execute();
   }
 }

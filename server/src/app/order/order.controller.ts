@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -40,5 +41,20 @@ export class OrderController {
 
       res.json(order);
     });
+  }
+
+  @Delete(':id')
+  deleteOrderById(@Param('id') id: number, @Res() res) {
+    this._orderService
+      .getOrderByRestaurantId(id)
+      .subscribe((order: OrderDTO) => {
+        this._websocketGatewayService.sendNewRestaurantMessage(
+          order.restaurant,
+        );
+
+        res.json(order);
+      });
+
+    this._orderService.deleteOrderById(id);
   }
 }

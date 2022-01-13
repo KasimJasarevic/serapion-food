@@ -18,4 +18,10 @@ export class OrderService {
   addNewOrder(orderData: any): Observable<IOrder> {
     return this._http.post<any>(environment.api_url + '/orders', orderData);
   }
+
+  deleteOrder(restaurantId: number) {
+    return this._http.delete<number>(
+      environment.api_url + `/orders/${restaurantId}`
+    );
+  }
 }

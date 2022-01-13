@@ -3,6 +3,7 @@ import { SubSink } from '@core/helpers/sub-sink';
 import { NotificationService } from '@core/services/notification.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
 import { Observable } from 'rxjs';
+import { IPlace } from '../../places/models/place.model';
 import { IOrder } from '../models/order.model';
 import { OrderService } from '../services/order.service';
 
@@ -33,6 +34,23 @@ export class OrderListComponent implements OnInit, OnDestroy {
       .subscribe((data: any) => {
         this.orders.push(data);
       });
+  }
+
+  closeRestaurant(id: number | undefined) {
+    if (id) {
+      this.subs.sink = this._orderService
+        .deleteOrder(id)
+        .subscribe((data: any) => {
+          this._notificationService.sendCloseRestaurantMessage(
+            data.restaurant.name
+          );
+        });
+
+      const index = this.orders.findIndex(
+        (order) => order.restaurant.id === id
+      );
+      this.orders.splice(index, 1);
+    }
   }
 
   ngOnDestroy(): void {
