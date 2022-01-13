@@ -34,6 +34,11 @@ export class NotificationService {
     this.sendNotification(content);
   }
 
+  sendOrderItemAddedMessage(orderItem: string) {
+    const content = this.createContent(orderItem);
+    this.sendNotification(content);
+  }
+
   sendCloseRestaurantMessage(restaurant: string) {
     const content = this.createContent(restaurant + ' is closed.');
     this.sendNotification(content);

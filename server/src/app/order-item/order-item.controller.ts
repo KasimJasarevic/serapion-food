@@ -18,7 +18,6 @@ export class OrderItemController {
     // });
 
     this._orderItemService.addNewOrderItem(payload).subscribe((orderItem) => {
-      console.log(orderItem.users.length);
       this._websocketGatewayService.sendNewOrderItemMessage({
         usersCount: orderItem.users.length,
         ...orderItem,

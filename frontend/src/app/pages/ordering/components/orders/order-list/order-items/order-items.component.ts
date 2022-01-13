@@ -2,7 +2,9 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
+import { NotificationService } from '@core/services/notification.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { timeStamp } from 'console';
 import { OrderService } from '../../services/order.service';
 import { IItem } from './models/order-item.model';
 
@@ -18,7 +20,8 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
 
   constructor(
     private _orderService: OrderService,
-    private _websocketService: WebsocketMessagesService
+    private _websocketService: WebsocketMessagesService,
+    private _notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +57,23 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
     };
 
     this.subs.sink = this._orderService.addNewOrderItem(orderItem).subscribe();
-    console.log(orderItem);
+
+    // let ids: number[] = [];
+    // this.items.forEach((item) =>
+    //   item.users?.forEach((user) => ids.push(user.id))
+    // );
+    // ids = ids.filter((value, index, array) => {
+    //   return array.indexOf(value) === index;
+    // });
+
+    // let idsStr = ids.map((id) => id.toString());
+
+    // this._notificationService.sendNotificationToUsers(['1']);
+    // this._notificationService.sendOrderItemAddedMessage(idsStr, `Item added!`);
+
+    this._notificationService.sendOrderItemAddedMessage(
+      `Item ${orderItem.name} added!`
+    );
   }
 
   ngOnDestroy(): void {
