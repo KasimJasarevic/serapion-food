@@ -17,6 +17,12 @@ export class RestaurantService {
   }
 
   getAllPlaces(): Observable<RestaurantDTO[]> {
-    return from(this._restaurantRepo.find());
+    return from(
+      this._restaurantRepo
+        .createQueryBuilder('restaurant')
+        .leftJoinAndSelect('restaurant.order', 'order')
+        .where(`order.id is null`)
+        .getMany(),
+    );
   }
 }

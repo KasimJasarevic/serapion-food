@@ -36,6 +36,7 @@ export class OrderEntity extends BaseEntity {
   @Column({
     name: 'opened_at',
     type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   openedAt: Date;
 

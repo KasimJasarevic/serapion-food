@@ -5,15 +5,23 @@
     <div class="flex flex-row items-center justify-items-center z-10">
       <div class="flex-1">
         <h1 class="font-thin uppercase">
-          {{ order.type }}
+          {{ order.restaurant.name }}
         </h1>
-        <p class="text-xs text-serapion-blue-300">@John Doe</p>
-        <strong class="text-xs font-semibold">+38762225883</strong>
-        <p class="text-xs text-serapion-grey-100">Take Away</p>
+        <p class="text-xs text-serapion-blue-300">
+          {{ order.user.firstName + " " + order.user.lastName | titlecase }}
+        </p>
+        <strong class="text-xs font-semibold">{{
+          order.restaurant.phoneNumber
+        }}</strong>
+        <p class="text-xs text-serapion-grey-100">{{ order.type }}</p>
       </div>
-      <button class="btn btn-secondary">
+      <a
+        class="btn btn-secondary"
+        href="{{ order.restaurant.menu }}"
+        target="_blank"
+      >
         <i class="fas fa-globe fa-xs pr-1"></i> Visit
-      </button>
+      </a>
     </div>
     <!-- CARD HEADER END -->
 

@@ -3,10 +3,7 @@
     <div
       class="px-2 py-4 bg-serapion-white rounded-md transition duration-300 hover:bg-serapion-blue-300 hover:text-serapion-white"
     >
-      <div
-        class="flex flex-row justify-between items-center text-sm font-thin"
-        (click)="openRestaurant(place.name)"
-      >
+      <div class="flex flex-row justify-between items-center text-sm font-thin">
         <span class="uppercase">{{ place.name }}</span>
       </div>
 
@@ -19,10 +16,7 @@
         >
           <i class="far fa-sm fa-edit pr-1"></i> Edit
         </button>
-        <button
-          class="btn btn-card flex-1"
-          (click)="openRestaurant(place.name)"
-        >
+        <button class="btn btn-card flex-1" (click)="openRestaurant(place)">
           <i class="fas fa-sm fa-external-link-alt pr-1"></i> Open
         </button>
       </div>

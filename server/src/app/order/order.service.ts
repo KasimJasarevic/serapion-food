@@ -12,7 +12,34 @@ export class OrderService {
   ) {}
 
   getAllOrders(): Observable<OrderDTO[]> {
-    // This should be done with QueryBuilder!
-    return from(this._orderRepo.find());
+    return from(
+      this._orderRepo
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.user', 'user')
+        .leftJoinAndSelect('order.restaurant', 'restaurant')
+        .getMany(),
+    );
+  }
+
+  getOrderById(id: number): Observable<OrderDTO> {
+    return from(
+      this._orderRepo
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.user', 'user')
+        .leftJoinAndSelect('order.restaurant', 'restaurant')
+        .where('order.id = :id', { id: id })
+        .getOne(),
+    );
+  }
+
+  addNewOrder(payload: OrderDTO): Observable<OrderDTO> {
+    const order: OrderDTO = {
+      user: payload.user,
+      type: payload.type,
+      status: payload.status,
+      restaurant: payload.restaurant,
+    };
+
+    return from(this._orderRepo.create(order).save());
   }
 }

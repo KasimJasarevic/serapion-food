@@ -1,4 +1,5 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { OrderDTO } from '../order/order.dto';
 import { RestaurantDTO } from '../restaurant/restaurant.dto';
 
 @WebSocketGateway()
@@ -20,10 +21,14 @@ export class WebsocketGatewayService {
   // @UseGuards(AuthGuard('jwt'))
   // @SubscribeMessage(WebsocketMessageTypes.RESTAURANT_NEW_EVENT)
   // async onRestaurantAdded(client, message) {
-  //   client.broadcast.emit(WebsocketMessageTypes.RESTAURANT_NEW_EVENT, message);
+  // client.broadcast.emit(WebsocketMessageTypes.RESTAURANT_NEW_EVENT, message);
   // }
 
   sendNewRestaurantMessage(restaurant: RestaurantDTO) {
     this.server.emit('newRestaurantEvent', restaurant);
+  }
+
+  sendNewOrderMessage(order: OrderDTO) {
+    this.server.emit('orderNewEvent', order);
   }
 }

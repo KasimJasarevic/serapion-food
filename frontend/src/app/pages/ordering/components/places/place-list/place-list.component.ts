@@ -5,6 +5,12 @@ import { PlaceService } from '../services/place.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { SubSink } from '../../../../../core/helpers/sub-sink';
 import { WebsocketMessagesService } from '../../../../../core/services/websocket-messages.service';
+import { OrderService } from '../../orders/services/order.service';
+import { LocalStorageTypes } from '@core/enums/local-storage-types';
+import { IOrder } from '../../orders/models/order.model';
+import { log } from 'console';
+import { OrderType } from '../../orders/models/order-type-types';
+import { OrderStatus } from '../../orders/models/order-status-types';
 
 @Component({
   selector: 'app-place-list',
@@ -18,7 +24,8 @@ export class PlaceListComponent implements OnInit, OnDestroy {
   constructor(
     private _placeService: PlaceService,
     private _websocketService: WebsocketMessagesService,
-    private _notificationService: NotificationService
+    private _notificationService: NotificationService,
+    private _orderService: OrderService
   ) {}
 
   ngOnInit(): void {
@@ -31,15 +38,35 @@ export class PlaceListComponent implements OnInit, OnDestroy {
       .subscribe((data: any) => {
         this.places.push(data);
       });
+
+    this.subs.sink = this._websocketService
+      .onOrderOpened()
+      .subscribe((data: any) => {
+        const index = this.places.findIndex(
+          (place) => place.id === data.restaurant.id
+        );
+        this.places.splice(index, 1);
+      });
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
 
-  openRestaurant(name: string) {
-    // this._notificationService.sendLastCall(name);
-    console.log('Open restaurant...');
+  openRestaurant(place: IPlace) {
+    const user = JSON.parse(
+      <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
+    );
+
+    const orderData = {
+      restaurant: place.id,
+      user: user.id,
+      type: OrderType.DELIVERY,
+      status: OrderStatus.ACTIVE,
+    };
+
+    this.subs.sink = this._orderService.addNewOrder(orderData).subscribe();
+    this._notificationService.sendOpenRestaurantMessage(place.name);
   }
 
   editRestaurant(name: string) {

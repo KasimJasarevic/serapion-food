@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SubSink } from '@core/helpers/sub-sink';
 import { NotificationService } from '@core/services/notification.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { Observable } from 'rxjs';
 import { IOrder } from '../models/order.model';
 import { OrderService } from '../services/order.service';
 
@@ -25,6 +26,12 @@ export class OrderListComponent implements OnInit, OnDestroy {
       .getAllOrders()
       .subscribe((orders: IOrder[]) => {
         this.orders = orders;
+      });
+
+    this.subs.sink = this._websocketService
+      .onOrderOpened()
+      .subscribe((data: any) => {
+        this.orders.push(data);
       });
   }
 

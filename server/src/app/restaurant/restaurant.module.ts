@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RestaurantController } from './restaurant.controller';
 import { RestaurantEntity } from './restaurant.entity';
 import { RestaurantService } from './restaurant.service';
-import {EventsModule} from "../events/events.module";
+import { EventsModule } from '../events/events.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([RestaurantEntity]), EventsModule],

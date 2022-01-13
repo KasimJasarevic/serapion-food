@@ -1,11 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {NgForm} from '@angular/forms';
-import {Router} from '@angular/router';
-import {UserService} from 'src/app/core/services/user.service';
-import {IPlace} from './models/place.model';
-import {PlaceService} from './services/place.service';
-import {WebsocketMessagesService} from "@core/services/websocket-messages.service";
-import {SubSink} from "@core/helpers/sub-sink";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { UserService } from 'src/app/core/services/user.service';
+import { IPlace } from './models/place.model';
+import { PlaceService } from './services/place.service';
+import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { SubSink } from '@core/helpers/sub-sink';
 
 @Component({
   selector: 'app-places',
@@ -21,12 +21,9 @@ export class PlacesComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _placeService: PlaceService,
     private _websocketService: WebsocketMessagesService
-  ) {
-  }
+  ) {}
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   logout() {
     this._userService.removeUser();
@@ -40,7 +37,7 @@ export class PlacesComponent implements OnInit, OnDestroy {
       phoneNumber: form.value.phone,
     };
 
-    this._placeService.addNewPlace(place).subscribe();
+    this.subs.sink = this._placeService.addNewPlace(place).subscribe();
     this.showModal = !this.showModal;
   }
 

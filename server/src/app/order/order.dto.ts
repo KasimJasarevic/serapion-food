@@ -4,11 +4,11 @@ import { UserEntity } from '../user/user.entity';
 import { OrderStatus, OrderType } from './order.interface';
 
 export class OrderDTO {
-  id: number;
+  id?: number;
   type?: OrderType;
   status?: OrderStatus;
   openedAt?: Date;
-  restaurant: RestaurantEntity;
-  user: UserEntity;
-  orderItems: OrderItemEntity[];
+  restaurant?: RestaurantEntity;
+  user?: UserEntity;
+  orderItems?: OrderItemEntity[];
 }
