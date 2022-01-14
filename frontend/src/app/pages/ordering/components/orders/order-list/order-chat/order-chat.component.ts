@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
@@ -16,7 +16,6 @@ import { IMessage } from './models/order-chat.model';
 })
 export class OrderChatComponent implements OnInit, OnDestroy {
   @Input() order: IOrder | undefined;
-  // messages: IMessage[] = [];
   messages: IMessage[] = [];
   private subs = new SubSink();
 
@@ -61,6 +60,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     };
 
     this._orderService.addNewComment(comment).subscribe();
+    form.resetForm();
   }
 
   isCurrentUser(user: IUser | undefined): boolean {

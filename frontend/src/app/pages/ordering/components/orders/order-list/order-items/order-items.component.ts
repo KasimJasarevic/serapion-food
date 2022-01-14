@@ -56,6 +56,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
     };
 
     this.subs.sink = this._orderService.addNewOrderItem(orderItem).subscribe();
+    form.resetForm();
 
     // let ids: number[] = [];
     // this.items.forEach((item) =>
