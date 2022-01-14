@@ -1,4 +1,5 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { CommentDTO } from '../comment/comment.dto';
 import { OrderItemDTO } from '../order-item/order-item.dto';
 import { OrderDTO } from '../order/order.dto';
 import { RestaurantDTO } from '../restaurant/restaurant.dto';
@@ -35,5 +36,9 @@ export class WebsocketGatewayService {
 
   sendNewOrderMessage(order: OrderDTO) {
     this.server.emit('orderNewEvent', order);
+  }
+
+  sendNewCommentMessage(comment: CommentDTO) {
+    this.server.emit('commentEvent', comment);
   }
 }

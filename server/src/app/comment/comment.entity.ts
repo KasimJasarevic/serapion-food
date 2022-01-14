@@ -23,6 +23,7 @@ export class CommentEntity extends BaseEntity {
   @Column({
     name: 'commented_on',
     type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   commentedOn: Date;
 

@@ -4,6 +4,7 @@ import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
 import { IPlace } from '../../places/models/place.model';
 import { IOrder } from '../models/order.model';
+import { IMessage } from '../order-list/order-chat/models/order-chat.model';
 import { IItem } from '../order-list/order-items/models/order-item.model';
 
 @Injectable({
@@ -30,6 +31,16 @@ export class OrderService {
     return this._http.get<IItem[]>(
       environment.api_url + `/order-items/order/${orderId}`
     );
+  }
+
+  getComments(orderId: number): Observable<IItem[]> {
+    return this._http.get<IMessage[]>(
+      environment.api_url + `/comments/order/${orderId}`
+    );
+  }
+
+  addNewComment(comment: IMessage): Observable<IMessage> {
+    return this._http.post<any>(environment.api_url + '/comments', comment);
   }
 
   addNewOrderItem(orderItemData: any): Observable<IItem> {

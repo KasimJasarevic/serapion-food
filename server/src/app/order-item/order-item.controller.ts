@@ -12,11 +12,6 @@ export class OrderItemController {
 
   @Post()
   addNewOrderItem(@Body() payload: OrderItemDTO, @Res() res) {
-    // this._restaurantService.addNewPlace(payload).subscribe((place) => {
-    //   this._websocketGatewayService.sendNewRestaurantMessage(place);
-    //   res.json(place);
-    // });
-
     this._orderItemService.addNewOrderItem(payload).subscribe((orderItem) => {
       this._websocketGatewayService.sendNewOrderItemMessage({
         usersCount: orderItem.users.length,

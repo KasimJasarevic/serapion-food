@@ -4,7 +4,6 @@ import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
 import { NotificationService } from '@core/services/notification.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { timeStamp } from 'console';
 import { OrderService } from '../../services/order.service';
 import { IItem } from './models/order-item.model';
 
