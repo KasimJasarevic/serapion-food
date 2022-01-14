@@ -114,7 +114,7 @@
             class="btn w-1/2 ml-1"
             [ngClass]="{
               'btn-primary': f.valid,
-              'btn-secondary': !f.valid
+              'btn-disabled': !f.valid
             }"
             type="submit"
             [disabled]="!f.valid"

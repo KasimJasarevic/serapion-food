@@ -4,7 +4,7 @@
     *ngFor="let place of places | filter: filterStr"
   >
     <div
-      class="px-2 py-4 bg-serapion-white rounded-md transition duration-300 hover:bg-serapion-blue-300 hover:text-serapion-white"
+      class="px-2 py-4 bg-serapion-white rounded-md transform hover:-translate-y-1 transition-all duration-300"
     >
       <div class="flex flex-row justify-between items-center text-sm font-thin">
         <span class="uppercase">{{ place.name }}</span>
@@ -14,12 +14,12 @@
 
       <div class="flex pt-4 space-x-2 justify-center">
         <button
-          class="btn btn-card flex-1"
+          class="btn btn-warn flex-1"
           (click)="editRestaurant(place.name)"
         >
           <i class="far fa-sm fa-edit pr-1"></i> Edit
         </button>
-        <button class="btn btn-card flex-1" (click)="openRestaurant(place)">
+        <button class="btn btn-primary flex-1" (click)="openRestaurant(place)">
           <i class="fas fa-sm fa-external-link-alt pr-1"></i> Open
         </button>
       </div>

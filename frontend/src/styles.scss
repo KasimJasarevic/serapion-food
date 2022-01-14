@@ -33,10 +33,10 @@
           hover:bg-serapion-purple;
 }
 
-.btn-card {
+.btn-disabled {
   @apply bg-serapion-grey-100
           text-serapion-white
-          hover:bg-serapion-yellow;
+          cursor-not-allowed;
 }
 
 .btn-accent {
