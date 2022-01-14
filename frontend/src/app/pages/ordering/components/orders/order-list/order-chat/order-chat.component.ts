@@ -61,7 +61,6 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     };
 
     this._orderService.addNewComment(comment).subscribe();
-    console.log(comment);
   }
 
   isCurrentUser(user: IUser | undefined): boolean {
