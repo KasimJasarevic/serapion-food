@@ -64,14 +64,11 @@ export class OrderChatComponent implements OnInit, OnDestroy {
   }
 
   isCurrentUser(user: IUser | undefined): boolean {
-    if (
-      user?.id ===
-      JSON.parse(
-        <string>(
-          localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
-        )
-      ).id
-    ) {
+    const currentUser = JSON.parse(
+      <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
+    ).id;
+
+    if (user?.id === currentUser) {
       return true;
     }
 

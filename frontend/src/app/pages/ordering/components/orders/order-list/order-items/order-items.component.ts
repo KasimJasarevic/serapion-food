@@ -58,19 +58,6 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
     this.subs.sink = this._orderService.addNewOrderItem(orderItem).subscribe();
     form.resetForm();
 
-    // let ids: number[] = [];
-    // this.items.forEach((item) =>
-    //   item.users?.forEach((user) => ids.push(user.id))
-    // );
-    // ids = ids.filter((value, index, array) => {
-    //   return array.indexOf(value) === index;
-    // });
-
-    // let idsStr = ids.map((id) => id.toString());
-
-    // this._notificationService.sendNotificationToUsers(['1']);
-    // this._notificationService.sendOrderItemAddedMessage(idsStr, `Item added!`);
-
     this._notificationService.sendOrderItemAddedMessage(
       `Item ${orderItem.name} added!`
     );
