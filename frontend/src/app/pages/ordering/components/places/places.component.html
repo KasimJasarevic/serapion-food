@@ -6,10 +6,10 @@
     New
   </div>
 
-<!--  <div class="btn btn-primary mr-2" (click)="openPlacesDialog()">-->
-<!--    <i class="fas fa-plus fa-xs pr-1"></i>-->
-<!--    New-->
-<!--  </div>-->
+  <!--  <div class="btn btn-primary mr-2" (click)="openPlacesDialog()">-->
+  <!--    <i class="fas fa-plus fa-xs pr-1"></i>-->
+  <!--    New-->
+  <!--  </div>-->
 
   <button class="btn btn-accent" (click)="logout()">
     <i class="fas fa-user fa-xs pr-1"></i>
@@ -22,17 +22,11 @@
 <div class="bg-serapion-white pb-6 px-4 z-50">
   <form class="relative text-serapion-grey-100 text-xs">
     <input
-      class="
-        peer
-        bg-serapion-white
-        w-full
-        pl-6
-        py-2
-        border-b border-serapion-grey-100
-        focus:outline-none focus:border-serapion-blue-300
-      "
+      class="peer bg-serapion-white w-full pl-6 py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
       type="text"
       placeholder="Filter restaurants..."
+      name="filter"
+      [(ngModel)]="filterInput"
     />
     <label
       class="absolute left-0 top-1/2 -mt-2 peer-focus:text-serapion-blue-300"
@@ -48,7 +42,7 @@
 <!-- PLACES HERO END -->
 
 <!-- PLACES -->
-<app-place-list></app-place-list>
+<app-place-list [filterStr]="filterInput"></app-place-list>
 <!-- PLACES END -->
 
 <!-- NEW PLACE MODAL -->
@@ -69,12 +63,7 @@
             <span class="font-semibold">*</span> Required
           </div>
           <input
-            class="
-              w-full
-              py-2
-              border-b border-serapion-grey-100
-              focus:outline-none focus:border-serapion-blue-300
-            "
+            class="w-full py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
             type="text"
             placeholder="Name"
             required
@@ -95,12 +84,7 @@
             ngModel
             name="menu"
             pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
-            class="
-              w-full
-              py-2
-              border-b border-serapion-grey-100
-              focus:outline-none focus:border-serapion-blue-300
-            "
+            class="w-full py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
             type="text"
             placeholder="Menu"
             #menu="ngModel"
@@ -119,12 +103,7 @@
           ngModel
           name="phone"
           pattern="^\+[1-9]{1}[0-9]{3,14}$"
-          class="
-            w-full
-            py-2
-            border-b border-serapion-grey-100
-            focus:outline-none focus:border-serapion-blue-300
-          "
+          class="w-full py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
           type="text"
           placeholder="Phone"
           #phone="ngModel"
@@ -154,13 +133,7 @@
   </div>
 </div>
 <div
-  class="
-    absolute
-    backdrop-filter backdrop-blur-lg
-    z-40
-    inset-0
-    bg-opacity-20 bg-serapion-blue-300
-  "
+  class="absolute backdrop-filter backdrop-blur-lg z-40 inset-0 bg-opacity-20 bg-serapion-blue-300"
   *ngIf="showModal"
 ></div>
 <!-- NEW PLACE MODAL END -->

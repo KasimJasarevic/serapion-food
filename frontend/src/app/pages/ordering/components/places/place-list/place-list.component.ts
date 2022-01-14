@@ -1,5 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { IPlace } from '../models/place.model';
 import { PlaceService } from '../services/place.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
@@ -7,8 +6,6 @@ import { SubSink } from '../../../../../core/helpers/sub-sink';
 import { WebsocketMessagesService } from '../../../../../core/services/websocket-messages.service';
 import { OrderService } from '../../orders/services/order.service';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
-import { IOrder } from '../../orders/models/order.model';
-import { log } from 'console';
 import { OrderType } from '../../orders/models/order-type-types';
 import { OrderStatus } from '../../orders/models/order-status-types';
 
@@ -18,6 +15,7 @@ import { OrderStatus } from '../../orders/models/order-status-types';
   styleUrls: ['./place-list.component.scss'],
 })
 export class PlaceListComponent implements OnInit, OnDestroy {
+  @Input() filterStr: string = '';
   places: IPlace[] = [];
   private subs = new SubSink();
 

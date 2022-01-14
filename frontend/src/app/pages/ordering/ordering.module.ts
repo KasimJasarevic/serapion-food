@@ -10,8 +10,10 @@ import { OrderChatComponent } from './components/orders/order-list/order-chat/or
 import { OrderItemsComponent } from './components/orders/order-list/order-items/order-items.component';
 import { FormsModule } from '@angular/forms';
 import { PlaceFormComponent } from './components/places/place-form/place-form.component';
-import {OneSignalService} from "onesignal-ngx";
-import {NotificationService} from "../../core/services/notification.service";
+import { OneSignalService } from 'onesignal-ngx';
+import { NotificationService } from '../../core/services/notification.service';
+import { FilterPipe } from './components/places/place-list/pipes/filter.pipe';
+// import { FilterPipe } from './components/orders/order-list/order-chat/pipes/filter.pipe';
 
 @NgModule({
   declarations: [
@@ -23,6 +25,7 @@ import {NotificationService} from "../../core/services/notification.service";
     OrderChatComponent,
     OrderItemsComponent,
     PlaceFormComponent,
+    FilterPipe,
   ],
   imports: [CommonModule, OrderingRoutingModule, FormsModule],
 })

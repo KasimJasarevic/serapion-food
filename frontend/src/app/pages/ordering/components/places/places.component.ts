@@ -13,6 +13,7 @@ import { SubSink } from '@core/helpers/sub-sink';
   styleUrls: ['./places.component.scss'],
 })
 export class PlacesComponent implements OnInit, OnDestroy {
+  filterInput: string = '';
   showModal = false;
   private subs = new SubSink();
 
