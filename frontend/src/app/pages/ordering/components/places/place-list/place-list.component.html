@@ -7,10 +7,15 @@
       class="px-2 py-4 bg-serapion-white rounded-md transform hover:-translate-y-1 transition-all duration-300"
     >
       <div class="flex flex-row justify-between items-center text-sm font-thin">
-        <span class="uppercase">{{ place.name }}</span>
+        <span class="uppercase flex-1">{{ place.name }}</span>
+        <button class="btn btn-secondary" (click)="editRestaurant(place.name)">
+          <i class="fas fa-sm fa-trash pr-1"></i> Delete
+        </button>
       </div>
 
-      <strong class="text-xs font-semibold">{{ place.phoneNumber }}</strong>
+      <strong class="text-xs font-semibold">{{
+        place.phoneNumber ? place.phoneNumber : "No phone number"
+      }}</strong>
 
       <div class="flex pt-4 space-x-2 justify-center">
         <button

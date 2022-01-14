@@ -21,6 +21,18 @@
           cursor-pointer;
 }
 
+.btn-circle {
+  @apply font-semibold
+          shadow-sm
+          text-xs
+          py-2
+          px-4
+          rounded-full
+          transition
+          duration-300
+          cursor-pointer;
+}
+
 .btn-primary {
   @apply bg-serapion-blue-300
           text-serapion-white

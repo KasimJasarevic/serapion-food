@@ -3,7 +3,7 @@
 >
   <!-- ORDER -->
   <div
-    class="card z-10 transform hover:-translate-y-1 transition-all duration-300"
+    class="card z-10 lg:transform hover:-translate-y-1 transition-all duration-300"
     *ngFor="let order of orders"
   >
     <!-- CARD HEADER -->
@@ -17,11 +17,13 @@
         </p>
         <strong class="text-xs font-semibold">{{
           order.restaurant.phoneNumber
+            ? order.restaurant.phoneNumber
+            : "No phone number"
         }}</strong>
         <p class="text-xs text-serapion-grey-100">{{ order.type }}</p>
       </div>
       <a
-        class="btn btn-secondary"
+        class="btn btn-warn"
         href="{{ order.restaurant.menu }}"
         target="_blank"
       >
