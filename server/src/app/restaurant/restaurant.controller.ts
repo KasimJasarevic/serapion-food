@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 import { RestaurantDTO } from './restaurant.dto';
@@ -24,5 +33,18 @@ export class RestaurantController {
   @Get()
   getAllPlaces(): Observable<RestaurantDTO[]> {
     return this._restaurantService.getAllPlaces();
+  }
+
+  // 2 places with same name ???
+  @Delete(':name')
+  deletePlaceByName(@Param('name') name: string, @Res() res) {
+    this._restaurantService
+      .getPlaceByName(name)
+      .subscribe((place: RestaurantDTO) => {
+        this._websocketGatewayService.sendNewRestaurantDeletedMessage(place);
+        this._restaurantService.deletePlaceById(place.id);
+
+        res.json(place);
+      });
   }
 }

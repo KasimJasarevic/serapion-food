@@ -13,6 +13,7 @@ import { PlaceFormComponent } from './components/places/place-form/place-form.co
 import { OneSignalService } from 'onesignal-ngx';
 import { NotificationService } from '../../core/services/notification.service';
 import { FilterPipe } from './components/places/place-list/pipes/filter.pipe';
+import { SharedModule } from 'src/app/shared/shared.module';
 // import { FilterPipe } from './components/orders/order-list/order-chat/pipes/filter.pipe';
 
 @NgModule({
@@ -27,7 +28,7 @@ import { FilterPipe } from './components/places/place-list/pipes/filter.pipe';
     PlaceFormComponent,
     FilterPipe,
   ],
-  imports: [CommonModule, OrderingRoutingModule, FormsModule],
+  imports: [CommonModule, OrderingRoutingModule, FormsModule, SharedModule],
 })
 export class OrderingModule {
   constructor(private _notificationService: NotificationService) {

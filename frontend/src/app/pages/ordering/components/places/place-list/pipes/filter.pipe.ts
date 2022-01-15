@@ -5,7 +5,7 @@ import { IPlace } from '../../models/place.model';
   name: 'filter',
 })
 export class FilterPipe implements PipeTransform {
-  transform(places: IPlace[], filterString: string): IPlace[] {
+  transform(places: IPlace[], filterString: string, updated: Date): IPlace[] {
     if (!filterString || !places) {
       return places;
     }

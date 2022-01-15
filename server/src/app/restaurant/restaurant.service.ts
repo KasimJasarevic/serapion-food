@@ -25,4 +25,23 @@ export class RestaurantService {
         .getMany(),
     );
   }
+
+  getPlaceByName(name: string): Observable<RestaurantDTO> {
+    return from(
+      this._restaurantRepo
+        .createQueryBuilder('restaurant')
+        .where(`restaurant.name = :name`, { name })
+        .getOne(),
+    );
+  }
+
+  deletePlaceById(id: number) {
+    return from(
+      this._restaurantRepo
+        .createQueryBuilder('restaurant')
+        .delete()
+        .where('restaurant.id = :id', { id })
+        .execute(),
+    );
+  }
 }

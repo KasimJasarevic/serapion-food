@@ -51,8 +51,8 @@
   *ngIf="showModal"
 >
   <div class="relative mx-auto w-1/2 max-w-2xl">
-    <div class="bg-white rounded-md p-4 flex flex-col">
-      <div class="text-lg font-thin uppercase">Add New Place</div>
+    <div class="bg-serapion-white rounded-md p-4 flex flex-col">
+      <div class="text-lg font-thin uppercase">Add New Restaurant</div>
 
       <form class="pt-4" (ngSubmit)="onSubmit(f)" #f="ngForm">
         <div class="group w-full">
@@ -63,7 +63,7 @@
             <span class="font-semibold">*</span> Required
           </div>
           <input
-            class="w-full py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
+            class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
             type="text"
             placeholder="Name"
             required
@@ -84,7 +84,7 @@
             ngModel
             name="menu"
             pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
-            class="w-full py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
+            class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
             type="text"
             placeholder="Menu"
             #menu="ngModel"
@@ -103,7 +103,7 @@
           ngModel
           name="phone"
           pattern="^\+[1-9]{1}[0-9]{3,14}$"
-          class="w-full py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
+          class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
           type="text"
           placeholder="Phone"
           #phone="ngModel"
@@ -137,3 +137,9 @@
   *ngIf="showModal"
 ></div>
 <!-- NEW PLACE MODAL END -->
+
+<!-- <app-modal id="emir">
+  <h1>A Custom Modal!</h1>
+  <p>Home page text: <input type="text" /></p>
+  <button (click)="openPlacesDialog('custom-modal-1')">Close</button>
+</app-modal> -->

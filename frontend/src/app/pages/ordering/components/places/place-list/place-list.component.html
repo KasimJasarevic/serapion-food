@@ -1,14 +1,14 @@
 <div class="p-4 grid grid-cols-3 gap-2 lg:grid-cols-2 lg:gap-4 z-10 lg:-mt-80">
   <a
     class="cursor-pointer z-10"
-    *ngFor="let place of places | filter: filterStr"
+    *ngFor="let place of places | filter: filterStr:updated"
   >
     <div
       class="px-2 py-4 bg-serapion-white rounded-md transform hover:-translate-y-1 lg:hover:shadow-lg transition-all duration-300"
     >
       <div class="flex flex-row justify-between items-center text-sm font-thin">
         <span class="uppercase flex-1">{{ place.name }}</span>
-        <button class="btn btn-secondary" (click)="editRestaurant(place.name)">
+        <button class="btn btn-secondary" (click)="deletePlace(place.name)">
           <i class="fas fa-sm fa-trash pr-1"></i> Delete
         </button>
       </div>

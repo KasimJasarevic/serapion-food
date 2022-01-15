@@ -16,6 +16,9 @@ import { OrderStatus } from '../../orders/models/order-status-types';
 })
 export class PlaceListComponent implements OnInit, OnDestroy {
   @Input() filterStr: string = '';
+  // Trick to update pipe, maybe there is a better solution for this.
+  updated: Date = new Date();
+
   places: IPlace[] = [];
   private subs = new SubSink();
 
@@ -35,6 +38,7 @@ export class PlaceListComponent implements OnInit, OnDestroy {
       .onRestaurantAdded()
       .subscribe((data: any) => {
         this.places.push(data);
+        this.updated = new Date();
       });
 
     this.subs.sink = this._websocketService
@@ -44,6 +48,15 @@ export class PlaceListComponent implements OnInit, OnDestroy {
           (place) => place.id === data.restaurant.id
         );
         this.places.splice(index, 1);
+        this.updated = new Date();
+      });
+
+    this.subs.sink = this._websocketService
+      .onRestaurantDeleted()
+      .subscribe((data: any) => {
+        const index = this.places.findIndex((place) => place.id === data.id);
+        this.places.splice(index, 1);
+        this.updated = new Date();
       });
   }
 
@@ -70,5 +83,9 @@ export class PlaceListComponent implements OnInit, OnDestroy {
   editRestaurant(name: string) {
     this._notificationService.sendLastCall(name);
     // console.log('Edit restaurant...');
+  }
+
+  deletePlace(name: string) {
+    this._placeService.deletePlace(name).subscribe();
   }
 }
