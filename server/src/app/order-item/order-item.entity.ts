@@ -20,13 +20,14 @@ export class OrderItemEntity extends BaseEntity {
 
   // On delete set all order_id item of an order to null?
   @ManyToOne(() => OrderEntity, (order) => order.orderItems, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'order_id' })
   order: OrderEntity;
 
   @ManyToMany(() => UserEntity, (user) => user.orderedItems, {
     cascade: ['insert'],
+    onDelete: 'CASCADE',
   })
   users: UserEntity[];
 }

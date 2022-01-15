@@ -9,3 +9,9 @@ export class OrderItemDTO {
   count?: number;
   usersCount?: number;
 }
+
+export class OrderItemPostRequest {
+  name: string;
+  order: OrderEntity;
+  users: UserEntity[];
+}

@@ -4,6 +4,7 @@ import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
 import { NotificationService } from '@core/services/notification.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 import { IItem } from './models/order-item.model';
 
@@ -13,7 +14,7 @@ import { IItem } from './models/order-item.model';
   styleUrls: ['./order-items.component.scss'],
 })
 export class OrderItemsComponent implements OnInit, OnDestroy {
-  @Input() orderId: number | undefined;
+  @Input() order: IOrder | undefined;
   items: IItem[] = [];
   private subs = new SubSink();
 
@@ -24,9 +25,9 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (this.orderId) {
+    if (this.order!.id) {
       this.subs.sink = this._orderService
-        .getOrderItems(this.orderId)
+        .getOrderItems(this.order!.id)
         .subscribe((data: IItem[]) => {
           this.items = data;
         });
@@ -35,7 +36,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
     this.subs.sink = this._websocketService
       .onOrderItemAdded()
       .subscribe((data: any) => {
-        if (data.order === this.orderId) {
+        if (data.order.id === this.order!.id) {
           this.items.push(data);
         }
       });
@@ -43,7 +44,8 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
 
   onSubmit(form: NgForm) {
     const orderItem: any = {
-      order: this.orderId,
+      name: form.value.item,
+      order: this.order,
       users: [
         JSON.parse(
           <string>(
@@ -51,7 +53,6 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
           )
         ),
       ],
-      name: form.value.item,
       amount: form.value.amount,
     };
 

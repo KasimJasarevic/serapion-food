@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
-import { OrderItemDTO } from './order-item.dto';
+import { OrderItemDTO, OrderItemPostRequest } from './order-item.dto';
 import { OrderItemEntity } from './order-item.entity';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class OrderItemService {
     );
   }
 
-  addNewOrderItem(place: OrderItemDTO): Observable<OrderItemDTO> {
+  addNewOrderItem(place: OrderItemPostRequest): Observable<OrderItemDTO> {
     return from(this._orderitemRepo.create(place).save());
   }
 }

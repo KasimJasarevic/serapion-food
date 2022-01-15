@@ -3,7 +3,7 @@
   <div
     *ngFor="let message of messages"
     class="border-l-4 pl-2 py-2 border-serapion-blue-300"
-    [ngClass]="{ 'border-serapion-green': isCurrentUser(message.user) }"
+    [ngClass]="{ 'border-serapion-purple': isCurrentUser(message.user) }"
   >
     <strong class="font-semibold" *ngIf="message.user">
       {{
