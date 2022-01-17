@@ -36,10 +36,26 @@ export class UserService {
         .getOne(),
     );
   }
+
   getOne(userId: number): Observable<UserDTO> {
+    console.log(userId);
+
     return from(
       this.userRepo
         .createQueryBuilder('user')
+        .select('user')
+        .where('user.id = :id', { id: userId })
+        .getOne(),
+    );
+  }
+
+  getOneById(userId: number): Observable<UserEntity> {
+    console.log(userId);
+
+    return from(
+      this.userRepo
+        .createQueryBuilder('user')
+        .select('user')
         .where('user.id = :id', { id: userId })
         .getOne(),
     );
@@ -48,4 +64,6 @@ export class UserService {
   store(user: UserDTO): Observable<UserDTO> {
     return from(this.userRepo.create(user).save());
   }
+
+  // This solution is not good!
 }

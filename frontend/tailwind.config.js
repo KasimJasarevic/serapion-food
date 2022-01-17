@@ -26,6 +26,10 @@ module.exports = {
     fontFamily: {
       "serapion-sans": ["Rubik, sans-serif"],
     },
+    animation: {
+      "bounce-slow": "bounce 3s linear infinite",
+      "spin-slow": "spin 10s linear infinite",
+    },
   },
   variants: {
     extend: {

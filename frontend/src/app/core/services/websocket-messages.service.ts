@@ -16,6 +16,22 @@ export class WebsocketMessagesService {
     return this._socket.fromEvent(WebsocketMessageTypes.ORDER_ITEM_EVENT);
   }
 
+  onOrderItemDeleted() {
+    return this._socket.fromEvent(
+      WebsocketMessageTypes.ORDER_ITEM_DELETE_EVENT
+    );
+  }
+
+  onOrderItemUserAdded() {
+    return this._socket.fromEvent(WebsocketMessageTypes.ORDER_ITEM_USER_EVENT);
+  }
+
+  onOrderItemUserDeleted() {
+    return this._socket.fromEvent(
+      WebsocketMessageTypes.ORDER_ITEM_USER_DELETE_EVENT
+    );
+  }
+
   onRestaurantAdded() {
     return this._socket.fromEvent(WebsocketMessageTypes.RESTAURANT_NEW_EVENT);
   }

@@ -1,11 +1,20 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
 import { IPlace } from '../../places/models/place.model';
 import { IOrder } from '../models/order.model';
 import { IMessage } from '../order-list/order-chat/models/order-chat.model';
-import { IItem } from '../order-list/order-items/models/order-item.model';
+import {
+  AddOrderItem,
+  IAddItem,
+  IAddItemEx,
+  IDeleteItem,
+  IDeleteOrderItem,
+  IItem,
+  IOrderItemUser,
+  IRemoveOrderItemUser,
+} from '../order-list/order-items/models/order-item.model';
 
 @Injectable({
   providedIn: 'root',
@@ -43,10 +52,53 @@ export class OrderService {
     return this._http.post<any>(environment.api_url + '/comments', comment);
   }
 
-  addNewOrderItem(orderItemData: any): Observable<IItem> {
+  addNewOrderItem(orderItemData: any): Observable<AddOrderItem> {
     return this._http.post<any>(
       environment.api_url + '/order-items',
       orderItemData
     );
+  }
+
+  // deleteOrderItem({ name, order, user }: IDeleteItem) {
+  //   // order-item?order=id&user=id&_name=name
+  //   const opts = {
+  //     params: new HttpParams({
+  //       fromString: `_order=${order}&_user=${user}&_name=${name}`,
+  //     }),
+  //   };
+
+  //   this._http
+  //     .delete<any>(environment.api_url + '/order-items', opts)
+  //     .subscribe();
+  // }
+
+  addOrderItem(item: IAddItem) {
+    this._http.put<any>(environment.api_url + '/order-items', item).subscribe();
+  }
+
+  addOrderItemUser({ id, ...payload }: IAddItemEx) {
+    return this._http.post<any>(
+      environment.api_url + `/order-items/${id}`,
+      payload
+    );
+  }
+
+  removeOrderItemUser({ itemId, userId }: IRemoveOrderItemUser) {
+    // order-item?_user=id&_item=id
+    const opts = {
+      params: new HttpParams({
+        fromString: `_user=${userId}&_item=${itemId}`,
+      }),
+    };
+
+    this._http
+      .delete<any>(environment.api_url + '/order-items', opts)
+      .subscribe();
+  }
+
+  deleteOrderItem(itemId: IDeleteOrderItem) {
+    this._http
+      .delete<any>(environment.api_url + `/order-items/${itemId}`)
+      .subscribe();
   }
 }

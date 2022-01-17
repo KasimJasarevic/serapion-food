@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
@@ -61,5 +62,16 @@ export class OrderService {
       .delete()
       .where('restaurant.id = :id', { id: restaurantId })
       .execute();
+  }
+
+  // @Cron('*/1 * * * *')
+  // testCron() {
+  //   console.log('1 min passed.');
+  // }
+
+  @Cron('0 17 * * *')
+  deleteAllOrders() {
+    console.log('Clear all orders!');
+    this._orderRepo.createQueryBuilder('order').delete().execute();
   }
 }

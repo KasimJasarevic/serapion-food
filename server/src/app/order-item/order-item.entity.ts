@@ -3,12 +3,12 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { OrderItemToUserEntity } from '../order-item-user/order-item-user.entity';
 import { OrderEntity } from '../order/order.entity';
-import { UserEntity } from '../user/user.entity';
 
 @Entity({ name: 'order_item' })
 export class OrderItemEntity extends BaseEntity {
@@ -25,9 +25,13 @@ export class OrderItemEntity extends BaseEntity {
   @JoinColumn({ name: 'order_id' })
   order: OrderEntity;
 
-  @ManyToMany(() => UserEntity, (user) => user.orderedItems, {
-    cascade: ['insert'],
-    onDelete: 'CASCADE',
-  })
-  users: UserEntity[];
+  @OneToMany(
+    () => OrderItemToUserEntity,
+    (orderedItems) => orderedItems.orderItem,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  orderedItems: OrderItemToUserEntity[];
 }

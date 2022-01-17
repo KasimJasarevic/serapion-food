@@ -14,6 +14,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CleanupDatabaseService } from './database/cleanup-database.service';
+import { OrderItemUserModule } from './order-item-user/order-item-user.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CleanupDatabaseService } from './database/cleanup-database.service';
       imports: [ConfigModule],
       useClass: DatabaseConfig,
     }),
+    ScheduleModule.forRoot(),
     UserModule,
     RestaurantModule,
     CommentModule,
@@ -37,6 +39,7 @@ import { CleanupDatabaseService } from './database/cleanup-database.service';
       rootPath: join(__dirname, '..', '..', 'front'),
     }),
     ScheduleModule.forRoot(),
+    OrderItemUserModule,
   ],
   providers: [CleanupDatabaseService, Logger],
 })

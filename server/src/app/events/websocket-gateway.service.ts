@@ -1,6 +1,10 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { CommentDTO } from '../comment/comment.dto';
-import { OrderItemDTO } from '../order-item/order-item.dto';
+import {
+  OrderItemByIdGetRequest,
+  OrderItemDTO,
+  OrderItemUserDeleteResponse,
+} from '../order-item/order-item.dto';
 import { OrderDTO } from '../order/order.dto';
 import { RestaurantDTO } from '../restaurant/restaurant.dto';
 
@@ -30,6 +34,14 @@ export class WebsocketGatewayService {
     this.server.emit('orderItemEvent', item);
   }
 
+  sendNewOrderItemUserMessage(item: OrderItemByIdGetRequest) {
+    this.server.emit('orderItemUserEvent', item);
+  }
+
+  sendDeleteOrderItemUserMessage(item: OrderItemUserDeleteResponse) {
+    this.server.emit('deleteOrderItemUserEvent', item);
+  }
+
   sendNewRestaurantMessage(restaurant: RestaurantDTO) {
     this.server.emit('newRestaurantEvent', restaurant);
   }
@@ -44,5 +56,9 @@ export class WebsocketGatewayService {
 
   sendNewCommentMessage(comment: CommentDTO) {
     this.server.emit('commentEvent', comment);
+  }
+
+  sendDeleteOrderItemMessage(itemId: number) {
+    this.server.emit('orderItemDeleteEvent', itemId);
   }
 }

@@ -57,4 +57,9 @@ export class OrderController {
 
     this._orderService.deleteOrderById(id);
   }
+
+  @Delete()
+  deleteAllOrders() {
+    this._orderService.deleteAllOrders();
+  }
 }

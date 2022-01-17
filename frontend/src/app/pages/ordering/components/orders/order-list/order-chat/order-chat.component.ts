@@ -1,4 +1,13 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
@@ -14,8 +23,10 @@ import { IMessage } from './models/order-chat.model';
   templateUrl: './order-chat.component.html',
   styleUrls: ['./order-chat.component.scss'],
 })
-export class OrderChatComponent implements OnInit, OnDestroy {
+export class OrderChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() order: IOrder | undefined;
+  @ViewChild('commentBox', { static: false }) private _commentBox!: ElementRef;
+
   messages: IMessage[] = [];
   private subs = new SubSink();
 
@@ -46,6 +57,18 @@ export class OrderChatComponent implements OnInit, OnDestroy {
           );
         }
       });
+  }
+
+  ngAfterViewChecked(): void {
+    this._commentBox.nativeElement.scrollTop =
+      this._commentBox.nativeElement.scrollHeight;
+    this.subs.sink = this._websocketService
+      .onCommentReceived()
+      .subscribe(
+        (next) =>
+          (this._commentBox.nativeElement.scrollTop =
+            this._commentBox.nativeElement.scrollHeight)
+      );
   }
 
   onAddComment(form: NgForm) {

@@ -56,16 +56,27 @@
     <div class="-space-x-2 ml-auto mr-1">
       <img
         class="relative z-30 inline object-cover w-6 h-6 border-2 border-serapion-white rounded-full"
-        src="{{ user.photo }}"
-        alt="{{ user.firstName + ' ' + user.lastName + ' Profile Picture' }}"
-        *ngFor="let user of item.users"
+        src="{{ orderItem.user!.photo }}"
+        alt="{{
+          orderItem.user!.firstName +
+            ' ' +
+            orderItem.user!.lastName +
+            ' Profile Picture'
+        }}"
+        *ngFor="let orderItem of item.orderedItems"
       />
     </div>
 
     <div class="uppercase text-xs font-semibold">
-      <i class="fas fa-angle-left fa-sm pr-1 cursor-pointer"></i>
-      <span>{{ item.usersCount }}x</span>
-      <i class="fas fa-angle-right fa-sm pl-1 cursor-pointer"></i>
+      <i
+        class="fas fa-angle-left fa-sm pr-1 cursor-pointer"
+        (click)="removeItem(item)"
+      ></i>
+      <span>{{ item.orderedItems!.length }}x</span>
+      <i
+        class="fas fa-angle-right fa-sm pl-1 cursor-pointer"
+        (click)="addItem(item)"
+      ></i>
     </div>
   </div>
 </div>

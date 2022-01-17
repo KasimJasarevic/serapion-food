@@ -2,13 +2,11 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CommentEntity } from '../comment/comment.entity';
-import { OrderItemEntity } from '../order-item/order-item.entity';
+import { OrderItemToUserEntity } from '../order-item-user/order-item-user.entity';
 import { OrderEntity } from '../order/order.entity';
 
 @Entity({ name: 'user' })
@@ -53,19 +51,9 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => OrderEntity, (order) => order.user)
   orders: OrderEntity[];
 
-  @ManyToMany(() => OrderItemEntity, (orderItems) => orderItems.users, {
+  @OneToMany(() => OrderItemToUserEntity, (orderedItems) => orderedItems.user, {
+    cascade: true,
     onDelete: 'CASCADE',
   })
-  @JoinTable({
-    name: 'order_item_user',
-    joinColumn: {
-      name: 'user_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'order_item_id',
-      referencedColumnName: 'id',
-    },
-  })
-  orderedItems: OrderItemEntity[];
+  orderedItems: OrderItemToUserEntity[];
 }
