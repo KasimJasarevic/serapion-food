@@ -8,12 +8,12 @@ import { OrderListComponent } from './components/orders/order-list/order-list.co
 import { PlaceListComponent } from './components/places/place-list/place-list.component';
 import { OrderChatComponent } from './components/orders/order-list/order-chat/order-chat.component';
 import { OrderItemsComponent } from './components/orders/order-list/order-items/order-items.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlaceFormComponent } from './components/places/place-form/place-form.component';
 import { OneSignalService } from 'onesignal-ngx';
 import { NotificationService } from '../../core/services/notification.service';
 import { FilterPipe } from './components/places/place-list/pipes/filter.pipe';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { PlaceModalComponent } from './components/places/place-modal/place-modal.component';
 // import { FilterPipe } from './components/orders/order-list/order-chat/pipes/filter.pipe';
 
 @NgModule({
@@ -26,9 +26,16 @@ import { SharedModule } from 'src/app/shared/shared.module';
     OrderChatComponent,
     OrderItemsComponent,
     PlaceFormComponent,
+    PlaceModalComponent,
     FilterPipe,
+    PlaceModalComponent,
   ],
-  imports: [CommonModule, OrderingRoutingModule, FormsModule, SharedModule],
+  imports: [
+    CommonModule,
+    OrderingRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
 })
 export class OrderingModule {
   constructor(private _notificationService: NotificationService) {

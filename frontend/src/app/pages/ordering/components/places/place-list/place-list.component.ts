@@ -8,6 +8,7 @@ import { OrderService } from '../../orders/services/order.service';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { OrderType } from '../../orders/models/order-type-types';
 import { OrderStatus } from '../../orders/models/order-status-types';
+import { ModalService } from '../services/modal.service';
 
 @Component({
   selector: 'app-place-list',
@@ -26,7 +27,8 @@ export class PlaceListComponent implements OnInit, OnDestroy {
     private _placeService: PlaceService,
     private _websocketService: WebsocketMessagesService,
     private _notificationService: NotificationService,
-    private _orderService: OrderService
+    private _orderService: OrderService,
+    private _modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -58,6 +60,19 @@ export class PlaceListComponent implements OnInit, OnDestroy {
         this.places.splice(index, 1);
         this.updated = new Date();
       });
+
+    this.subs.sink = this._websocketService
+      .onRestaurantUpdated()
+      .subscribe((data: any) => {
+        this.places = this.places.map((place) => {
+          if (place.id == data.id) {
+            place = data;
+          }
+          return place;
+        });
+
+        this.updated = new Date();
+      });
   }
 
   ngOnDestroy(): void {
@@ -80,9 +95,8 @@ export class PlaceListComponent implements OnInit, OnDestroy {
     this._notificationService.sendOpenRestaurantMessage(place.name);
   }
 
-  editRestaurant(name: string) {
-    this._notificationService.sendLastCall(name);
-    // console.log('Edit restaurant...');
+  editRestaurant(id: number) {
+    this._modalService.modalOpen(id);
   }
 
   deletePlace(name: string) {

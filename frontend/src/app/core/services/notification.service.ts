@@ -51,8 +51,8 @@ export class NotificationService {
     this.sendNotification(content);
   }
 
-  sendNotificationToUsers(ids: string[]) {
-    const content = this.createContentForUsers(ids, 'This is message');
+  sendNotificationToUsers(ids: string[], message: string) {
+    const content = this.createContentForUsers(ids, message);
     this.sendNotification(content);
   }
 

@@ -21,6 +21,17 @@ export class PlaceService {
     return this._http.get<IPlace[]>(`${environment.api_url}/restaurants`);
   }
 
+  updatePlace(id: number, placeData: IPlace): Observable<IPlace> {
+    return this._http.put<IPlace>(
+      environment.api_url + `/restaurants/${id}`,
+      placeData
+    );
+  }
+
+  getPlaceById(id: number): Observable<IPlace> {
+    return this._http.get<IPlace>(`${environment.api_url}/restaurants/${id}`);
+  }
+
   deletePlace(name: string) {
     return this._http.delete<IPlace>(
       `${environment.api_url}/restaurants/${name}`

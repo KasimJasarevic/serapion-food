@@ -12,6 +12,7 @@ import { NgForm } from '@angular/forms';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
 import { IUser } from '@core/models/user.model';
+import { NotificationService } from '@core/services/notification.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
 import { Observable, of, tap } from 'rxjs';
 import { IOrder } from '../../models/order.model';
@@ -32,7 +33,8 @@ export class OrderChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private _orderService: OrderService,
-    private _websocketService: WebsocketMessagesService
+    private _websocketService: WebsocketMessagesService,
+    private _notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +56,13 @@ export class OrderChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.messages.push(data);
           this.messages.sort((a, b) =>
             a.commentedOn! < b.commentedOn! ? -1 : 1
+          );
+
+          const str = `You have a new message from ${data.user.firstName} in ${data.order.restaurant.name}: ${data.comment}`;
+
+          this._notificationService.sendNotificationToUsers(
+            ['5b75ed56-6948-11ec-a936-12ba290cdd34'],
+            str
           );
         }
       });

@@ -6,7 +6,7 @@ import { IPlace } from './models/place.model';
 import { PlaceService } from './services/place.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
 import { SubSink } from '@core/helpers/sub-sink';
-import { ModalService } from 'src/app/shared/components/modal/services/modal.service';
+import { ModalService } from './services/modal.service';
 
 @Component({
   selector: 'app-places',
@@ -21,8 +21,6 @@ export class PlacesComponent implements OnInit, OnDestroy {
   constructor(
     private _userService: UserService,
     private _router: Router,
-    private _placeService: PlaceService,
-    private _websocketService: WebsocketMessagesService,
     private _modalService: ModalService
   ) {}
 
@@ -33,24 +31,12 @@ export class PlacesComponent implements OnInit, OnDestroy {
     this._router.navigate(['login']);
   }
 
-  onSubmit(form: NgForm) {
-    const place: IPlace = {
-      name: form.value.name,
-      menu: form.value.menu,
-      phoneNumber: form.value.phone,
-    };
-
-    this.subs.sink = this._placeService.addNewPlace(place).subscribe();
-    this.showModal = !this.showModal;
-  }
-
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
 
   // ID exist - fetch restaurant with specific ID and populate fields
-  openPlacesDialog(id?: string) {
-    if (!id) {
-    }
+  openPlacesDialog() {
+    this._modalService.modalOpen();
   }
 }

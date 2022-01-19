@@ -6,7 +6,6 @@ import {
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
-import { ModalService } from './services/modal.service';
 
 @Component({
   selector: 'app-modal',
@@ -18,7 +17,7 @@ export class ModalComponent implements OnInit, OnDestroy {
   @Input() id!: string;
   private element: any;
 
-  constructor(private _modalService: ModalService, private el: ElementRef) {
+  constructor(private el: ElementRef) {
     this.element = el.nativeElement;
   }
 
@@ -40,12 +39,10 @@ export class ModalComponent implements OnInit, OnDestroy {
     // });
 
     // add self (this modal instance) to the modal service so it's accessible from controllers
-    this._modalService.add(this);
   }
 
   // remove self from modal service when component is destroyed
   ngOnDestroy(): void {
-    this._modalService.remove(this.id);
     this.element.remove();
   }
 

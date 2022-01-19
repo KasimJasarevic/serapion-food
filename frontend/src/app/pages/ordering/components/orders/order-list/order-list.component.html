@@ -3,7 +3,7 @@
 >
   <!-- ORDER -->
   <div
-    class="card z-10 lg:transform hover:-translate-y-1 lg:hover:shadow-lg transition-all duration-300"
+    class="card z-10 lg:transform lg:hover:scale-105 lg:hover:shadow-lg transition-all duration-300 border-serapion-green border-t-4 border-opacity-75"
     *ngFor="let order of orders"
   >
     <!-- CARD HEADER -->
@@ -24,7 +24,7 @@
       </div>
       <a
         class="btn btn-warn"
-        href="{{ order.restaurant.menu }}"
+        [href]="'//' + order.restaurant.menu"
         target="_blank"
       >
         <i class="fas fa-globe fa-xs pr-1"></i> Visit

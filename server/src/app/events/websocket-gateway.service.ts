@@ -46,6 +46,10 @@ export class WebsocketGatewayService {
     this.server.emit('newRestaurantEvent', restaurant);
   }
 
+  sendNewRestaurantUpdateMessage(restaurant: RestaurantDTO) {
+    this.server.emit('newRestaurantUpdateEvent', restaurant);
+  }
+
   sendNewRestaurantDeletedMessage(restaurant: RestaurantDTO) {
     this.server.emit('deleteRestaurantEvent', restaurant);
   }

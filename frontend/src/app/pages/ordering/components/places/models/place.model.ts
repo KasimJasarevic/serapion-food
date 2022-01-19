@@ -7,3 +7,8 @@ export interface IPlace {
   phoneNumber?: string;
   order?: IOrder;
 }
+
+export interface IPlaceSub {
+  showModal: boolean;
+  placeId: number | undefined;
+}

@@ -36,6 +36,12 @@ export class WebsocketMessagesService {
     return this._socket.fromEvent(WebsocketMessageTypes.RESTAURANT_NEW_EVENT);
   }
 
+  onRestaurantUpdated() {
+    return this._socket.fromEvent(
+      WebsocketMessageTypes.RESTAURANT_NEW_UPDATE_EVENT
+    );
+  }
+
   onRestaurantDeleted() {
     return this._socket.fromEvent(
       WebsocketMessageTypes.RESTAURANT_DELETED_EVENT

@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -35,6 +36,11 @@ export class RestaurantController {
     return this._restaurantService.getAllPlaces();
   }
 
+  @Get(':id')
+  getPlaceById(@Param('id') id: number): Observable<RestaurantDTO> {
+    return this._restaurantService.getPlaceById(id);
+  }
+
   // 2 places with same name ???
   @Delete(':name')
   deletePlaceByName(@Param('name') name: string, @Res() res) {
@@ -46,5 +52,19 @@ export class RestaurantController {
 
         res.json(place);
       });
+  }
+
+  @Put(':id')
+  updatePlace(
+    @Param('id') withId: number,
+    @Body() payload: RestaurantDTO,
+    @Res() res,
+  ) {
+    this._restaurantService.updatePlace(withId, payload).subscribe(() => {
+      this._restaurantService.getPlaceById(withId).subscribe((place) => {
+        this._websocketGatewayService.sendNewRestaurantUpdateMessage(place);
+        res.json(place);
+      });
+    });
   }
 }

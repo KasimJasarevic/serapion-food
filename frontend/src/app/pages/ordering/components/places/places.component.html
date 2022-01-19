@@ -1,7 +1,7 @@
 <!-- PLACES HEADER -->
 <div class="flex flex-row items-center p-4 bg-serapion-white z-50">
   <div class="flex-1 uppercase font-thin text-lg">Restaurants</div>
-  <div class="btn btn-primary mr-2" (click)="showModal = !showModal">
+  <div class="btn btn-primary mr-2" (click)="openPlacesDialog()">
     <i class="fas fa-plus fa-xs pr-1"></i>
     New
   </div>
@@ -46,7 +46,7 @@
 <!-- PLACES END -->
 
 <!-- NEW PLACE MODAL -->
-<div
+<!-- <div
   class="z-50 fixed inset-0 flex justify-center items-center"
   *ngIf="showModal"
 >
@@ -135,11 +135,7 @@
 <div
   class="absolute backdrop-filter backdrop-blur-lg z-40 inset-0 bg-opacity-20 bg-serapion-blue-300"
   *ngIf="showModal"
-></div>
+></div> -->
 <!-- NEW PLACE MODAL END -->
 
-<!-- <app-modal id="emir">
-  <h1>A Custom Modal!</h1>
-  <p>Home page text: <input type="text" /></p>
-  <button (click)="openPlacesDialog('custom-modal-1')">Close</button>
-</app-modal> -->
+<app-place-modal></app-place-modal>
