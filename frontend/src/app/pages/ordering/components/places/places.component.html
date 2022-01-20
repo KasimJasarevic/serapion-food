@@ -6,11 +6,6 @@
     New
   </div>
 
-  <!--  <div class="btn btn-primary mr-2" (click)="openPlacesDialog()">-->
-  <!--    <i class="fas fa-plus fa-xs pr-1"></i>-->
-  <!--    New-->
-  <!--  </div>-->
-
   <button class="btn btn-secondary" (click)="logout()">
     <i class="fas fa-user fa-xs pr-1"></i>
     Logout
@@ -44,98 +39,5 @@
 <!-- PLACES -->
 <app-place-list [filterStr]="filterInput"></app-place-list>
 <!-- PLACES END -->
-
-<!-- NEW PLACE MODAL -->
-<!-- <div
-  class="z-50 fixed inset-0 flex justify-center items-center"
-  *ngIf="showModal"
->
-  <div class="relative mx-auto w-1/2 max-w-2xl">
-    <div class="bg-serapion-white rounded-md p-4 flex flex-col">
-      <div class="text-lg font-thin uppercase">Add New Restaurant</div>
-
-      <form class="pt-4" (ngSubmit)="onSubmit(f)" #f="ngForm">
-        <div class="group w-full">
-          <div
-            class="text-xs text-serapion-purple"
-            *ngIf="name.touched && !name.valid"
-          >
-            <span class="font-semibold">*</span> Required
-          </div>
-          <input
-            class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-            type="text"
-            placeholder="Name"
-            required
-            ngModel
-            name="name"
-            #name="ngModel"
-          />
-        </div>
-
-        <div class="group w-full mt-8">
-          <div
-            class="text-xs text-serapion-purple"
-            *ngIf="menu.touched && menu.errors?.['pattern']"
-          >
-            <span class="font-semibold">*</span> Invalid URL
-          </div>
-          <input
-            ngModel
-            name="menu"
-            pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
-            class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-            type="text"
-            placeholder="Menu"
-            #menu="ngModel"
-          />
-        </div>
-
-        <div class="group w-full mt-8">
-          <div
-            class="text-xs text-serapion-purple"
-            *ngIf="phone.touched && phone.errors?.['pattern']"
-          >
-            <span class="font-semibold">*</span> Invalid phone number
-          </div>
-        </div>
-        <input
-          ngModel
-          name="phone"
-          pattern="^\+[1-9]{1}[0-9]{3,14}$"
-          class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-          type="text"
-          placeholder="Phone"
-          #phone="ngModel"
-        />
-
-        <div class="pt-8 flex flex-row-reverse justify-between items-center">
-          <button
-            class="btn w-1/2 ml-1"
-            [ngClass]="{
-              'btn-primary': f.valid,
-              'btn-disabled': !f.valid
-            }"
-            type="submit"
-            [disabled]="!f.valid"
-          >
-            <i class="fas fa-check pr-1"></i> Add
-          </button>
-          <button
-            class="btn btn-secondary w-1/2"
-            (click)="showModal = !showModal"
-          >
-            <i class="fas fa-times pr-1"></i> Close
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<div
-  class="absolute backdrop-filter backdrop-blur-lg z-40 inset-0 bg-opacity-20 bg-serapion-blue-300"
-  *ngIf="showModal"
-></div> -->
-<!-- NEW PLACE MODAL END -->
 
 <app-place-modal></app-place-modal>

@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LocalStorageTypes } from '../enums/local-storage-types';
 import { IUser } from '../models/user.model';
+import { environment } from '@environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +30,7 @@ export class UserService {
     return this._user;
   }
 
-  constructor() {
+  constructor(private _http: HttpClient) {
     this._user = null;
   }
 
@@ -36,5 +38,13 @@ export class UserService {
     localStorage.removeItem(LocalStorageTypes.FOOD_ORDERING_AUTH_TOKEN);
     localStorage.removeItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER);
     this._user = null;
+  }
+
+  getUserById(id: number) {
+    return this._http.get<IUser>(environment.api_url + '/orders');
+  }
+
+  getById(userId: number) {
+    return this._http.get<IUser>(environment.api_url + `/users/${userId}`);
   }
 }

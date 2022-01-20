@@ -101,4 +101,10 @@ export class OrderService {
       .delete<any>(environment.api_url + `/order-items/${itemId}`)
       .subscribe();
   }
+
+  getOrderOrderer(orderId: number) {
+    return this._http.get<any>(
+      environment.api_url + `/order-items/orders/${orderId}`
+    );
+  }
 }

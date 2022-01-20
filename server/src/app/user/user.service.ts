@@ -38,8 +38,6 @@ export class UserService {
   }
 
   getOne(userId: number): Observable<UserDTO> {
-    console.log(userId);
-
     return from(
       this.userRepo
         .createQueryBuilder('user')
@@ -50,8 +48,6 @@ export class UserService {
   }
 
   getOneById(userId: number): Observable<UserEntity> {
-    console.log(userId);
-
     return from(
       this.userRepo
         .createQueryBuilder('user')

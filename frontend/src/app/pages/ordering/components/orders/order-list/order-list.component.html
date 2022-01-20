@@ -3,7 +3,7 @@
 >
   <!-- ORDER -->
   <div
-    class="card z-10 lg:transform lg:hover:scale-105 lg:hover:shadow-lg transition-all duration-300 border-serapion-green border-t-4 border-opacity-75"
+    class="card z-10 lg:transform lg:hover:scale-105 lg:hover:shadow-lg transition-all duration-300 border-serapion-green border-t-4 border-b-4 border-opacity-75"
     *ngFor="let order of orders"
   >
     <!-- CARD HEADER -->
@@ -12,8 +12,18 @@
         <h1 class="font-thin uppercase">
           {{ order.restaurant.name }}
         </h1>
-        <p class="text-xs text-serapion-blue-300">
-          {{ order.user.firstName + " " + order.user.lastName | titlecase }}
+        <p class="text-xs font-thin">
+          <span class="uppercase">Opened by:</span>
+          {{ getOwnerFullName(order) | titlecase }}
+        </p>
+        <p
+          class="text-xs text-serapion-blue-300 font-thin"
+          *ngIf="order.orderer"
+        >
+          <span class="uppercase">Orderer:</span>
+          {{
+            order.orderer.firstName + " " + order.orderer.lastName | titlecase
+          }}
         </p>
         <strong class="text-xs font-semibold">{{
           order.restaurant.phoneNumber
@@ -33,7 +43,7 @@
     <!-- CARD HEADER END -->
 
     <!-- ORDER ITEMS -->
-    <app-order-items [order]="order"></app-order-items>
+    <app-order-items [order]="order" #orderItems></app-order-items>
     <!-- ORDER ITEMS END -->
 
     <!-- ORDER COMMENTS -->
@@ -42,11 +52,24 @@
 
     <!-- SUBMIT BUTTONS -->
     <div class="flex-grow pt-8 flex flex-row-reverse justify-end items-center">
-      <button class="btn btn-primary w-1/2 ml-1">
+      <button
+        class="btn w-1/2 ml-1"
+        [ngClass]="{
+          'btn-primary': isOrderOrderer(order),
+          'btn-disabled': !isOrderOrderer(order)
+        }"
+        [disabled]="!isOrderOrderer(order)"
+        (click)="confirmOrder()"
+      >
         <i class="fas fa-check pr-1"></i> Confirm
       </button>
       <button
-        class="btn btn-secondary w-1/2"
+        class="btn w-1/2"
+        [ngClass]="{
+          'btn-secondary': isOrderOwner(order),
+          'btn-disabled': !isOrderOwner(order)
+        }"
+        [disabled]="!isOrderOwner(order)"
         (click)="closeRestaurant(order.restaurant.id)"
       >
         <i class="fas fa-times pr-1"></i> Close

@@ -18,6 +18,9 @@ export class OrderService {
         .createQueryBuilder('order')
         .leftJoinAndSelect('order.user', 'user')
         .leftJoinAndSelect('order.restaurant', 'restaurant')
+        .leftJoinAndSelect('order.orderItems', 'orderItems')
+        .leftJoinAndSelect('orderItems.orderedItems', 'orderedItems')
+        .leftJoinAndSelect('orderedItems.user', 'users')
         .getMany(),
     );
   }

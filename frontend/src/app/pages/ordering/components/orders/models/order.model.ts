@@ -12,4 +12,5 @@ export interface IOrder {
   restaurant: IPlace;
   user: IUser;
   orderItems: IItem[];
+  orderer: IUser | undefined;
 }

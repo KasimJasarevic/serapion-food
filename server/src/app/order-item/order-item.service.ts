@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
 import { OrderItemToUserEntity } from '../order-item-user/order-item-user.entity';
+import { UserDTO } from '../user/user.dto';
 import { UserEntity } from '../user/user.entity';
 import {
   OrderItemDeleteRequest,
@@ -20,13 +21,18 @@ export class OrderItemService {
     private _orderitemRepo: Repository<OrderItemEntity>,
   ) {}
 
-  test() {
-    return this._orderitemRepo
-      .createQueryBuilder('order_item')
-      .innerJoinAndSelect('order_item.order', 'order')
-      .innerJoinAndSelect('order_item.orderedItems', 'items')
-      .innerJoinAndSelect('items.user', 'user')
-      .getMany();
+  getOrderOrdererId(id: number): Observable<UserDTO> {
+    return from(
+      this._orderitemRepo
+        .createQueryBuilder('order_item')
+        .innerJoin('order_item.order', 'order')
+        .innerJoin('order_item.orderedItems', 'items')
+        .innerJoin('items.user', 'user')
+        .select('user.id')
+        .where('order.id = :id', { id: id })
+        .orderBy('user.lastOrder', 'ASC')
+        .getRawOne(),
+    );
 
     // return this._orderitemRepo.find({
     //   join: {

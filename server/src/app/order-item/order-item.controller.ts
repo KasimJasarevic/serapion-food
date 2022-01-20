@@ -24,9 +24,9 @@ export class OrderItemController {
     private _websocketGatewayService: WebsocketGatewayService,
   ) {}
 
-  @Get('test')
-  testOrderItem() {
-    return this._orderItemService.test();
+  @Get('orders/:id')
+  gerOrderOrdererId(@Param('id') id: number) {
+    return this._orderItemService.getOrderOrdererId(id);
   }
 
   @Post()

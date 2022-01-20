@@ -2,17 +2,17 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
+import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
+import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { deflateSync } from 'zlib';
 import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 import {
   AddOrderItem,
-  IAddItem,
   IAddItemEx,
-  IDeleteItem,
   IItem,
-  IOrderItemUser,
   IRemoveOrderItemUser,
 } from './models/order-item.model';
 
@@ -25,6 +25,13 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
   @Input() order: IOrder | undefined;
   items: IItem[] = [];
   private subs = new SubSink();
+  private _orderer: IUser | undefined;
+
+  public getOrderOrderer(order: IOrder) {}
+
+  set orderer(orderer: IUser | undefined) {
+    this._orderer = orderer;
+  }
 
   constructor(
     private _orderService: OrderService,
@@ -38,6 +45,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
         .getOrderItems(this.order!.id)
         .subscribe((data: IItem[]) => {
           this.items = data;
+          // This is not good!
         });
     }
 

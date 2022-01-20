@@ -4,4 +4,5 @@ export interface IUser {
   lastName: string;
   photo?: string;
   email: string;
+  lastOrder?: Date;
 }
