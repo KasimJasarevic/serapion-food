@@ -63,7 +63,7 @@
             orderItem.user!.lastName +
             ' Profile Picture'
         }}"
-        *ngFor="let orderItem of item.orderedItems"
+        *ngFor="let orderItem of item.orderedItems! | uniqueFilter: updated"
       />
     </div>
 

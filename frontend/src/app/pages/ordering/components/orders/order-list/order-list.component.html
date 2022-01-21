@@ -3,8 +3,12 @@
 >
   <!-- ORDER -->
   <div
-    class="card z-10 lg:transform lg:hover:scale-105 lg:hover:shadow-lg transition-all duration-300 border-serapion-green border-t-4 border-b-4 border-opacity-75"
     *ngFor="let order of orders"
+    class="card z-10 lg:transform lg:hover:scale-105 lg:hover:shadow-lg transition-all duration-300 {{
+      order.status === orderStatus.ACTIVE
+        ? 'border-serapion-green'
+        : 'border-serapion-purple'
+    }} border-t-4 border-b-4 border-opacity-75"
   >
     <!-- CARD HEADER -->
     <div class="flex flex-row items-center justify-items-center z-10">
@@ -55,21 +59,29 @@
       <button
         class="btn w-1/2 ml-1"
         [ngClass]="{
-          'btn-primary': isOrderOrderer(order),
-          'btn-disabled': !isOrderOrderer(order)
+          'btn-primary':
+            isOrderOrderer(order) && order.status === orderStatus.ACTIVE,
+          'btn-disabled':
+            !isOrderOrderer(order) || order.status === orderStatus.INACTIVE
         }"
-        [disabled]="!isOrderOrderer(order)"
-        (click)="confirmOrder()"
+        [disabled]="
+          !isOrderOrderer(order) || order.status === orderStatus.INACTIVE
+        "
+        (click)="confirmOrder(order)"
       >
         <i class="fas fa-check pr-1"></i> Confirm
       </button>
       <button
         class="btn w-1/2"
         [ngClass]="{
-          'btn-secondary': isOrderOwner(order),
-          'btn-disabled': !isOrderOwner(order)
+          'btn-secondary':
+            isOrderOwner(order) && order.status === orderStatus.ACTIVE,
+          'btn-disabled':
+            !isOrderOwner(order) || order.status === orderStatus.INACTIVE
         }"
-        [disabled]="!isOrderOwner(order)"
+        [disabled]="
+          !isOrderOwner(order) || order.status === orderStatus.INACTIVE
+        "
         (click)="closeRestaurant(order.restaurant.id)"
       >
         <i class="fas fa-times pr-1"></i> Close

@@ -26,11 +26,6 @@ export class PlacesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {}
 
-  logout() {
-    this._userService.removeUser();
-    this._router.navigate(['login']);
-  }
-
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }

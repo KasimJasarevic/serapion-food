@@ -67,9 +67,13 @@ export class OrderService {
       .execute();
   }
 
+  completeOrder(id: number, order: OrderDTO): Observable<OrderDTO> {
+    return from(this._orderRepo.save(order));
+  }
+
   // @Cron('*/1 * * * *')
   // testCron() {
-  //   console.log('1 min passed.');
+  //   console.log('Each minute');
   // }
 
   @Cron('0 17 * * *')

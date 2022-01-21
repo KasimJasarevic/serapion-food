@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -61,5 +62,14 @@ export class OrderController {
   @Delete()
   deleteAllOrders() {
     this._orderService.deleteAllOrders();
+  }
+
+  @Put(':id')
+  completeOrder(@Param('id') id: number, @Body() order: any) {
+    // console.log(id);
+    // console.log(order);
+    this._orderService.completeOrder(id, order).subscribe((next: OrderDTO) => {
+      this._websocketGatewayService.sendOrderCompletedMessage(next);
+    });
   }
 }

@@ -107,4 +107,10 @@ export class OrderService {
       environment.api_url + `/order-items/orders/${orderId}`
     );
   }
+
+  completeOrder(id: number, order: IOrder) {
+    return this._http
+      .put<any>(environment.api_url + `/orders/${id}`, order)
+      .subscribe();
+  }
 }

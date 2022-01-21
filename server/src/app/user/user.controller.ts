@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { UserDTO } from './user.dto';
 import { UserService } from './user.service';
@@ -15,5 +15,10 @@ export class UserController {
   @Get(':userId')
   getOne(@Param('userId') userId: number): Observable<UserDTO> {
     return this.userService.getOne(userId);
+  }
+
+  @Put()
+  updateOne(@Body() user: UserDTO): Observable<UserDTO> {
+    return this.userService.updateOne(user);
   }
 }

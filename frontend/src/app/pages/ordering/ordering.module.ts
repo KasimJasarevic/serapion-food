@@ -14,6 +14,7 @@ import { OneSignalService } from 'onesignal-ngx';
 import { NotificationService } from '../../core/services/notification.service';
 import { FilterPipe } from './components/places/place-list/pipes/filter.pipe';
 import { PlaceModalComponent } from './components/places/place-modal/place-modal.component';
+import { UniqueFilterPipe } from './components/orders/order-list/order-items/pipes/unique-filter.pipe';
 // import { FilterPipe } from './components/orders/order-list/order-chat/pipes/filter.pipe';
 
 @NgModule({
@@ -29,6 +30,7 @@ import { PlaceModalComponent } from './components/places/place-modal/place-modal
     PlaceModalComponent,
     FilterPipe,
     PlaceModalComponent,
+    UniqueFilterPipe,
   ],
   imports: [
     CommonModule,

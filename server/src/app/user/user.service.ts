@@ -61,5 +61,7 @@ export class UserService {
     return from(this.userRepo.create(user).save());
   }
 
-  // This solution is not good!
+  updateOne(user: UserDTO): Observable<UserDTO> {
+    return from(this.userRepo.save(user));
+  }
 }

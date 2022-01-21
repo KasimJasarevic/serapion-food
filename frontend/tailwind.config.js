@@ -34,6 +34,13 @@ module.exports = {
   variants: {
     extend: {
       backgroundColor: ["responsive", "hover", "focus", "group-focus"],
+      ringOpacity: [
+        "responsive",
+        "dark",
+        "focus-within",
+        "focus",
+        "group-hover",
+      ],
     },
   },
   plugins: [],

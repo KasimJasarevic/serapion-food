@@ -24,14 +24,8 @@ import {
 export class OrderItemsComponent implements OnInit, OnDestroy {
   @Input() order: IOrder | undefined;
   items: IItem[] = [];
+  updated: Date = new Date();
   private subs = new SubSink();
-  private _orderer: IUser | undefined;
-
-  public getOrderOrderer(order: IOrder) {}
-
-  set orderer(orderer: IUser | undefined) {
-    this._orderer = orderer;
-  }
 
   constructor(
     private _orderService: OrderService,
@@ -54,6 +48,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
       .subscribe((data: any) => {
         if (data.order.id === this.order!.id) {
           this.items.push(data);
+          this.updated = new Date();
         }
       });
 
@@ -61,6 +56,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
       .onOrderItemDeleted()
       .subscribe((data: any) => {
         this.items = this.items.filter((item) => item.id != data);
+        this.updated = new Date();
       });
 
     this.subs.sink = this._websocketService
@@ -69,6 +65,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
         this.items.forEach((item) => {
           if (item.id === data.id) {
             item.orderedItems = data.orderedItems;
+            this.updated = new Date();
           }
         });
       });
@@ -87,6 +84,8 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
               this._orderService.deleteOrderItem(data.orderItem.id);
             }
           }
+
+          this.updated = new Date();
         });
       });
   }

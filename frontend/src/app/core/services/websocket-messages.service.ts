@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
+import { IOrder } from 'src/app/pages/ordering/components/orders/models/order.model';
 import { WebsocketMessageTypes } from '../enums/websocket-message.types';
 
 @Injectable({
@@ -29,6 +30,12 @@ export class WebsocketMessagesService {
   onOrderItemUserDeleted() {
     return this._socket.fromEvent(
       WebsocketMessageTypes.ORDER_ITEM_USER_DELETE_EVENT
+    );
+  }
+
+  onOrderCompleted() {
+    return this._socket.fromEvent<IOrder>(
+      WebsocketMessageTypes.ORDER_COMPLETED_EVENT
     );
   }
 

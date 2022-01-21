@@ -5,10 +5,10 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { deflateSync } from 'zlib';
+import { switchMap, tap } from 'rxjs';
+import { OrderStatus } from '../models/order-status-types';
 import { IOrder } from '../models/order.model';
 import { OrderService } from '../services/order.service';
-import { OrderItemsComponent } from './order-items/order-items.component';
 
 @Component({
   selector: 'app-order-list',
@@ -17,6 +17,7 @@ import { OrderItemsComponent } from './order-items/order-items.component';
 })
 export class OrderListComponent implements OnInit, OnDestroy {
   orders: IOrder[] = [];
+  orderStatus = OrderStatus;
   private subs = new SubSink();
 
   constructor(
@@ -55,6 +56,35 @@ export class OrderListComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this._setOrderers();
       });
+
+    this.subs.sink = this._websocketService
+      .onOrderCompleted()
+      .pipe(
+        switchMap((order: any) => {
+          this.orders[
+            this.orders.findIndex((el) => el.id === order.id)
+          ].status = order.status;
+          const orderer: IUser = order.orderer;
+          return this._userService.getById(orderer.id).pipe(
+            switchMap((user: IUser) => {
+              user.lastOrder = new Date();
+              return this._userService.updateOne(user);
+            })
+          );
+        })
+      )
+      .subscribe((updatedUser: IUser) => {
+        this.orders.forEach((order: IOrder) => {
+          order.orderItems.forEach((data) => {
+            data.orderedItems?.forEach((item) => {
+              item.user =
+                item.user!.id === updatedUser.id ? updatedUser : item.user;
+            });
+          });
+        });
+
+        this._setOrderers();
+      });
   }
 
   closeRestaurant(id: number | undefined) {
@@ -74,8 +104,10 @@ export class OrderListComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmOrder() {
-    console.log('Confirm order...');
+  confirmOrder(order: IOrder) {
+    order.status = OrderStatus.INACTIVE;
+    this._orderService.completeOrder(order.id, order);
+    // this._userService.updateOne(order.orderer!.id, order.orderer!);
   }
 
   ngOnDestroy(): void {
@@ -144,19 +176,21 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
   private _setOrderers() {
     this.orders.forEach((order) => {
-      this.subs.sink = this._orderService
-        .getOrderOrderer(order.id)
-        .subscribe((next) => {
-          if (next) {
-            this.subs.sink = this._userService
-              .getById(next.user_id)
-              .subscribe((user) => {
-                order.orderer = user;
-              });
-          } else {
-            order.orderer = undefined;
-          }
-        });
+      if (order.status === OrderStatus.ACTIVE) {
+        this.subs.sink = this._orderService
+          .getOrderOrderer(order.id)
+          .subscribe((next) => {
+            if (next) {
+              this.subs.sink = this._userService
+                .getById(next.user_id)
+                .subscribe((user) => {
+                  order.orderer = user;
+                });
+            } else {
+              order.orderer = undefined;
+            }
+          });
+      }
     });
   }
 }

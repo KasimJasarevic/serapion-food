@@ -47,4 +47,8 @@ export class UserService {
   getById(userId: number) {
     return this._http.get<IUser>(environment.api_url + `/users/${userId}`);
   }
+
+  updateOne(user: IUser) {
+    return this._http.put<IUser>(environment.api_url + `/users/`, user);
+  }
 }

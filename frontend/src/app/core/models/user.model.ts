@@ -5,4 +5,5 @@ export interface IUser {
   photo?: string;
   email: string;
   lastOrder?: Date;
+  subscriptionId?: string;
 }
