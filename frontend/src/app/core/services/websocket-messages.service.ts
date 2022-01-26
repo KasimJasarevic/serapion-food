@@ -58,4 +58,14 @@ export class WebsocketMessagesService {
   onOrderOpened() {
     return this._socket.fromEvent(WebsocketMessageTypes.ORDER_NEW_EVENT);
   }
+
+  onOrderTypeUpdate() {
+    return this._socket.fromEvent<number>(
+      WebsocketMessageTypes.ORDER_TYPE_EVENT
+    );
+  }
+
+  onCleanUp() {
+    return this._socket.fromEvent(WebsocketMessageTypes.CLEAN_UP_EVENT);
+  }
 }

@@ -1,30 +1,47 @@
-<div class="p-4 grid grid-cols-3 gap-2 lg:grid-cols-2 lg:gap-4 z-10 lg:-mt-80">
+<div
+  class="min-h-screen p-4 grid grid-cols-3 gap-2 lg:grid-cols-2 lg:gap-4 z-10 2xl:pt-8 rounded-t-xl bg-serapion-blue-100 shadow-md dark:bg-serapion-black-100"
+>
   <a
     class="cursor-pointer z-10"
     *ngFor="let place of places | filter: filterStr:updated"
   >
     <div
-      class="px-2 py-4 bg-serapion-white rounded-md transform hover:scale-105 lg:hover:shadow-lg transition-all duration-300"
+      class="px-2 py-4 bg-serapion-white rounded-md transform hover:scale-105 lg:hover:shadow-lg transition-all duration-300 dark:bg-serapion-black-200"
     >
       <div class="flex flex-row justify-between items-center text-sm font-thin">
-        <span class="uppercase flex-1">{{
-          place.name.length > 12
-            ? (place.name | slice: 0:12) + "..."
-            : place.name
-        }}</span>
-        <button class="btn btn-secondary" (click)="deletePlace(place.name)">
+        <div class="uppercase flex-1 mr-2">
+          <!-- {{
+            place.name.length > 12
+              ? (place.name | slice: 0:12) + "..."
+              : place.name
+          }} -->
+          {{ place.name }}
+        </div>
+        <div
+          class="flex flex-row space-x-2 text-serapion-grey-100 2xl:space-x-3 mr-1"
+        >
+          <i
+            class="fas fa-sm fa-edit hover:text-serapion-yellow transition-all duration-300"
+            (click)="editRestaurant(place.id!)"
+          ></i>
+          <i
+            class="fas fa-sm fa-trash-alt hover:text-serapion-grey-200 transition-all duration-300 dark:hover:text-serapion-white"
+            (click)="deletePlace(place.name)"
+          ></i>
+        </div>
+        <!-- <button class="btn btn-secondary" (click)="deletePlace(place.name)">
           <i class="fas fa-sm fa-trash pr-1"></i> Delete
-        </button>
+        </button> -->
       </div>
 
-      <strong class="text-xs font-semibold">{{
+      <!-- <strong class="text-xs font-semibold">{{
         place.phoneNumber ? place.phoneNumber : "No phone number"
-      }}</strong>
+      }}</strong> -->
 
-      <div class="flex pt-4 space-x-2 justify-center">
-        <button class="btn btn-warn flex-1" (click)="editRestaurant(place.id!)">
+      <div class="flex pt-8 space-x-2 justify-center">
+        <!-- <button class="btn btn-warn flex-1" (click)="editRestaurant(place.id!)">
           <i class="far fa-sm fa-edit pr-1"></i> Edit
-        </button>
+        </button> -->
         <button class="btn btn-primary flex-1" (click)="openRestaurant(place)">
           <i class="fas fa-sm fa-external-link-alt pr-1"></i> Open
         </button>

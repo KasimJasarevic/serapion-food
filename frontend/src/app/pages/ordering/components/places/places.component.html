@@ -1,45 +1,55 @@
 <!-- PLACES HEADER -->
 <!-- Delivery & takeout from the best local restaurants -->
-<div class="flex flex-row items-center p-4 bg-serapion-white z-50">
+<div
+  class="flex flex-row items-center p-4 bg-serapion-white z-50 dark:bg-serapion-black-200"
+>
   <div class="flex-1">
     <div class="uppercase font-thin text-xl tracking-widest">Restaurants</div>
     <div class="text-sm text-serapion-grey-100 font-thin">
       Choose from the best local restaurants
     </div>
   </div>
-  <div class="btn btn-primary mr-2" (click)="openPlacesDialog()">
-    <i class="fas fa-plus fa-xs pr-1"></i>
-    New
-  </div>
+  <div class="flex flex-row space-x-2 justify-between items-center">
+    <div class="btn btn-primary mr-2" (click)="openPlacesDialog()">
+      <i class="fas fa-plus fa-xs pr-1"></i>
+      New
+    </div>
 
-  <!-- <button class="btn btn-secondary" (click)="logout()">
-    <i class="fas fa-user fa-xs pr-1"></i>
-    Logout
-  </button> -->
+    <div class="hidden lg:block">
+      <i
+        class="fas fa-chevron-left fa-sm text-serapion-grey-100 hover:text-serapion-grey-200 cursor-pointer dark:hover:text-serapion-white"
+        (click)="hideSidebar()"
+      ></i>
+    </div>
+  </div>
 </div>
 <!-- PLACES HEADER END -->
 
 <!-- PLACES FILTER -->
-<div class="bg-serapion-white pb-6 px-4 z-50">
-  <form class="relative text-serapion-grey-100 text-xs">
-    <input
-      class="peer bg-serapion-white w-full pl-6 py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-      type="text"
-      placeholder="e.g. Restaurant name"
-      name="filter"
-      [(ngModel)]="filterInput"
-    />
-    <label
-      class="absolute left-0 top-1/2 -mt-2 peer-focus:text-serapion-blue-300"
+<div class="bg-serapion-white pb-6 px-4 z-50 dark:bg-serapion-black-200">
+  <form>
+    <div
+      class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
     >
-      <i class="fas fa-search"></i>
-    </label>
+      <label for="filter" class="w-8 text-right mr-4 text-serapion-grey-100">
+        <i class="fas fa-xs fa-search"></i>
+      </label>
+      <input
+        type="text"
+        id="filter"
+        placeholder="Restaurant name..."
+        autocomplete="off"
+        name="filter"
+        [(ngModel)]="filterInput"
+        class="flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+      />
+    </div>
   </form>
 </div>
 <!-- PLACES FILTER END -->
 
 <!-- PLACES HERO -->
-<div class="hidden lg:flex places-hero -z-50"></div>
+<!-- <div class="hidden lg:flex places-hero -z-50"></div> -->
 <!-- PLACES HERO END -->
 
 <!-- PLACES -->

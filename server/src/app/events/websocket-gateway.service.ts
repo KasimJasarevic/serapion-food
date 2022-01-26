@@ -1,3 +1,4 @@
+import { Cron } from '@nestjs/schedule';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { CommentDTO } from '../comment/comment.dto';
 import {
@@ -68,5 +69,15 @@ export class WebsocketGatewayService {
 
   sendDeleteOrderItemMessage(itemId: number) {
     this.server.emit('orderItemDeleteEvent', itemId);
+  }
+
+  sendOrderTypeUpdatedMessage(orderId: number) {
+    this.server.emit('orderTypeUpdatedEvent', orderId);
+  }
+
+  // @Cron('*/30 * * * * *')
+  @Cron('0 17 * * *')
+  sendCleanUpMessage() {
+    this.server.emit('cleanUpEvent');
   }
 }

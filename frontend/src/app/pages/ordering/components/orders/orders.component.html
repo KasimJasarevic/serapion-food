@@ -1,54 +1,76 @@
 <!-- ORDERS HEADER -->
 <div
-  class="p-4 flex flex-row justify-between items-center bg-serapion-white font-thin z-10"
+  class="p-4 flex flex-row justify-between items-center bg-serapion-white font-thin z-10 dark:bg-serapion-black-200"
 >
-  <div class="">
-    <div class="tracking-widest uppercase text-xl">Orders</div>
-    <span class="text-sm font-thin text-serapion-grey-100"
-      >List of orders from you and/or your colleagues</span
-    >
+  <div class="flex flex-row items-center justify-between space-x-4">
+    <div class="hidden lg:block" *ngIf="!!(isHidden$ | async)">
+      <i
+        class="fas fa-chevron-right fa-sm text-serapion-grey-100 hover:text-serapion-grey-200 cursor-pointer dark:hover:text-serapion-white"
+        (click)="openSidebar()"
+      ></i>
+    </div>
+    <div>
+      <div class="tracking-widest uppercase text-xl">Orders</div>
+      <span class="text-sm font-thin text-serapion-grey-100"
+        >List of orders from you and/or your colleagues</span
+      >
+    </div>
   </div>
 
   <div
-    class="group border border-serapion-grey-100 border-opacity-25 p-3 rounded-lg flex flex-row justify-between space-x-3 items-center"
+    class="group border-serapion-grey-100 border-opacity-25 p-3 rounded-lg flex flex-row justify-between space-x-3 items-center"
     *ngIf="user"
   >
-    <img class="w-14 h-14 rounded-full" src="{{ user.photo }}" />
+    <img
+      class="w-14 h-14 rounded-full"
+      src="{{ user.photo }}"
+      referrerpolicy="no-referrer"
+    />
 
     <div class="text-xs font-thin">
-      <div class="font-semibold text-serapion-grey-200">
+      <div
+        class="font-semibold text-serapion-grey-200 dark:text-serapion-white"
+      >
         {{ user.firstName + " " + user.lastName | titlecase }}
       </div>
       <div class="text-serapion-grey-100">
         {{ user.email }}
       </div>
-      <a
-        class="pt-1 flex flex-row space-x-1 text-serapion-grey-100 hover:text-serapion-grey-200 items-center cursor-pointer"
-        (click)="logout()"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-3 w-3"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <div class="flex flex-row justify-between items-center pt-2">
+        <a
+          class="flex flex-row space-x-1 text-serapion-grey-100 hover:text-serapion-grey-200 items-center cursor-pointer dark:hover:text-serapion-white"
+          (click)="logout()"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-          />
-        </svg>
-        <span class="text-xs font-thin">Sign out</span>
-      </a>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-3 w-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          <span class="text-xs font-thin">Sign out</span>
+        </a>
+        <a
+          class="text-serapion-grey-100 hover:text-serapion-grey-200 cursor-pointer dark:hover:text-serapion-white"
+          (click)="changeTheme()"
+        >
+          <i class="fas fa-adjust"></i>
+        </a>
+      </div>
     </div>
   </div>
 </div>
 <!-- ORDERS HEADER END -->
 
 <!-- ORDERS HERO -->
-<div class="hidden lg:flex orders-hero -z-50"></div>
+<!-- <div class="hidden lg:flex bg-hero w-full h-full -z-50"></div> -->
 <!-- ORDERS HERO END -->
 
 <!-- ORDER CARDS -->

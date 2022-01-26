@@ -3,42 +3,95 @@
   *ngIf="showModal"
 >
   <div class="relative mx-auto w-1/2 max-w-2xl">
-    <div class="bg-serapion-white rounded-md p-4 flex flex-col">
+    <div
+      class="bg-serapion-white rounded-md p-4 shadow-lg flex flex-col dark:bg-serapion-black-200"
+    >
       <div class="text-lg font-thin uppercase">
-        {{ place ? "Edit Restaurant " + place.name : "Add New Restaurant" }}
+        {{ place ? "Edit Restaurant: " + place.name : "Add New Restaurant" }}
       </div>
       <form class="pt-4" [formGroup]="placeForm" (ngSubmit)="onSubmit()">
-        <div class="group w-full">
+        <div class="w-full">
           <div
             class="text-xs text-serapion-purple"
             *ngIf="name.invalid && (name.dirty || name.touched)"
           >
-            <span class="font-semibold">*</span> Required
+            <span class="font-semibold">*</span> Name is required!
           </div>
-          <input
-            class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-            type="text"
-            placeholder="Name"
-            formControlName="name"
-          />
+          <div
+            class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+          >
+            <label
+              for="name"
+              class="w-8 text-right text-serapion-grey-100 mr-6"
+            >
+              <i class="fas fa-md fa-store"></i>
+            </label>
+            <input
+              type="text"
+              id="name"
+              placeholder="e.g. Mozaik"
+              autocomplete="off"
+              name="name"
+              formControlName="name"
+              class="flex-1 p-2 pl-0 text-md bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+            />
+          </div>
         </div>
 
-        <div class="group w-full mt-8">
-          <input
-            class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-            type="text"
-            placeholder="Menu"
-            formControlName="menu"
-          />
+        <div class="w-full mt-8">
+          <div
+            class="text-xs text-serapion-purple"
+            *ngIf="menu.errors?.['pattern'] && (menu.dirty || menu.touched)"
+          >
+            <span class="font-semibold">*</span> URL is invalid!
+          </div>
+          <div
+            class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+          >
+            <label
+              for="menu"
+              class="w-8 text-right mr-6 text-serapion-grey-100"
+            >
+              <i class="fas fa-md fa-globe"></i>
+            </label>
+            <input
+              type="text"
+              id="menu"
+              placeholder="e.g. https://www.google.com/"
+              autocomplete="off"
+              name="menu"
+              formControlName="menu"
+              class="flex-1 p-2 pl-0 text-md bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+            />
+          </div>
         </div>
 
-        <div class="group w-full mt-8">
-          <input
-            class="w-full py-2 border-b bg-serapion-white border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-            type="text"
-            placeholder="Phone"
-            formControlName="phone"
-          />
+        <div class="w-full mt-8">
+          <div
+            class="text-xs text-serapion-purple"
+            *ngIf="phone.errors?.['pattern'] && (phone.dirty || phone.touched)"
+          >
+            <span class="font-semibold">*</span> Phone number is invalid!
+          </div>
+          <div
+            class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+          >
+            <label
+              for="phone"
+              class="w-8 text-right mr-6 text-serapion-grey-100"
+            >
+              <i class="fas fa-md fa-phone"></i>
+            </label>
+            <input
+              type="text"
+              id="phone"
+              placeholder="e.g. 062 225 883"
+              autocomplete="off"
+              name="phone"
+              formControlName="phone"
+              class="flex-1 p-2 pl-0 text-md bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+            />
+          </div>
         </div>
 
         <div class="pt-8 flex flex-row-reverse justify-between items-center">
@@ -53,7 +106,11 @@
           >
             <i class="fas fa-check pr-1"></i> {{ place ? "Save" : "Add" }}
           </button>
-          <button class="btn btn-secondary w-1/2" (click)="closeModal()">
+          <button
+            type="button"
+            class="btn btn-secondary w-1/2"
+            (click)="closeModal()"
+          >
             <i class="fas fa-times pr-1"></i> Close
           </button>
         </div>
@@ -63,6 +120,6 @@
 </div>
 
 <div
-  class="absolute backdrop-filter backdrop-blur-lg z-40 inset-0 bg-opacity-20 bg-serapion-blue-300"
+  class="absolute backdrop-filter backdrop-blur-lg z-40 inset-0 bg-opacity-10 bg-serapion-blue-300"
   *ngIf="showModal"
 ></div>

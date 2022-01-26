@@ -9,4 +9,6 @@ export enum WebsocketMessageTypes {
   ORDER_ITEM_USER_EVENT = 'orderItemUserEvent',
   ORDER_ITEM_USER_DELETE_EVENT = 'deleteOrderItemUserEvent',
   ORDER_NEW_EVENT = 'orderNewEvent',
+  ORDER_TYPE_EVENT = 'orderTypeUpdatedEvent',
+  CLEAN_UP_EVENT = 'cleanUpEvent',
 }

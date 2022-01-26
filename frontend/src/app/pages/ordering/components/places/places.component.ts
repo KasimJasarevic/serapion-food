@@ -7,6 +7,7 @@ import { PlaceService } from './services/place.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
 import { SubSink } from '@core/helpers/sub-sink';
 import { ModalService } from './services/modal.service';
+import { SidebarService } from 'src/app/shared/services/sidebar.service';
 
 @Component({
   selector: 'app-places',
@@ -19,9 +20,8 @@ export class PlacesComponent implements OnInit, OnDestroy {
   private subs = new SubSink();
 
   constructor(
-    private _userService: UserService,
-    private _router: Router,
-    private _modalService: ModalService
+    private _modalService: ModalService,
+    private _sidebarService: SidebarService
   ) {}
 
   ngOnInit(): void {}
@@ -30,8 +30,11 @@ export class PlacesComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  // ID exist - fetch restaurant with specific ID and populate fields
   openPlacesDialog() {
     this._modalService.modalOpen();
+  }
+
+  hideSidebar() {
+    this._sidebarService.isHidden$.next(true);
   }
 }

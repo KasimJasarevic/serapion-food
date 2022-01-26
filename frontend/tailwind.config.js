@@ -21,6 +21,14 @@ module.exports = {
           200: "#3f4756",
         },
         "serapion-white": "#f3faff",
+        "serapion-black": {
+          100: "#1e2122",
+          200: "#14171d",
+        },
+      },
+      backgroundImage: {
+        hero: "url('~/src/assets/images/food-raw.jpg')",
+        login: "url('~/src/assets/images/food-raw-10.jpg')",
       },
     },
     fontFamily: {
@@ -28,7 +36,7 @@ module.exports = {
     },
     animation: {
       "bounce-slow": "bounce 3s linear infinite",
-      "spin-slow": "spin 20s linear infinite",
+      "spin-slow": "spin 30s linear infinite",
     },
   },
   variants: {
@@ -43,5 +51,5 @@ module.exports = {
       ],
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

@@ -17,8 +17,16 @@ export class PlaceModalComponent implements OnInit, OnDestroy, AfterViewInit {
 
   placeForm = new FormGroup({
     name: new FormControl(null, Validators.required),
-    phone: new FormControl(null),
-    menu: new FormControl(null),
+    phone: new FormControl(
+      null,
+      Validators.pattern('^\\d{3}\\s\\d{3}\\s\\d{3}$')
+    ),
+    menu: new FormControl(
+      null,
+      Validators.pattern(
+        '^(https://)([da-z.-]+.[a-z.]{2,6}|[d.]+)([/:?=&#]{1}[da-z.-]+)*[/?]?$'
+      )
+    ),
   });
 
   get name() {

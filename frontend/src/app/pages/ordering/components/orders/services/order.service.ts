@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
 import { IPlace } from '../../places/models/place.model';
+import { OrderType } from '../models/order-type-types';
 import { IOrder } from '../models/order.model';
 import { IMessage } from '../order-list/order-chat/models/order-chat.model';
 import {
@@ -109,8 +110,13 @@ export class OrderService {
   }
 
   completeOrder(id: number, order: IOrder) {
+    return this._http.put<any>(environment.api_url + `/orders/${id}`, order);
+  }
+
+  updateTypeById(id: number, type: any) {
+    // console.log(id, type);
     return this._http
-      .put<any>(environment.api_url + `/orders/${id}`, order)
+      .put<any>(environment.api_url + `/orders/type/${id}`, { type: type })
       .subscribe();
   }
 }

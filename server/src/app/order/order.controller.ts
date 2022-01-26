@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { WebsocketGatewayService } from '../events/websocket-gateway.service';
 import { OrderDTO } from './order.dto';
 import { OrderService } from './order.service';
@@ -71,5 +71,28 @@ export class OrderController {
     this._orderService.completeOrder(id, order).subscribe((next: OrderDTO) => {
       this._websocketGatewayService.sendOrderCompletedMessage(next);
     });
+  }
+
+  @Put('type/:id')
+  updateTypeById(
+    @Param('id') id: number,
+    @Body() payload: any,
+  ): Observable<any> {
+    // console.log(id);
+    // console.log(payload);
+
+    return this._orderService.updateTypeById(id, payload).pipe(
+      tap(() => {
+        // console.log('Event fired!');
+        this._websocketGatewayService.sendOrderTypeUpdatedMessage(id);
+      }),
+    );
+  }
+
+  @Get('docs/:id')
+  testQueryBuilder() {
+    console.log('Testing TypeORMs QueryBuilder.');
+
+    return this._orderService.testQueryBuilder();
   }
 }

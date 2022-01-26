@@ -2,42 +2,39 @@
 <div class="pt-4">
   <form
     class="relative text-serapion-grey-100 text-xs flex flex-col lg:flex-row items-center justify-between gap-2"
-    (ngSubmit)="onSubmit(f)"
-    #f="ngForm"
+    [formGroup]="itemForm"
+    (ngSubmit)="onSubmit()"
   >
-    <div class="group w-full lg:w-2/4">
-      <span
-        class="absolute top-1/2 -mt-14 lg:-mt-2 group-focus-within:text-serapion-blue-300"
+    <div class="flex-1 group w-full lg:w-2/4 mr-1">
+      <div
+        class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
       >
-        <i class="fas fa-pizza-slice"></i>
-      </span>
-      <input
-        class="bg-serapion-white w-full pl-6 py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-        type="text"
-        placeholder="e.g. Hamburger"
-        ngModel
-        name="item"
-        #item="ngModel"
-      />
-    </div>
-    <div class="group w-full lg:w-1/4">
-      <span
-        class="absolute top-1/2 -mt-4 lg:-mt-2 group-focus-within:text-serapion-blue-300"
-      >
-        <i class="fas fa-sort-numeric-up-alt"></i>
-      </span>
-      <input
-        class="bg-serapion-white w-full pl-6 py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-        type="number"
-        min="1"
-        placeholder="e.g. 1"
-        ngModel
-        name="amount"
-        #amount="ngModel"
-      />
+        <label for="item" class="w-6 text-right mr-4 text-serapion-grey-100">
+          <i class="fas fa-xs fa-hamburger"></i>
+        </label>
+        <input
+          type="text"
+          id="item"
+          placeholder="e.g. Hamburger"
+          autocomplete="off"
+          name="item"
+          formControlName="item"
+          class="flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+        />
+      </div>
     </div>
     <div class="w-full py-2 lg:w-max lg:py-0">
-      <button class="btn btn-primary w-full" type="submit">
+      <button
+        class="btn btn-primary w-full"
+        [ngClass]="{
+          'btn-primary':
+            !itemForm.invalid && order?.status === orderStatus.ACTIVE,
+          'btn-disabled':
+            itemForm.invalid || order?.status === orderStatus.INACTIVE
+        }"
+        [disabled]="itemForm.invalid || order?.status === orderStatus.INACTIVE"
+        type="submit"
+      >
         <i class="fas fa-plus fa-xs pr-1"></i>
         Add
       </button>
@@ -55,7 +52,7 @@
     <div class="uppercase text-xs font-thin">{{ item.name }}</div>
     <div class="-space-x-2 ml-auto mr-1">
       <img
-        class="relative z-30 inline object-cover w-6 h-6 border-2 border-serapion-white rounded-full"
+        class="relative z-30 inline object-cover w-6 h-6 border-2 border-serapion-white rounded-full dark:border-serapion-black-200"
         src="{{ orderItem.user!.photo }}"
         alt="{{
           orderItem.user!.firstName +
@@ -63,6 +60,8 @@
             orderItem.user!.lastName +
             ' Profile Picture'
         }}"
+        title="{{ orderItem.user!.firstName + ' ' + orderItem.user!.lastName }}"
+        referrerpolicy="no-referrer"
         *ngFor="let orderItem of item.orderedItems! | uniqueFilter: updated"
       />
     </div>

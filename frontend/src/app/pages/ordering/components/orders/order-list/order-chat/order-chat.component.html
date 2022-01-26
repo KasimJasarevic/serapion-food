@@ -1,5 +1,11 @@
 <!-- COMMENTS -->
-<div class="mt-4 flex flex-col text-xs h-40 overflow-y-auto" #commentBox>
+<div
+  class="mt-12 py-4 text-xs font-thin uppercase text-serapion-grey-100 border-t border-opacity-25 border-serapion-grey-100 border-dashed"
+>
+  Comments
+</div>
+
+<div class="pb-4 flex flex-col text-xs h-40 overflow-y-auto" #commentBox>
   <div
     *ngFor="let message of messages"
     class="border-l-4 pl-2 py-2 border-serapion-blue-300"
@@ -22,27 +28,46 @@
 <!-- COMMENTS INPUT -->
 <div class="pt-4 flex flex-row justify-between items-center">
   <form
-    class="flex group relative text-serapion-grey-100 text-xs flex-1"
-    (ngSubmit)="onAddComment(f)"
-    #f="ngForm"
+    class="flex flex-col lg:flex-row group relative text-serapion-grey-100 justify-between text-xs flex-1"
+    [formGroup]="commentForm"
+    (ngSubmit)="onAddComment()"
   >
-    <span
-      class="absolute top-1/2 -mt-2 group-focus-within:text-serapion-blue-300"
-    >
-      <i class="fas fa-comments"></i>
-    </span>
-    <input
-      class="flex-1 bg-serapion-white pl-6 py-2 border-b border-serapion-grey-100 focus:outline-none focus:border-serapion-blue-300"
-      type="text"
-      placeholder="e.g. Peel the onion."
-      ngModel
-      name="comment"
-      #comment="ngModel"
-    />
-    <button class="flex-none btn btn-primary ml-4" type="submit">
-      <i class="fas fa-paper-plane fa-xs pr-1"></i>
-      Send
-    </button>
+    <div class="flex-1 w-full lg:w-2/4 mr-2">
+      <div
+        class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+      >
+        <label for="comment" class="w-6 text-right mr-4 text-serapion-grey-100">
+          <i class="fas fa-xs fa-comment"></i>
+        </label>
+        <input
+          type="text"
+          id="comment"
+          placeholder="Your comment..."
+          autocomplete="off"
+          name="comment"
+          formControlName="comment"
+          class="flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+        />
+      </div>
+    </div>
+    <div class="w-full py-2 lg:w-max lg:py-0">
+      <button
+        class="btn btn-primary w-full"
+        [ngClass]="{
+          'btn-primary':
+            !commentForm.invalid && order?.status === orderStatus.ACTIVE,
+          'btn-disabled':
+            commentForm.invalid || order?.status === orderStatus.INACTIVE
+        }"
+        [disabled]="
+          commentForm.invalid || order?.status === orderStatus.INACTIVE
+        "
+        type="submit"
+      >
+        <i class="fas fa-paper-plane fa-xs pr-1"></i>
+        Send
+      </button>
+    </div>
   </form>
 </div>
 <!-- COMMENTS INPUT END -->

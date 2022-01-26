@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
 import { IUser } from '@core/models/user.model';
@@ -7,6 +7,8 @@ import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
 import { deflateSync } from 'zlib';
+import { OrderStatus } from '../../models/order-status-types';
+import { OrderType } from '../../models/order-type-types';
 import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 import {
@@ -26,6 +28,11 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
   items: IItem[] = [];
   updated: Date = new Date();
   private subs = new SubSink();
+  orderStatus = OrderStatus;
+
+  itemForm = new FormGroup({
+    item: new FormControl(null, Validators.required),
+  });
 
   constructor(
     private _orderService: OrderService,
@@ -90,20 +97,19 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
       });
   }
 
-  onSubmit(form: NgForm) {
+  onSubmit() {
     const orderItem: any = {
-      name: form.value.item,
+      name: <string>this.itemForm.get('item')?.value,
       order: this.order,
       users: JSON.parse(
         <string>(
           localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
         )
       ),
-      amount: form.value.amount,
     };
 
     const newOrderItem: AddOrderItem = {
-      name: <string>form.value.item,
+      name: <string>this.itemForm.get('item')?.value,
       order: this.order!,
       orderedItems: [
         {
@@ -130,11 +136,11 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
         this._orderService.addOrderItemUser(orderItemUser);
       });
 
-    form.resetForm();
+    this.itemForm.reset();
 
-    this._notificationService.sendOrderItemAddedMessage(
-      `Item ${orderItem.name} added!`
-    );
+    // this._notificationService.sendOrderItemAddedMessage(
+    //   `Item ${orderItem.name} added!`
+    // );
   }
 
   addItem(item: IItem) {

@@ -3,6 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
+import { UserEntity } from '../user/user.entity';
 import { OrderDTO } from './order.dto';
 import { OrderEntity } from './order.entity';
 
@@ -11,6 +12,54 @@ export class OrderService {
   constructor(
     @InjectRepository(OrderEntity) private _orderRepo: Repository<OrderEntity>,
   ) {}
+
+  testQueryBuilder(): Observable<any> {
+    // return from(
+    //   this._orderRepo
+    //     .createQueryBuilder('order')
+    //     .leftJoin('order.user', 'user')
+    //     .leftJoin('order.restaurant', 'restaurant')
+    //     .leftJoin('order.orderItems', 'orderItems')
+    //     .leftJoin('orderItems.orderedItems', 'orderedItems')
+    //     .leftJoin('orderedItems.user', 'users')
+    //     .select(['order.id'])
+    //     .addSelect('user.firstName')
+    //     .getMany(),
+    // );
+    // return from(
+    //   this._orderRepo
+    //     .createQueryBuilder('order')
+    //     .leftJoin('order.user', 'user')
+    //     .leftJoin('order.restaurant', 'restaurant')
+    //     .leftJoin('order.orderItems', 'orderItems')
+    //     .leftJoin('orderItems.orderedItems', 'orderedItems')
+    //     .leftJoin('orderedItems.user', 'users')
+    //     .select(['order.id'])
+    //     .addSelect(['orderedItems.user'])
+    //     .getMany(),
+    // );
+
+    return from(
+      this._orderRepo
+        .createQueryBuilder('o')
+        .innerJoinAndSelect('o.user', 'u', 'u.firstName = :name', {
+          name: 'Emir',
+        })
+        .where((querybuilder) => {
+          const subquery = querybuilder
+            .subQuery()
+            .select('user.id')
+            .from(UserEntity, 'user')
+            .orderBy('user.last_order', 'DESC')
+            .limit(1)
+            .getQuery();
+          console.log(subquery);
+
+          return 'u.id = ' + subquery;
+        })
+        .getMany(),
+    );
+  }
 
   getAllOrders(): Observable<OrderDTO[]> {
     return from(
@@ -71,14 +120,19 @@ export class OrderService {
     return from(this._orderRepo.save(order));
   }
 
+  updateTypeById(id: number, payload: any): Observable<any> {
+    return from(this._orderRepo.update(id, payload));
+  }
+
   // @Cron('*/1 * * * *')
   // testCron() {
   //   console.log('Each minute');
   // }
 
+  // @Cron('*/30 * * * * *')
   @Cron('0 17 * * *')
   deleteAllOrders() {
-    console.log('Clear all orders!');
+    // console.log('Clear all orders!');
     this._orderRepo.createQueryBuilder('order').delete().execute();
   }
 }

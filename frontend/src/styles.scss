@@ -63,6 +63,16 @@
           hover:bg-serapion-purple;
 }
 
+.btn-white {
+  @apply bg-serapion-white
+          text-serapion-grey-200
+          hover:bg-serapion-purple
+          hover:text-serapion-white
+          dark:bg-serapion-black-200
+          dark:hover:bg-serapion-purple
+          dark:text-serapion-white;
+}
+
 .card {
   @apply px-2 py-4 bg-serapion-white rounded-md;
 }

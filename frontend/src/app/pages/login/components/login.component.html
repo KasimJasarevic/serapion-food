@@ -1,27 +1,42 @@
 <div class="flex w-screen items-center h-screen">
   <div class="flex flex-1 items-center justify-center -mt-8">
     <div
-      class="flex flex-col card shadow-xl transform hover:scale-105 transition-all duration-300"
+      class="flex flex-row bg-serapion-white shadow-2xl rounded-md dark:bg-serapion-black-200"
     >
-      <div class="mx-16 my-8 aspect-square w-52">
-        <img
-          class="object-cover animate-spin-slow"
-          src="../../../../assets/images/logo.png"
-          alt="Logo"
-        />
-      </div>
-      <div class="text-center font-thin uppercase">Food Ordering Service</div>
-      <div class="text-center m-8">
-        <div class="btn btn-primary" (click)="googleSignIn()">
-          <i class="fab fa-google mr-1"></i>
-          Sign in with Google
-        </div>
+      <div
+        class="hidden rounded-md lg:flex lg:flex-1 p-48 bg-serapion-blue-100 rounded-r-xl bg-login bg-cover bg-no-repeat bg-blend-soft-light dark:bg-serapion-black-100"
+      >
+        <!-- Large screen sidebar -->
       </div>
       <div
-        class="text-center text-xs text-serapion-purple"
-        *ngIf="errorMessage"
+        class="flex flex-col text-center items-center justify-between mx-16 my-8"
       >
-        <span class="font-semibold">ERROR:</span> {{ errorMessage }}
+        <a
+          class="text-serapion-grey-100 hover:text-serapion-grey-200 cursor-pointer dark:hover:text-serapion-white"
+          (click)="changeTheme()"
+        >
+          <i class="fas fa-adjust"></i>
+        </a>
+        <div class="aspect-square w-52 pt-10">
+          <img
+            class="object-cover animate-spin-slow"
+            src="../../../../assets/images/logo.png"
+            alt="Serapion Logo"
+          />
+        </div>
+        <div class="font-thin uppercase">Food Ordering Service</div>
+        <div class="w-full mt-16">
+          <div class="btn btn-primary" (click)="googleSignIn()">
+            <i class="fab fa-google mr-1"></i>
+            Sign in with Google
+          </div>
+        </div>
+        <div
+          class="text-center text-xs text-serapion-purple pt-2"
+          *ngIf="errorMessage"
+        >
+          <span class="font-semibold">*</span> {{ errorMessage }}
+        </div>
       </div>
     </div>
   </div>
