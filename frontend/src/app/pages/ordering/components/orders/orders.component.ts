@@ -31,7 +31,8 @@ export class OrdersComponent implements OnInit {
   }
 
   openSidebar() {
-    this._sidebarService.isHidden$.next(false);
+    // this._sidebarService.isHidden$.next(false);
+    this._sidebarService.toggleSidebar();
   }
 
   changeTheme() {

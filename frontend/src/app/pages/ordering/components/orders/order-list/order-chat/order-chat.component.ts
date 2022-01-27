@@ -14,10 +14,11 @@ import { SubSink } from '@core/helpers/sub-sink';
 import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, of, switchMap, tap } from 'rxjs';
 import { OrderStatus } from '../../models/order-status-types';
 import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
+import { IItem } from '../order-items/models/order-item.model';
 import { IMessage } from './models/order-chat.model';
 
 @Component({
@@ -90,21 +91,33 @@ export class OrderChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       order: this.order,
     };
 
-    this._orderService.addNewComment(comment).subscribe();
+    this._orderService
+      .addNewComment(comment)
+      .pipe(
+        switchMap((data) => {
+          return this._orderService.getOrderItems(data.order?.id!);
+        })
+      )
+      .subscribe((item: IItem[]) => {
+        let ids: string[] = [];
 
-    let ids: string[] = [];
-    this.order?.orderItems.forEach((next) => {
-      next.orderedItems?.forEach((item) => {
-        if (item.user?.subscriptionId) {
-          ids.push(item.user.subscriptionId);
+        // If items are found
+        if (!!item.length) {
+          item.forEach((data) => {
+            data.orderedItems?.forEach((oi) => {
+              if (oi.user?.subscriptionId) {
+                ids.push(oi.user.subscriptionId);
+              }
+            });
+          });
+
+          ids = [...new Set(ids)];
+
+          const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
+          this._notificationService.sendNotificationToUsers(ids, str);
         }
       });
-    });
-    ids = [...new Set(ids)];
-    // console.log(ids);
-    const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
 
-    this._notificationService.sendNotificationToUsers(ids, str);
     this.commentForm.reset();
   }
 

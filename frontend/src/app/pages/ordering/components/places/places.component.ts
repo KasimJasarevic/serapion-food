@@ -35,6 +35,7 @@ export class PlacesComponent implements OnInit, OnDestroy {
   }
 
   hideSidebar() {
-    this._sidebarService.isHidden$.next(true);
+    this._sidebarService.toggleSidebar();
+    // this._sidebarService.isHidden$.next(true);
   }
 }

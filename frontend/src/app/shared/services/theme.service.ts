@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
+import { SidebarTypes, ThemeTypes } from '@core/enums/utility-types';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -13,32 +14,55 @@ export class ThemeService {
   }
 
   toggleTheme() {
-    const userTheme = <string>(
-      localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_THEME)
+    const uiPreferences = JSON.parse(
+      <string>(
+        localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_UI_PREFERENCES)
+      )
     );
 
-    if (userTheme === 'light') {
+    const userTheme = uiPreferences.theme;
+
+    if (userTheme === ThemeTypes.LIGHT) {
       this._darkTheme$.next(true);
-      localStorage.setItem(LocalStorageTypes.FOOD_ORDERING_THEME, 'dark');
+      uiPreferences.theme = ThemeTypes.DARK;
+      localStorage.setItem(
+        LocalStorageTypes.FOOD_ORDERING_UI_PREFERENCES,
+        JSON.stringify(uiPreferences)
+      );
     } else {
       this._darkTheme$.next(false);
-      localStorage.setItem(LocalStorageTypes.FOOD_ORDERING_THEME, 'light');
+      uiPreferences.theme = ThemeTypes.LIGHT;
+      localStorage.setItem(
+        LocalStorageTypes.FOOD_ORDERING_UI_PREFERENCES,
+        JSON.stringify(uiPreferences)
+      );
     }
   }
 
   constructor() {
-    const userTheme = <string>(
-      localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_THEME)
+    const uiPreferences = JSON.parse(
+      <string>(
+        localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_UI_PREFERENCES)
+      )
     );
 
-    if (userTheme) {
+    if (uiPreferences) {
+      const userTheme = uiPreferences.theme;
+
       this._darkTheme$ =
-        userTheme === 'dark'
+        userTheme === ThemeTypes.DARK
           ? new BehaviorSubject<boolean>(true)
           : new BehaviorSubject<boolean>(false);
     } else {
-      this._darkTheme$ = new BehaviorSubject<boolean>(false);
-      localStorage.setItem(LocalStorageTypes.FOOD_ORDERING_THEME, 'light');
+      this._darkTheme$ = new BehaviorSubject<boolean>(true);
+
+      localStorage.setItem(
+        LocalStorageTypes.FOOD_ORDERING_UI_PREFERENCES,
+        JSON.stringify({
+          theme: ThemeTypes.DARK,
+          sidebar: SidebarTypes.EXPANDED,
+        })
+      );
     }
   }
 }
