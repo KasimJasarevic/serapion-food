@@ -40,6 +40,13 @@ export class OrderEntity extends BaseEntity {
   })
   openedAt: Date;
 
+  @Column({
+    name: 'arrival_time',
+    type: 'timestamp',
+    nullable: true,
+  })
+  arrivalTime: Date;
+
   @OneToMany(() => CommentEntity, (comment) => comment.order)
   comments: CommentEntity[];
 

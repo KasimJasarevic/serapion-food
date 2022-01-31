@@ -11,7 +11,6 @@
 
 .btn {
   @apply font-semibold
-          shadow-sm
           text-xs
           py-2
           px-4
@@ -23,7 +22,7 @@
 
 .btn-circle {
   @apply font-semibold
-          shadow-sm
+          shadow-md
           text-xs
           py-2
           px-4
@@ -99,4 +98,8 @@ $serapion-scrollbar: #a3abbd !default;
 *::-webkit-scrollbar-thumb {
   background-color: $serapion-scrollbar;
   border-radius: 0.2rem;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  display: none;
 }

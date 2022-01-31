@@ -6,6 +6,7 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { take } from 'rxjs';
 import { deflateSync } from 'zlib';
 import { OrderStatus } from '../../models/order-status-types';
 import { OrderType } from '../../models/order-type-types';
@@ -46,7 +47,6 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
         .getOrderItems(this.order!.id)
         .subscribe((data: IItem[]) => {
           this.items = data;
-          // This is not good!
         });
     }
 
@@ -94,6 +94,15 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
 
           this.updated = new Date();
         });
+      });
+
+    this.subs.sink = this._websocketService
+      .onOrderCompleted()
+      .subscribe((next) => {
+        if (next.id === this.order?.id) {
+          this.order = next;
+          this.items = next.orderItems;
+        }
       });
   }
 
@@ -158,6 +167,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
   }
 
   removeItem(item: IItem) {
+    // console.log('clicked');
     // const idx = members.findIndex(p => p.class=="two");
     // const removed = members.splice(idx,1);
     const currentUser = JSON.parse(

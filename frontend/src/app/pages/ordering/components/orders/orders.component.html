@@ -1,6 +1,6 @@
 <!-- ORDERS HEADER -->
 <div
-  class="p-4 flex flex-row justify-between items-center bg-serapion-white font-thin z-10 dark:bg-serapion-black-200"
+  class="sticky top-0 p-4 flex flex-row justify-between items-center bg-serapion-white font-thin z-10 dark:bg-serapion-black-200 dark:bg-opacity-95 bg-opacity-95"
 >
   <div class="flex flex-row items-center justify-between space-x-4">
     <div class="hidden lg:block" *ngIf="!!(isHidden$ | async)">
@@ -12,7 +12,7 @@
     <div>
       <div class="tracking-widest uppercase text-xl">Orders</div>
       <span class="text-sm font-thin text-serapion-grey-100"
-        >List of orders from you and/or your colleagues</span
+        >List of orders from you and your colleagues</span
       >
     </div>
   </div>
@@ -24,6 +24,8 @@
     <img
       class="w-14 h-14 rounded-full"
       src="{{ user.photo }}"
+      alt="{{ user!.firstName + ' ' + user!.lastName + ' Profile Picture' }}"
+      title="{{ user!.firstName + ' ' + user!.lastName }}"
       referrerpolicy="no-referrer"
     />
 

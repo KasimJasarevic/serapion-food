@@ -68,9 +68,11 @@ export class OrderController {
   completeOrder(@Param('id') id: number, @Body() order: any) {
     // console.log(id);
     // console.log(order);
-    this._orderService.completeOrder(id, order).subscribe((next: OrderDTO) => {
-      this._websocketGatewayService.sendOrderCompletedMessage(next);
-    });
+    return this._orderService.completeOrder(id, order).pipe(
+      tap((next: OrderDTO) => {
+        this._websocketGatewayService.sendOrderCompletedMessage(next);
+      }),
+    );
   }
 
   @Put('type/:id')

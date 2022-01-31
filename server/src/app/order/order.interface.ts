@@ -13,6 +13,7 @@ export interface Order {
   type?: OrderType;
   status?: OrderStatus;
   openedAt?: Date;
+  arrivalTime?: Date;
   restaurantId?: number;
   userId?: number;
 }

@@ -40,6 +40,10 @@ export class UserService {
     this._user = null;
   }
 
+  getAllUsers() {
+    return this._http.get<IUser[]>(environment.api_url + '/users');
+  }
+
   getUserById(id: number) {
     return this._http.get<IUser>(environment.api_url + '/orders');
   }

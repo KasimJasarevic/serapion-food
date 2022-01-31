@@ -1,4 +1,5 @@
 import {
+  AfterContentInit,
   AfterViewChecked,
   AfterViewInit,
   Component,
@@ -13,8 +14,9 @@ import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
 import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
+import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { Observable, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, switchMap, tap } from 'rxjs';
 import { OrderStatus } from '../../models/order-status-types';
 import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
@@ -26,10 +28,18 @@ import { IMessage } from './models/order-chat.model';
   templateUrl: './order-chat.component.html',
   styleUrls: ['./order-chat.component.scss'],
 })
-export class OrderChatComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class OrderChatComponent
+  implements
+    OnInit,
+    OnDestroy,
+    AfterViewChecked,
+    AfterViewInit,
+    AfterContentInit
+{
   @Input() order: IOrder | undefined;
   @ViewChild('commentBox', { static: false }) private _commentBox!: ElementRef;
   orderStatus = OrderStatus;
+  items$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   messages: IMessage[] = [];
   private subs = new SubSink();
@@ -40,11 +50,21 @@ export class OrderChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private _orderService: OrderService,
+    private _userService: UserService,
     private _websocketService: WebsocketMessagesService,
     private _notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
+    this.subs.sink = this._userService.getAllUsers().subscribe((data) => {
+      const users: string[] = [];
+      data.forEach((user: IUser) => {
+        users.push(`${user.firstName} ${user.lastName}`);
+      });
+
+      this.items$.next(users);
+    });
+
     if (this.order) {
       this.subs.sink = this._orderService
         .getComments(this.order.id)
@@ -64,20 +84,39 @@ export class OrderChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.messages.sort((a, b) =>
             a.commentedOn! < b.commentedOn! ? -1 : 1
           );
+
+          this._commentBox.nativeElement.scrollTop =
+            this._commentBox.nativeElement.scrollHeight;
         }
       });
   }
 
+  ngAfterContentInit(): void {}
+
+  ngAfterViewInit(): void {
+    this._commentBox.nativeElement.scrollIntoView({ block: 'end' });
+    // this.users.forEach((user) => {
+    //   this.items.push(user.firstName);
+    // });
+  }
+
   ngAfterViewChecked(): void {
-    this._commentBox.nativeElement.scrollTop =
-      this._commentBox.nativeElement.scrollHeight;
-    this.subs.sink = this._websocketService
-      .onCommentReceived()
-      .subscribe(
-        (next) =>
-          (this._commentBox.nativeElement.scrollTop =
-            this._commentBox.nativeElement.scrollHeight)
-      );
+    // this.subs.sink = this._userService
+    //   .getAllUsers()
+    //   .subscribe((data: IUser[]) => {
+    //     data.forEach((user) => {
+    //       this.users.push(user.firstName);
+    //     });
+    //   });
+    // this._commentBox.nativeElement.scrollTop =
+    //   this._commentBox.nativeElement.scrollHeight;
+    // this.subs.sink = this._websocketService
+    //   .onCommentReceived()
+    //   .subscribe(
+    //     (next) =>
+    //       (this._commentBox.nativeElement.scrollTop =
+    //         this._commentBox.nativeElement.scrollHeight)
+    //   );
   }
 
   onAddComment() {
@@ -133,6 +172,14 @@ export class OrderChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     return false;
+  }
+
+  onItemSelected(value: any) {
+    const str = 'the quick @brown fox jumps @over';
+    console.log(str.split('@'));
+
+    // console.log(this.items$.value);
+    // console.log(value);
   }
 
   ngOnDestroy(): void {

@@ -1,12 +1,54 @@
 <!-- COMMENTS -->
 <div
-  class="mt-12 py-4 text-xs font-thin uppercase text-serapion-grey-100 border-t border-opacity-25 border-serapion-grey-100 border-dashed"
+  class="mt-8 py-4 border-t border-opacity-25 border-serapion-grey-100 border-dashed"
 >
-  Comments
+  <span class="text-xs font-thin uppercase text-serapion-grey-100">
+    Comments
+  </span>
 </div>
 
-<div class="pb-4 flex flex-col text-xs h-40 overflow-y-auto" #commentBox>
+<div
+  class="pb-4 flex flex-col text-xs h-40 overflow-y-scroll space-y-4"
+  #commentBox
+>
   <div
+    class="flex flex-row justify-start items-start space-x-4"
+    *ngFor="let message of messages"
+  >
+    <div class="mt-2">
+      <img
+        class="w-6 h-6 rounded-full"
+        src="{{ message.user?.photo }}"
+        alt="{{
+          message.user!.firstName +
+            ' ' +
+            message.user!.lastName +
+            ' Profile Picture'
+        }}"
+        title="{{ message.user!.firstName + ' ' + message.user!.lastName }}"
+        referrerpolicy="no-referrer"
+      />
+    </div>
+    <div class="flex-1 flex flex-col justify-start items-start space-y-1">
+      <strong
+        class="font-normal text-xs text-serapion-grey-100"
+        *ngIf="message.user"
+      >
+        {{ message.user.firstName }},
+        {{ message.commentedOn | date: "shortTime" }}
+      </strong>
+      <p
+        class="bg-serapion-blue-100 rounded-lg p-4 pt-2 pl-2 mr-36 xl:mr-24 dark:bg-serapion-black-100"
+        [ngClass]="{
+          'bg-serapion': isCurrentUser(message.user)
+        }"
+      >
+        {{ message.comment }}
+      </p>
+    </div>
+  </div>
+
+  <!-- <div
     *ngFor="let message of messages"
     class="border-l-4 pl-2 py-2 border-serapion-blue-300"
     [ngClass]="{ 'border-serapion-purple': isCurrentUser(message.user) }"
@@ -21,7 +63,7 @@
     <p class="pt-2">
       {{ message.comment }}
     </p>
-  </div>
+  </div> -->
 </div>
 <!-- COMMENTS END -->
 
@@ -34,23 +76,29 @@
   >
     <div class="flex-1 w-full lg:w-2/4 mr-2">
       <div
-        class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+        class="flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
       >
-        <label for="comment" class="w-6 text-right mr-4 text-serapion-grey-100">
+        <label
+          for="comment-{{ order?.id }}"
+          class="w-6 text-right mr-4 text-serapion-grey-100 cursor-pointer"
+        >
           <i class="fas fa-xs fa-comment"></i>
         </label>
         <input
           type="text"
-          id="comment"
+          id="comment-{{ order?.id }}"
           placeholder="Your comment..."
           autocomplete="off"
           name="comment"
           formControlName="comment"
-          class="flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+          class="mentions flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+          (itemSelected)="onItemSelected($event)"
+          [mention]="(items$ | async)!"
+          [attr.disabled]="order?.status === orderStatus.INACTIVE ? '' : null"
         />
       </div>
     </div>
-    <div class="w-full py-2 lg:w-max lg:py-0">
+    <div class="w-full py-2 pt-4 lg:w-max lg:py-0">
       <button
         class="btn btn-primary w-full"
         [ngClass]="{

@@ -1,0 +1,21 @@
+:host {
+  ::ng-deep mention-list {
+    .scrollable-menu {
+      max-height: 160px !important;
+      background-color: #f3faff;
+    }
+    .mention-menu > li {
+      cursor: pointer;
+      // &:hover {
+      // }
+    }
+    .mention-active > a {
+      background-color: #5a8ed1 !important;
+      &::after {
+        .dropdown-item a:hover:after {
+          background-color: #5a8ed1 !important;
+        }
+      }
+    }
+  }
+}

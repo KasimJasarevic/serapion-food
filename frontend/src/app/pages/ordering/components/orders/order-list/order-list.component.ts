@@ -27,6 +27,7 @@ import { IItem } from './order-items/models/order-item.model';
 })
 export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   orders: IOrder[] = [];
+  users: IUser[] = [];
   orderStatus = OrderStatus;
   orderType = OrderType;
   ordersForm: FormGroup | undefined;
@@ -36,6 +37,8 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   // orderTypeForm = new FormGroup({
   //   orderType: new FormControl(),
   // });
+
+  orderArrivalArr!: FormArray;
 
   constructor(
     private _orderService: OrderService,
@@ -54,6 +57,8 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
       ]),
     });
 
+    this.orderArrivalArr = this._formBuilder.array([]);
+
     this.subs.sink = this._orderService
       .getAllOrders()
       .subscribe((orders: IOrder[]) => {
@@ -70,6 +75,12 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
               ],
             })
           );
+
+          const orderArrivalTime: FormControl = new FormControl(
+            null,
+            Validators.required
+          );
+          this.orderArrivalArr.push(orderArrivalTime);
         });
 
         this._setOrderers();
@@ -89,6 +100,12 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             ],
           })
         );
+
+        const orderArrivalTime: FormControl = new FormControl(
+          null,
+          Validators.required
+        );
+        this.orderArrivalArr.push(orderArrivalTime);
       });
 
     this.subs.sink = this._websocketService.onOrderItemAdded().subscribe(() => {
@@ -108,6 +125,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
           // console.log('Close');
           this.orders.splice(index, 1);
           (<FormArray>this.ordersForm?.get('orders')).removeAt(index);
+          this.orderArrivalArr.removeAt(index);
         }
       });
 
@@ -199,8 +217,28 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   confirmOrder(order: IOrder) {
     order.status = OrderStatus.INACTIVE;
-    this._orderService
-      .completeOrder(order.id, order)
+
+    // 1. Add database field to host arrivalTime field
+    // 2. Get order arrival time, set order.arrivalTime field to it and call service
+
+    const today = new Date();
+    const ind = this.orders.findIndex((o) => o.id == order.id);
+    order.arrivalTime = new Date(
+      today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value
+    );
+    // console.log(this.orderArrivalArr.at(ind).value);
+    // console.log(
+    //   new Date(today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value)
+    // );
+
+    this.subs.sink = this._orderService
+      .getOrderItems(order.id)
+      .pipe(
+        switchMap((items) => {
+          order.orderItems = items;
+          return this._orderService.completeOrder(order.id, order);
+        })
+      )
       .pipe(
         switchMap((_) => {
           return this._orderService.getOrderItems(order.id);
@@ -223,6 +261,31 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         const str = `Order ${order?.restaurant.name} completed!`;
         this._notificationService.sendNotificationToUsers(ids, str);
       });
+
+    // this._orderService
+    //   .completeOrder(order.id, order)
+    //   .pipe(
+    //     switchMap((_) => {
+    //       return this._orderService.getOrderItems(order.id);
+    //     })
+    //   )
+    //   .subscribe((item: IItem[]) => {
+    //     let ids: string[] = [];
+
+    //     item.forEach((data) => {
+    //       data.orderedItems?.forEach((oi) => {
+    //         if (oi.user?.subscriptionId) {
+    //           ids.push(oi.user.subscriptionId);
+    //         }
+    //       });
+    //     });
+
+    //     ids = [...new Set(ids)];
+    //     // console.log(ids);
+
+    //     const str = `Order ${order?.restaurant.name} completed!`;
+    //     this._notificationService.sendNotificationToUsers(ids, str);
+    //   });
   }
 
   ngOnDestroy(): void {
@@ -320,7 +383,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     const id = order.id;
 
     const ind = this.orders.findIndex((order) => order.id == id);
-    // console.log(ind);
 
     const formArr: FormGroup[] = <FormGroup[]>(
       (<FormArray>this.ordersForm?.get('orders')).controls
@@ -328,10 +390,29 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const type = formArr[ind].get('orderType')?.value;
 
-    console.log(formArr.length);
-    console.log(this.orders.length);
-
-    console.log(id, ind, formArr[ind].get('orderType')?.value);
     this._orderService.updateTypeById(id, type);
+  }
+
+  sendLastCall(order: IOrder) {
+    console.log(`Last call for ${order.restaurant.name}!`);
+
+    this.subs.sink = this._orderService
+      .getOrderItems(order.id)
+      .subscribe((item: IItem[]) => {
+        let ids: string[] = [];
+
+        item.forEach((data) => {
+          data.orderedItems?.forEach((oi) => {
+            if (oi.user?.subscriptionId) {
+              ids.push(oi.user.subscriptionId);
+            }
+          });
+        });
+
+        ids = [...new Set(ids)];
+
+        const str = `Last call ${order?.restaurant.name}!`;
+        this._notificationService.sendNotificationToUsers(ids, str);
+      });
   }
 }

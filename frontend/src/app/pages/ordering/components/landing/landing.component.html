@@ -4,7 +4,7 @@
 >
   <!-- PLACES -->
   <div
-    class="flex-auto lg:w-1/3 bg-serapion-white flex flex-col overflow-x-hidden lg:overflow-y-scroll transition-all duration-300 dark:bg-serapion-black-200"
+    class="flex-auto lg:w-1/3 bg-serapion-white flex flex-col overflow-x-hidden overflow-y-auto transition-all duration-300 dark:bg-serapion-black-200"
     [ngClass]="{ 'lg:hidden': !!(isHidden$ | async) }"
   >
     <app-places></app-places>
@@ -13,7 +13,7 @@
 
   <!-- ORDERS -->
   <div
-    class="flex-auto lg:w-2/3 bg-serapion-white flex flex-col overflow-x-hidden lg:overflow-y-scroll dark:bg-serapion-black-200"
+    class="flex-auto lg:w-2/3 bg-serapion-white flex flex-col overflow-x-hidden overflow-y-auto dark:bg-serapion-black-200"
   >
     <app-orders></app-orders>
   </div>

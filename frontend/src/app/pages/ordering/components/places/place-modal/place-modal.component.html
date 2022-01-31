@@ -4,21 +4,21 @@
 >
   <div class="relative mx-auto w-1/2 max-w-2xl">
     <div
-      class="bg-serapion-white rounded-md p-4 shadow-lg flex flex-col dark:bg-serapion-black-200"
+      class="bg-serapion-white rounded-md p-8 shadow-lg flex flex-col dark:bg-serapion-black-200"
     >
       <div class="text-lg font-thin uppercase">
-        {{ place ? "Edit Restaurant: " + place.name : "Add New Restaurant" }}
+        {{ place ? "Edit " + place.name : "New Restaurant" }}
       </div>
       <form class="pt-4" [formGroup]="placeForm" (ngSubmit)="onSubmit()">
         <div class="w-full">
           <div
-            class="text-xs text-serapion-purple"
+            class="text-xs text-serapion-purple pb-2"
             *ngIf="name.invalid && (name.dirty || name.touched)"
           >
             <span class="font-semibold">*</span> Name is required!
           </div>
           <div
-            class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+            class="flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
           >
             <label
               for="name"
@@ -40,13 +40,13 @@
 
         <div class="w-full mt-8">
           <div
-            class="text-xs text-serapion-purple"
+            class="text-xs text-serapion-purple pb-2"
             *ngIf="menu.errors?.['pattern'] && (menu.dirty || menu.touched)"
           >
             <span class="font-semibold">*</span> URL is invalid!
           </div>
           <div
-            class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+            class="flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
           >
             <label
               for="menu"
@@ -61,20 +61,20 @@
               autocomplete="off"
               name="menu"
               formControlName="menu"
-              class="flex-1 p-2 pl-0 text-md bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+              class="select-all flex-1 p-2 pl-0 text-md bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
             />
           </div>
         </div>
 
         <div class="w-full mt-8">
           <div
-            class="text-xs text-serapion-purple"
+            class="text-xs text-serapion-purple pb-2"
             *ngIf="phone.errors?.['pattern'] && (phone.dirty || phone.touched)"
           >
             <span class="font-semibold">*</span> Phone number is invalid!
           </div>
           <div
-            class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+            class="flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
           >
             <label
               for="phone"
@@ -89,7 +89,7 @@
               autocomplete="off"
               name="phone"
               formControlName="phone"
-              class="flex-1 p-2 pl-0 text-md bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+              class="select-all flex-1 p-2 pl-0 text-md bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
             />
           </div>
         </div>

@@ -7,19 +7,23 @@
   >
     <div class="flex-1 group w-full lg:w-2/4 mr-1">
       <div
-        class="flex items-center rounded border text-serapion-grey-200 dark:text-serapion-white"
+        class="flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
       >
-        <label for="item" class="w-6 text-right mr-4 text-serapion-grey-100">
+        <label
+          for="item-{{ order?.id }}"
+          class="w-6 text-right mr-4 text-serapion-grey-100 cursor-pointer"
+        >
           <i class="fas fa-xs fa-hamburger"></i>
         </label>
         <input
           type="text"
-          id="item"
+          id="item-{{ order?.id }}"
           placeholder="e.g. Hamburger"
           autocomplete="off"
           name="item"
           formControlName="item"
           class="flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+          [attr.disabled]="order?.status === orderStatus.INACTIVE ? '' : null"
         />
       </div>
     </div>
@@ -46,13 +50,13 @@
 <!-- ITEMS -->
 <div class="flex flex-col justify-between">
   <div
-    class="pt-4 flex flex-row justify-between items-center"
+    class="pt-8 flex flex-row justify-between items-center"
     *ngFor="let item of items"
   >
     <div class="uppercase text-xs font-thin">{{ item.name }}</div>
     <div class="-space-x-2 ml-auto mr-1">
       <img
-        class="relative z-30 inline object-cover w-6 h-6 border-2 border-serapion-white rounded-full dark:border-serapion-black-200"
+        class="relative z-30 inline object-cover w-5 h-5 border-2 border-serapion-white rounded-full dark:border-serapion-black-200"
         src="{{ orderItem.user!.photo }}"
         alt="{{
           orderItem.user!.firstName +
@@ -67,15 +71,19 @@
     </div>
 
     <div class="uppercase text-xs font-semibold">
-      <i
-        class="fas fa-angle-left fa-sm pr-1 cursor-pointer"
+      <button
         (click)="removeItem(item)"
-      ></i>
+        [disabled]="order?.status === orderStatus.INACTIVE"
+      >
+        <i class="fas fa-angle-left fa-sm pr-1 cursor-pointer"></i>
+      </button>
       <span>{{ item.orderedItems!.length }}x</span>
-      <i
-        class="fas fa-angle-right fa-sm pl-1 cursor-pointer"
+      <button
         (click)="addItem(item)"
-      ></i>
+        [disabled]="order?.status === orderStatus.INACTIVE"
+      >
+        <i class="fas fa-angle-right fa-sm pl-1 cursor-pointer"></i>
+      </button>
     </div>
   </div>
 </div>

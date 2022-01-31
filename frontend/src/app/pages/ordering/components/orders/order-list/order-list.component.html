@@ -1,14 +1,14 @@
 <div
-  class="min-h-screen p-4 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-100 bg-hero bg-cover bg-center bg-no-repeat bg-blend-soft-light rounded-t-xl shadow-md dark:bg-serapion-black-100"
+  class="min-h-screen p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-100 bg-hero bg-cover bg-fixed bg-center bg-no-repeat bg-blend-soft-light rounded-t-xl shadow-md dark:bg-serapion-black-100"
 >
   <!-- ORDER -->
   <div *ngFor="let order of orders; let i = index" class="place-self-strech">
     <div
-      class="rounded-md bg-serapion-white p-4 z-10 lg:transform shadow-lg transition-all duration-300 {{
+      class="rounded-md bg-serapion-white p-4 z-10 lg:transform lg:hover:shadow-lg transition-all duration-300 {{
         order.status === orderStatus.ACTIVE
           ? 'border-serapion-green'
           : 'border-serapion-purple'
-      }} border-t-4 dark:bg-serapion-black-200"
+      }} border-t-4 lg:hover:scale-102 dark:bg-serapion-black-200"
     >
       <!-- CARD HEADER -->
       <div class="flex flex-row items-start justify-items-between z-10">
@@ -27,19 +27,22 @@
               {{
                 order.restaurant.phoneNumber
                   ? order.restaurant.phoneNumber
-                  : "No phone number"
+                  : "Phone info not available"
               }}
             </p>
           </div>
           <div
             class="pt-2 flex flex-row space-x-2 justify-between items-center text-xs font-thin text-serapion-grey-100"
+            *ngIf="order?.status !== orderStatus.INACTIVE"
           >
             <i class="fas fa-xs fa-user pr-1"></i>
-            <p class="flex-1">{{ getOwnerFullName(order) | titlecase }}</p>
+            <p class="flex-1">
+              {{ getOwnerFullName(order) | titlecase }} has opened the order
+            </p>
           </div>
           <div
-            class="py-2 flex flex-row space-x-2 justify-between items-center text-xs text-serapion-blue-300 font-thin"
-            *ngIf="order.orderer"
+            class="pt-2 flex flex-row space-x-2 justify-between items-center text-xs text-serapion-green font-normal"
+            *ngIf="order.orderer && order?.status === orderStatus.ACTIVE"
           >
             <i class="fas fa-xs fa-car pr-1"></i>
             <p class="flex-1">
@@ -47,17 +50,20 @@
                 order.orderer.firstName + " " + order.orderer.lastName
                   | titlecase
               }}
+              is due to make the order
             </p>
           </div>
           <div class="text-xs uppercase text-serapion-grey-100">
             <form
-              *ngIf="isOrderOwner(order)"
+              *ngIf="
+                isOrderOwner(order) && order?.status === orderStatus.ACTIVE
+              "
               (change)="onOrderTypeChange(order)"
               [formGroup]="ordersForm!"
             >
               <div formArrayName="orders">
                 <div [formGroupName]="i">
-                  <div class="flex p-2 pt-4 pl-0 items-center">
+                  <div class="flex p-2 pt-3 pl-0 items-center">
                     <input
                       id="{{ orderType.DELIVERY + '-' + i }}"
                       type="radio"
@@ -94,7 +100,9 @@
             </form>
             <div
               class="py-2 flex flex-row space-x-2 justify-between items-center text-xs font-thin text-serapion-grey-100"
-              *ngIf="!isOrderOwner(order)"
+              *ngIf="
+                !isOrderOwner(order) || order?.status === orderStatus.INACTIVE
+              "
             >
               <i class="fas fa-xs fa-hashtag pr-1"></i>
               <p class="flex-1">
@@ -102,15 +110,31 @@
               </p>
             </div>
           </div>
+          <!-- *ngIf="order?.status === orderStatus.INACTIVE" -->
+          <div
+            class="py-2 pt-0 flex flex-row space-x-2 justify-between items-center text-xs font-normal text-serapion-purple"
+            *ngIf="order?.status === orderStatus.INACTIVE && order.arrivalTime"
+          >
+            <i class="fas fa-xs fa-clock pr-1"></i>
+            <p class="flex-1">
+              {{
+                (order?.type === orderType.DELIVERY
+                  ? "Arrives at "
+                  : "Departure at ") + (order?.arrivalTime | date: "shortTime")
+              }}
+            </p>
+          </div>
         </div>
-        <a
-          class="btn btn-white"
-          [href]="order.restaurant.menu"
-          target="_blank"
-          *ngIf="order.restaurant.menu"
-        >
-          <i class="fas fa-globe fa-sm pr-1"></i> Visit
-        </a>
+        <div>
+          <a
+            class="btn btn-white"
+            [href]="order.restaurant.menu"
+            target="_blank"
+            *ngIf="order.restaurant.menu"
+          >
+            <i class="fas fa-globe fa-sm pr-1"></i> Visit
+          </a>
+        </div>
       </div>
       <!-- CARD HEADER END -->
 
@@ -122,27 +146,87 @@
       <app-order-chat [order]="order"></app-order-chat>
       <!-- ORDER COMMENTS END -->
 
+      <!-- SOMETHING -->
+      <div
+        class="mt-8 py-4 border-t border-opacity-25 border-serapion-grey-100 border-dashed"
+        *ngIf="isOrderOrderer(order) && order?.status === orderStatus.ACTIVE"
+      >
+        <div class="flex flex-row items-center justify-between">
+          <span
+            class="flex-1 text-xs font-thin uppercase text-serapion-grey-100"
+            >Details</span
+          >
+
+          <button
+            class="text-serapion-grey-100 hover:text-serapion-yellow"
+            title="Last call {{ order?.restaurant?.name }}"
+            (click)="sendLastCall(order)"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 animate-wiggle"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="flex flex-row justify-between items-center space-x-6 mt-2">
+          <!-- <p>Date&time input here.</p> -->
+          <div
+            class="flex-1 mt-2 flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
+          >
+            <label
+              for="order-time-{{ order?.id }}"
+              class="w-6 text-right mr-4 text-serapion-grey-100 cursor-pointer"
+            >
+              <i class="fas fa-xs fa-clock"></i>
+            </label>
+            <input
+              type="time"
+              id="order-time-{{ order?.id }}"
+              [formControl]="$any(orderArrivalArr.at(i))"
+              name="orderArrivalTime"
+              autocomplete="off"
+              class="flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
+              [attr.disabled]="
+                order?.status === orderStatus.INACTIVE ? '' : null
+              "
+            />
+          </div>
+        </div>
+      </div>
+      <!-- SOMETHING END -->
+
       <!-- SUBMIT BUTTONS -->
       <div
         class="flex-grow pt-8 flex flex-row-reverse justify-end items-center"
       >
+        <!-- 'btn-disabled':
+              !isOrderOrderer(order) || order.status === orderStatus.INACTIVE -->
+        <!-- [disabled]="
+            !isOrderOrderer(order) || order.status === orderStatus.INACTIVE
+          " -->
         <button
-          class="btn w-1/2 ml-1"
+          class="btn flex-1 ml-1"
+          *ngIf="order.status === orderStatus.ACTIVE"
           [ngClass]="{
             'btn-primary':
-              isOrderOrderer(order) && order.status === orderStatus.ACTIVE,
-            'btn-disabled':
-              !isOrderOrderer(order) || order.status === orderStatus.INACTIVE
+              isOrderOrderer(order) &&
+              order.status === orderStatus.ACTIVE &&
+              !orderArrivalArr.at(i).invalid,
+            'btn-disabled': orderArrivalArr.at(i).invalid
           }"
-          [disabled]="
-            !isOrderOrderer(order) || order.status === orderStatus.INACTIVE
-          "
+          [disabled]="orderArrivalArr.at(i).invalid"
           (click)="confirmOrder(order)"
         >
           <i class="fas fa-check pr-1"></i> Confirm
         </button>
         <button
-          class="btn w-1/2"
+          class="btn flex-1"
           [ngClass]="{
             'btn-secondary':
               isOrderOwner(order) || order.status === orderStatus.INACTIVE,

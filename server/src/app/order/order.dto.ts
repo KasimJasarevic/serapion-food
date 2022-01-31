@@ -8,6 +8,7 @@ export class OrderDTO {
   type?: OrderType;
   status?: OrderStatus;
   openedAt?: Date;
+  arrivalTime?: Date;
   restaurant?: RestaurantEntity;
   user?: UserEntity;
   orderItems?: OrderItemEntity[];

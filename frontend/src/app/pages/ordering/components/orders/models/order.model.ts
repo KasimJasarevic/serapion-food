@@ -9,6 +9,7 @@ export interface IOrder {
   type?: OrderType;
   status?: OrderStatus;
   openedAt?: Date;
+  arrivalTime?: Date;
   restaurant: IPlace;
   user: IUser;
   orderItems: IItem[];

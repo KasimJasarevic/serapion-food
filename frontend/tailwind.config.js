@@ -30,13 +30,23 @@ module.exports = {
         hero: "url('~/src/assets/images/food-raw.jpg')",
         login: "url('~/src/assets/images/food-raw-10.jpg')",
       },
+      scale: {
+        102: "1.02",
+      },
+      keyframes: {
+        wiggle: {
+          "0%, 100%": { transform: "rotate(-3deg)" },
+          "50%": { transform: "rotate(3deg)" },
+        },
+      },
+      animation: {
+        "bounce-slow": "bounce 3s linear infinite",
+        "spin-slow": "spin 30s linear infinite",
+        wiggle: "wiggle 1s ease-in-out infinite",
+      },
     },
     fontFamily: {
       "serapion-sans": ["Rubik, sans-serif"],
-    },
-    animation: {
-      "bounce-slow": "bounce 3s linear infinite",
-      "spin-slow": "spin 30s linear infinite",
     },
   },
   variants: {

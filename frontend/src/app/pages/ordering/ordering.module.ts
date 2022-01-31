@@ -15,6 +15,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { FilterPipe } from './components/places/place-list/pipes/filter.pipe';
 import { PlaceModalComponent } from './components/places/place-modal/place-modal.component';
 import { UniqueFilterPipe } from './components/orders/order-list/order-items/pipes/unique-filter.pipe';
+import { MentionModule } from 'angular-mentions';
 // import { FilterPipe } from './components/orders/order-list/order-chat/pipes/filter.pipe';
 
 @NgModule({
@@ -36,6 +37,7 @@ import { UniqueFilterPipe } from './components/orders/order-list/order-items/pip
     CommonModule,
     OrderingRoutingModule,
     FormsModule,
+    MentionModule,
     ReactiveFormsModule,
   ],
 })

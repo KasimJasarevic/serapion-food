@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { environment } from '@environments/environment';
+import { MentionModule } from 'angular-mentions';
 
 const config: SocketIoConfig = {
   url: environment.ws_url,
