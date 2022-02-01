@@ -133,6 +133,13 @@ export class OrderService {
   @Cron('0 17 * * *')
   deleteAllOrders() {
     // console.log('Clear all orders!');
-    this._orderRepo.createQueryBuilder('order').delete().execute();
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    this._orderRepo
+      .createQueryBuilder('order')
+      .delete()
+      .where('order.openedAt <= :date', { date: yesterday })
+      .execute();
   }
 }

@@ -190,6 +190,21 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
     this._orderService.removeOrderItemUser(removeItem);
   }
 
+  haveThisItem(item: IItem) {
+    const currentUser = JSON.parse(
+      <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
+    );
+    const idx = item.orderedItems!.findIndex(
+      (oi) => oi.user?.id == currentUser.id
+    );
+
+    if (idx === -1) {
+      return false;
+    }
+
+    return true;
+  }
+
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }

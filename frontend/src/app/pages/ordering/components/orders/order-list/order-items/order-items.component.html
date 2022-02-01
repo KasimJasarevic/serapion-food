@@ -75,7 +75,10 @@
         (click)="removeItem(item)"
         [disabled]="order?.status === orderStatus.INACTIVE"
       >
-        <i class="fas fa-angle-left fa-sm pr-1 cursor-pointer"></i>
+        <i
+          class="fas fa-angle-left fa-sm pr-1 cursor-pointer"
+          [ngClass]="{ 'text-serapion-grey-100': !haveThisItem(item) }"
+        ></i>
       </button>
       <span>{{ item.orderedItems!.length }}x</span>
       <button
@@ -88,3 +91,4 @@
   </div>
 </div>
 <!-- ITEMS END -->
+

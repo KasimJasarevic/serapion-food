@@ -142,6 +142,14 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
       });
 
     this.subs.sink = this._websocketService
+      .onOrderItemDeleted()
+      .subscribe((data) => {
+        console.log(data);
+
+        this._setOrderers();
+      });
+
+    this.subs.sink = this._websocketService
       .onOrderCompleted()
       .pipe(
         switchMap((order: any) => {
@@ -204,88 +212,59 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   closeRestaurant(id: number | undefined) {
-    if (id) {
-      this.subs.sink = this._orderService
-        .deleteOrder(id)
-        .subscribe((data: any) => {
-          // this._notificationService.sendCloseRestaurantMessage(
-          //   data.restaurant.name
-          // );
-        });
+    if (confirm(`Are you sure you want to close this order?`)) {
+      if (id) {
+        this.subs.sink = this._orderService
+          .deleteOrder(id)
+          .subscribe((data: any) => {
+            // this._notificationService.sendCloseRestaurantMessage(
+            //   data.restaurant.name
+            // );
+          });
+      }
     }
   }
 
   confirmOrder(order: IOrder) {
-    order.status = OrderStatus.INACTIVE;
+    if (confirm(`Are you sure you want to confirm this order?`)) {
+      // Save it!
+      order.status = OrderStatus.INACTIVE;
+      const today = new Date();
+      const ind = this.orders.findIndex((o) => o.id == order.id);
+      order.arrivalTime = new Date(
+        today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value
+      );
 
-    // 1. Add database field to host arrivalTime field
-    // 2. Get order arrival time, set order.arrivalTime field to it and call service
+      this.subs.sink = this._orderService
+        .getOrderItems(order.id)
+        .pipe(
+          switchMap((items) => {
+            order.orderItems = items;
+            return this._orderService.completeOrder(order.id, order);
+          })
+        )
+        .pipe(
+          switchMap((_) => {
+            return this._orderService.getOrderItems(order.id);
+          })
+        )
+        .subscribe((item: IItem[]) => {
+          let ids: string[] = [];
 
-    const today = new Date();
-    const ind = this.orders.findIndex((o) => o.id == order.id);
-    order.arrivalTime = new Date(
-      today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value
-    );
-    // console.log(this.orderArrivalArr.at(ind).value);
-    // console.log(
-    //   new Date(today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value)
-    // );
-
-    this.subs.sink = this._orderService
-      .getOrderItems(order.id)
-      .pipe(
-        switchMap((items) => {
-          order.orderItems = items;
-          return this._orderService.completeOrder(order.id, order);
-        })
-      )
-      .pipe(
-        switchMap((_) => {
-          return this._orderService.getOrderItems(order.id);
-        })
-      )
-      .subscribe((item: IItem[]) => {
-        let ids: string[] = [];
-
-        item.forEach((data) => {
-          data.orderedItems?.forEach((oi) => {
-            if (oi.user?.subscriptionId) {
-              ids.push(oi.user.subscriptionId);
-            }
+          item.forEach((data) => {
+            data.orderedItems?.forEach((oi) => {
+              if (oi.user?.subscriptionId) {
+                ids.push(oi.user.subscriptionId);
+              }
+            });
           });
+
+          ids = [...new Set(ids)];
+
+          const str = `Order ${order?.restaurant.name} completed!`;
+          this._notificationService.sendNotificationToUsers(ids, str);
         });
-
-        ids = [...new Set(ids)];
-        // console.log(ids);
-
-        const str = `Order ${order?.restaurant.name} completed!`;
-        this._notificationService.sendNotificationToUsers(ids, str);
-      });
-
-    // this._orderService
-    //   .completeOrder(order.id, order)
-    //   .pipe(
-    //     switchMap((_) => {
-    //       return this._orderService.getOrderItems(order.id);
-    //     })
-    //   )
-    //   .subscribe((item: IItem[]) => {
-    //     let ids: string[] = [];
-
-    //     item.forEach((data) => {
-    //       data.orderedItems?.forEach((oi) => {
-    //         if (oi.user?.subscriptionId) {
-    //           ids.push(oi.user.subscriptionId);
-    //         }
-    //       });
-    //     });
-
-    //     ids = [...new Set(ids)];
-    //     // console.log(ids);
-
-    //     const str = `Order ${order?.restaurant.name} completed!`;
-    //     this._notificationService.sendNotificationToUsers(ids, str);
-    //   });
+    }
   }
 
   ngOnDestroy(): void {
@@ -302,7 +281,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   // ngAfterViewChecked(): void {
   //   if (this.children) {
   //     console.log(this.children);
-  //     this._cdr.detectChanges();
   //   }
   // }
 
@@ -394,7 +372,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   sendLastCall(order: IOrder) {
-    console.log(`Last call for ${order.restaurant.name}!`);
+    // console.log(`Last call for ${order.restaurant.name}!`);
 
     this.subs.sink = this._orderService
       .getOrderItems(order.id)

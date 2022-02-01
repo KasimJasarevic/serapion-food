@@ -2,12 +2,19 @@
   ::ng-deep mention-list {
     .scrollable-menu {
       max-height: 160px !important;
-      background-color: #f3faff;
+      @apply bg-serapion-white dark:bg-serapion-black-100;
+    }
+    .dropdown-menu {
+      // color: red;
+    }
+    .mention-menu {
+      // color: red;
     }
     .mention-menu > li {
       cursor: pointer;
-      // &:hover {
-      // }
+    }
+    .mention-menu > li > a {
+      @apply text-serapion-grey-200 dark:text-serapion-white text-xs;
     }
     .mention-active > a {
       background-color: #5a8ed1 !important;

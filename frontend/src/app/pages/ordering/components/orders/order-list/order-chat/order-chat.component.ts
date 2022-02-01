@@ -39,7 +39,10 @@ export class OrderChatComponent
   @Input() order: IOrder | undefined;
   @ViewChild('commentBox', { static: false }) private _commentBox!: ElementRef;
   orderStatus = OrderStatus;
-  items$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  // items$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
+  users$: BehaviorSubject<IUser[]> = new BehaviorSubject<IUser[]>([]);
+  toMention: IUser[] = [];
 
   messages: IMessage[] = [];
   private subs = new SubSink();
@@ -57,12 +60,20 @@ export class OrderChatComponent
 
   ngOnInit(): void {
     this.subs.sink = this._userService.getAllUsers().subscribe((data) => {
-      const users: string[] = [];
-      data.forEach((user: IUser) => {
-        users.push(`${user.firstName} ${user.lastName}`);
-      });
+      // const users: string[] = ['All'];
+      // data.forEach((user: IUser) => {
+      //   users.push(`${user.firstName}`);
+      // });
+      const dummyAll: IUser = {
+        id: -1,
+        firstName: 'All',
+        lastName: 'All',
+        email: 'All',
+      };
 
-      this.items$.next(users);
+      data.unshift(dummyAll);
+      this.users$.next(data);
+      // this.items$.next(users);
     });
 
     if (this.order) {
@@ -157,6 +168,42 @@ export class OrderChatComponent
         }
       });
 
+    if (!!this.toMention.length) {
+      // console.log('Mention!');
+      // const matches = [...comment.comment!.matchAll(/@(\w+)/g)];
+      // for (const match of matches) {
+      //   const matchedName = match[1];
+      // console.log(match[1]);
+      const indAll = this.toMention.findIndex(
+        (user) => user.firstName === 'All'
+      );
+
+      let ids: string[] = [];
+      if (indAll !== -1) {
+        // console.log('All users');
+        this.users$.value.forEach((user: IUser) => {
+          if (user.subscriptionId) {
+            ids.push(user.subscriptionId);
+          }
+        });
+      } else {
+        // console.log('Specific users');
+        this.toMention.forEach((user: IUser) => {
+          if (user.subscriptionId) {
+            ids.push(user.subscriptionId);
+          }
+        });
+      }
+
+      ids = [...new Set(ids)];
+
+      if (!!ids.length) {
+        const str = `New mention in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
+        this._notificationService.sendNotificationToUsers(ids, str);
+      }
+    }
+
+    this.toMention = [];
     this.commentForm.reset();
   }
 
@@ -174,12 +221,20 @@ export class OrderChatComponent
     return false;
   }
 
-  onItemSelected(value: any) {
-    const str = 'the quick @brown fox jumps @over';
-    console.log(str.split('@'));
-
-    // console.log(this.items$.value);
+  onItemSelected(value: any, id: number) {
     // console.log(value);
+    // console.log(id);
+    if (id === this.order?.id) {
+      this.toMention.push(value);
+      // console.log(this.toMention);
+    }
+
+    // Use this later !!!
+    // const str = 'The @quick, brown fox @jumps @over @a lazy @dog.';
+    // const matches = [...str.matchAll(/@(\w+)/g)];
+    // for (const match of matches) {
+    //   console.log(match[1]);
+    // }
   }
 
   ngOnDestroy(): void {

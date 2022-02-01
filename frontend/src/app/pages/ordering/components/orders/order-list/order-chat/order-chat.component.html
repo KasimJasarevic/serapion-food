@@ -87,13 +87,15 @@
         <input
           type="text"
           id="comment-{{ order?.id }}"
-          placeholder="Your comment..."
+          placeholder="Your comment, try typing @..."
           autocomplete="off"
           name="comment"
           formControlName="comment"
           class="mentions flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
-          (itemSelected)="onItemSelected($event)"
-          [mention]="(items$ | async)!"
+          (itemSelected)="onItemSelected($event, order!.id)"
+          [mention]="(users$ | async)!"
+          [mentionConfig]="{ labelKey: 'firstName' }"
+          [mentionListTemplate]="mentionListTemplate"
           [attr.disabled]="order?.status === orderStatus.INACTIVE ? '' : null"
         />
       </div>
@@ -119,3 +121,15 @@
   </form>
 </div>
 <!-- COMMENTS INPUT END -->
+
+<ng-template #mentionListTemplate let-item="item">
+  <div class="flex flex-row justify-start items-center space-x-2 py-1">
+    <img
+      class="rounded-full w-6 h-6"
+      [ngClass]="{ 'opacity-0': item.photo === undefined }"
+      src="{{ item.photo }}"
+      alt=""
+    />
+    <span>{{ item.firstName }}</span>
+  </div>
+</ng-template>

@@ -27,16 +27,16 @@ module.exports = {
         },
       },
       backgroundImage: {
-        hero: "url('~/src/assets/images/food-raw.jpg')",
-        login: "url('~/src/assets/images/food-raw-10.jpg')",
+        hero: "url('~/src/assets/images/food-raw-3.jpg')",
+        login: "url('~/src/assets/images/food-raw-2.jpg')",
       },
       scale: {
         102: "1.02",
       },
       keyframes: {
         wiggle: {
-          "0%, 100%": { transform: "rotate(-3deg)" },
-          "50%": { transform: "rotate(3deg)" },
+          "0%, 100%": { transform: "rotate(-5deg)" },
+          "50%": { transform: "rotate(5deg)" },
         },
       },
       animation: {
