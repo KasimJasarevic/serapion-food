@@ -116,7 +116,22 @@
             class="py-2 pt-0 flex flex-row space-x-2 justify-between items-center text-xs font-normal text-serapion-purple"
             *ngIf="order?.status === orderStatus.INACTIVE && order.arrivalTime"
           >
-            <i class="fas fa-xs fa-clock pr-1"></i>
+            <button
+              class="hover:text-serapion-yellow"
+              title="Food Arrived {{ order?.restaurant?.name }}"
+              (click)="sendArrivedCall(order)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-3 w-3 animate-wiggle"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
+                />
+              </svg>
+            </button>
             <p class="flex-1">
               {{
                 (order?.type === orderType.DELIVERY
@@ -178,7 +193,7 @@
         <div class="flex flex-row justify-between items-center space-x-6 mt-2">
           <!-- <p>Date&time input here.</p> -->
           <div
-            class="flex-1 mt-2 flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
+            class="relative flex-1 mt-2 flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
           >
             <label
               for="order-time-{{ order?.id }}"

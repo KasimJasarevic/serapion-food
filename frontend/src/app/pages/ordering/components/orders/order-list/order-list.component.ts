@@ -401,4 +401,27 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     return sidebar === 'collapsed';
   }
+
+  sendArrivedCall(order: IOrder) {
+    // console.log(`Last call for ${order.restaurant.name}!`);
+
+    this.subs.sink = this._orderService
+      .getOrderItems(order.id)
+      .subscribe((item: IItem[]) => {
+        let ids: string[] = [];
+
+        item.forEach((data) => {
+          data.orderedItems?.forEach((oi) => {
+            if (oi.user?.subscriptionId) {
+              ids.push(oi.user.subscriptionId);
+            }
+          });
+        });
+
+        ids = [...new Set(ids)];
+
+        const str = `Order arrived ${order?.restaurant.name}!`;
+        this._notificationService.sendNotificationToUsers(ids, str);
+      });
+  }
 }

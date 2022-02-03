@@ -101,5 +101,10 @@ $serapion-scrollbar: #a3abbd !default;
 }
 
 input[type="time"]::-webkit-calendar-picker-indicator {
-  display: none;
+  top: 0;
+  left: 0;
+  background: #0000;
+  position: absolute;
+  transform: scale(8);
+  // @apply bg-serapion-grey-100;
 }

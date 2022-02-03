@@ -1,7 +1,7 @@
 module.exports = {
   mode: "aot",
   purge: {
-    enabled: false,
+    enabled: true,
     content: ["./src/**/*.{html,ts}"],
   },
   darkMode: "class",
