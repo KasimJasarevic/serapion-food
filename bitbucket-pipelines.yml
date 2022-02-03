@@ -1,0 +1,55 @@
+image: node:16
+
+definitions:
+  caches:
+    frontend-build-cache: frontend/node_modules
+    backend-build-cache: backend/node_modules
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Build Frontend
+          script:
+            - cd frontend && npm install
+            - cd frontend && npm run build --prod
+          caches:
+            - frontend-build-cache
+          artifacts:
+            - frontend/dist/**
+      - step:
+          name: Build Backend
+          script:
+            - cd server && npm install
+            - cd server && npm run build
+          caches:
+            - backend-build-cache
+          artifacts:
+            - server/dist/**
+            - server/config/**
+            - server/ormconfig.js
+            - server/package.json
+      - step:
+          name: Build Docker
+          script:
+            - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+            - docker build . --file Dockerfile --tag ${IMAGE_NAME}
+            - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}.tar"
+          services:
+            - docker
+          caches:
+            - docker
+            - backend-build-cache
+          artifacts:
+            - "*.tar"
+      - step:
+          name: Push to LocalNexus
+          script:
+            - echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin https://nexus.individev.de/repository/internal_docker/
+            - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+            - docker load --input "${IMAGE_NAME}.tar"
+            - VERSION="prod-0.1.${BITBUCKET_BUILD_NUMBER}"
+            - IMAGE=${DOCKERHUB_NAMESPACE}/${IMAGE_NAME}
+            - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+            - docker push "${IMAGE}:${VERSION}"
+          services:
+            - docker
