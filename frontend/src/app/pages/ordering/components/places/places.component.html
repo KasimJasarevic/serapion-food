@@ -16,12 +16,21 @@
         New
       </div>
 
-      <div class="hidden lg:block">
+      <div
+        class="hidden lg:flex flex-row items-center justify-center bg-serapion-blue-100 dark:bg-serapion-black-100 bg-opacity-90 w-14 h-14 rounded-full cursor-pointer"
+        (click)="hideSidebar()"
+      >
+        <i
+          class="fas fa-compress-alt fa-md text-serapion-grey-100 hover:text-serapion-grey-200 dark:hover:text-serapion-white"
+        ></i>
+      </div>
+
+      <!-- <div class="hidden lg:block">
         <i
           class="fas fa-chevron-left fa-sm text-serapion-grey-100 hover:text-serapion-grey-200 cursor-pointer dark:hover:text-serapion-white"
           (click)="hideSidebar()"
         ></i>
-      </div>
+      </div> -->
     </div>
   </div>
   <!-- PLACES HEADER END -->

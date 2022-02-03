@@ -1,5 +1,5 @@
 <div
-  class="min-h-screen p-4 grid grid-cols-3 gap-2 lg:pt-8 lg:grid-cols-2 lg:gap-4 z-10 2xl:pt-8 rounded-t-xl bg-serapion-blue-100 shadow-md dark:bg-serapion-black-100"
+  class="min-h-screen p-4 grid grid-cols-2 gap-2 lg:pt-8 lg:grid-cols-2 lg:gap-4 z-10 2xl:pt-8 rounded-t-xl bg-serapion-blue-100 shadow-md dark:bg-serapion-black-100"
 >
   <a class="z-10" *ngFor="let place of places | filter: filterStr:updated">
     <div
@@ -39,7 +39,10 @@
         <!-- <button class="btn btn-warn flex-1" (click)="editRestaurant(place.id!)">
           <i class="far fa-sm fa-edit pr-1"></i> Edit
         </button> -->
-        <button class="btn btn-primary flex-1" (click)="openRestaurant(place)">
+        <button
+          class="btn btn-primary flex-1 mt-2"
+          (click)="openRestaurant(place)"
+        >
           <i class="fas fa-sm fa-external-link-alt pr-1"></i> Open
         </button>
       </div>

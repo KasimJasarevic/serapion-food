@@ -3,10 +3,13 @@
   class="sticky top-0 p-4 flex flex-row justify-between items-center bg-serapion-white font-thin z-10 dark:bg-serapion-black-200 dark:bg-opacity-95 bg-opacity-95"
 >
   <div class="flex flex-row items-center justify-between space-x-4">
-    <div class="hidden lg:block" *ngIf="!!(isHidden$ | async)">
+    <div
+      class="hidden lg:flex flex-row items-center justify-center bg-serapion-blue-100 dark:bg-serapion-black-100 bg-opacity-90 w-14 h-14 rounded-full cursor-pointer"
+      *ngIf="!!(isHidden$ | async)"
+      (click)="openSidebar()"
+    >
       <i
-        class="fas fa-chevron-right fa-sm text-serapion-grey-100 hover:text-serapion-grey-200 cursor-pointer dark:hover:text-serapion-white"
-        (click)="openSidebar()"
+        class="fas fa-utensils fa-md text-serapion-grey-100 hover:text-serapion-grey-200 dark:hover:text-serapion-white"
       ></i>
     </div>
     <div>
