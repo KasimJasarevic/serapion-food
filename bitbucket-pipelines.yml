@@ -11,7 +11,7 @@ pipelines:
           name: Build Frontend
           script:
             - cd frontend && npm install
-            - cd frontend && npm run build --prod
+            - npm run build --prod
           caches:
             - frontend-build-cache
           artifacts:
@@ -20,7 +20,7 @@ pipelines:
           name: Build Backend
           script:
             - cd server && npm install
-            - cd server && npm run build
+            - npm run build
           caches:
             - backend-build-cache
           artifacts:
