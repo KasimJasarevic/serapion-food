@@ -94,7 +94,7 @@
           class="mentions flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
           (itemSelected)="onItemSelected($event, order!.id)"
           [mention]="(users$ | async)!"
-          [mentionConfig]="{ labelKey: 'firstName' }"
+          [mentionConfig]="{ labelKey: 'firstName', dropUp: true }"
           [mentionListTemplate]="mentionListTemplate"
           [attr.disabled]="order?.status === orderStatus.INACTIVE ? '' : null"
         />

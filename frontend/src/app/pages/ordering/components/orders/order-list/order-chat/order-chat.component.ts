@@ -1,3 +1,4 @@
+import { isNgTemplate } from '@angular/compiler';
 import {
   AfterContentInit,
   AfterViewChecked,
@@ -16,7 +17,7 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { BehaviorSubject, Observable, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import { OrderStatus } from '../../models/order-status-types';
 import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
@@ -59,22 +60,17 @@ export class OrderChatComponent
   ) {}
 
   ngOnInit(): void {
-    this.subs.sink = this._userService.getAllUsers().subscribe((data) => {
-      // const users: string[] = ['All'];
-      // data.forEach((user: IUser) => {
-      //   users.push(`${user.firstName}`);
-      // });
-      const dummyAll: IUser = {
-        id: -1,
-        firstName: 'All',
-        lastName: 'All',
-        email: 'All',
-      };
+    // this.subs.sink = this._userService.getAllUsers().subscribe((data) => {
+    //   const dummyAll: IUser = {
+    //     id: -1,
+    //     firstName: 'All',
+    //     lastName: 'All',
+    //     email: 'All',
+    //   };
 
-      data.unshift(dummyAll);
-      this.users$.next(data);
-      // this.items$.next(users);
-    });
+    //   data.unshift(dummyAll);
+    //   this.users$.next(data);
+    // });
 
     if (this.order) {
       this.subs.sink = this._orderService
@@ -85,7 +81,31 @@ export class OrderChatComponent
             a.commentedOn! < b.commentedOn! ? -1 : 1
           );
         });
+
+      this.subs.sink = this._getUsers$().subscribe((users: IUser[]) =>
+        this._populateMentionList(users)
+      );
     }
+
+    this.subs.sink = this._websocketService
+      .onOrderItemAdded()
+      .pipe(switchMap(() => this._getUsers$()))
+      .subscribe((users: IUser[]) => this._populateMentionList(users));
+
+    this.subs.sink = this._websocketService
+      .onOrderItemDeleted()
+      .pipe(switchMap(() => this._getUsers$()))
+      .subscribe((users: IUser[]) => this._populateMentionList(users));
+
+    this.subs.sink = this._websocketService
+      .onOrderItemUserAdded()
+      .pipe(switchMap(() => this._getUsers$()))
+      .subscribe((users: IUser[]) => this._populateMentionList(users));
+
+    this.subs.sink = this._websocketService
+      .onOrderItemUserDeleted()
+      .pipe(switchMap(() => this._getUsers$()))
+      .subscribe((users: IUser[]) => this._populateMentionList(users));
 
     this.subs.sink = this._websocketService
       .onCommentReceived()
@@ -199,7 +219,7 @@ export class OrderChatComponent
 
       if (!!ids.length) {
         const str = `New mention in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
-        this._notificationService.sendNotificationToUsers(ids, str);
+        this._notificationService.sendMentionToUsers(ids, str);
       }
     }
 
@@ -240,4 +260,32 @@ export class OrderChatComponent
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
+
+  private _getUsers$ = () => {
+    return this._orderService.getOrderItems(this.order!.id).pipe(
+      map((data: IItem[]): IUser[] => {
+        return data
+          .map(({ orderedItems }) => {
+            return orderedItems?.map(({ user }) => user);
+          })
+          .flat() as IUser[];
+      })
+    );
+  };
+
+  private _populateMentionList = (users: IUser[]) => {
+    const uniqueUsers: IUser[] = [
+      ...new Map(users.map((user) => [user['id'], user])).values(),
+    ];
+
+    const dummyAll: IUser = {
+      id: -1,
+      firstName: 'All',
+      lastName: 'All',
+      email: 'All',
+    };
+
+    uniqueUsers.unshift(dummyAll);
+    this.users$.next(uniqueUsers);
+  };
 }

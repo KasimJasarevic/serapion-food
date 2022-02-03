@@ -56,6 +56,11 @@ export class NotificationService {
     this.sendNotification(content);
   }
 
+  sendMentionToUsers(ids: string[], message: string) {
+    const content = this.createContentForUsers(ids, message);
+    this.sendNotification(content);
+  }
+
   private createContent(message: string) {
     return {
       app_id: environment.notificationId,

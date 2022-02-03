@@ -2,19 +2,27 @@
   ::ng-deep mention-list {
     .scrollable-menu {
       max-height: 160px !important;
-      @apply bg-serapion-white dark:bg-serapion-black-100;
+      @apply bg-serapion-white dark:bg-serapion-black-100 z-50;
     }
+
     .dropdown-menu {
       // color: red;
+      // @apply z-50;
     }
     .mention-menu {
       // color: red;
+      // @apply z-50;
+    }
+    .mention-menu > ul {
+      // color: red;
+      // @apply z-50;
     }
     .mention-menu > li {
       cursor: pointer;
+      // @apply z-50;
     }
     .mention-menu > li > a {
-      @apply text-serapion-grey-200 dark:text-serapion-white text-xs;
+      @apply text-serapion-grey-200 dark:text-serapion-white text-xs z-50;
     }
     .mention-active > a {
       background-color: #5a8ed1 !important;

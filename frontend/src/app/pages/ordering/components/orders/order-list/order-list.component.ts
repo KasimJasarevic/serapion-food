@@ -144,8 +144,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.subs.sink = this._websocketService
       .onOrderItemDeleted()
       .subscribe((data) => {
-        console.log(data);
-
         this._setOrderers();
       });
 
@@ -392,5 +390,15 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         const str = `Last call ${order?.restaurant.name}!`;
         this._notificationService.sendNotificationToUsers(ids, str);
       });
+  }
+
+  isSidebarCollapsed() {
+    const { sidebar } = JSON.parse(
+      localStorage.getItem(
+        LocalStorageTypes.FOOD_ORDERING_UI_PREFERENCES
+      ) as string
+    );
+
+    return sidebar === 'collapsed';
   }
 }
