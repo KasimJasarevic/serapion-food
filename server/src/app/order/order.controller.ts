@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable, tap } from 'rxjs';
+import { CleanupDatabaseService } from '../database/cleanup-database.service';
 import { WebsocketGatewayService } from '../events/websocket-gateway.service';
 import { OrderDTO } from './order.dto';
 import { OrderService } from './order.service';
@@ -20,6 +21,7 @@ import { OrderService } from './order.service';
 export class OrderController {
   constructor(
     private _orderService: OrderService,
+    private _cleanUpService: CleanupDatabaseService,
     private _websocketGatewayService: WebsocketGatewayService,
   ) {}
 
@@ -61,7 +63,8 @@ export class OrderController {
 
   @Delete()
   deleteAllOrders() {
-    this._orderService.deleteAllOrders();
+    this._cleanUpService.cleanDatabase();
+    // this._orderService.deleteAllOrders();
   }
 
   @Put(':id')

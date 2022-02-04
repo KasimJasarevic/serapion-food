@@ -13,8 +13,10 @@ import { EventsModule } from './events/events.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ScheduleModule } from '@nestjs/schedule';
-import { CleanupDatabaseService } from './database/cleanup-database.service';
 import { OrderItemUserModule } from './order-item-user/order-item-user.module';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { ErrorFilter } from './core/error.filter';
+import { LoggingInterceptor } from './core/logging.interceptor';
 
 @Module({
   imports: [
@@ -41,10 +43,16 @@ import { OrderItemUserModule } from './order-item-user/order-item-user.module';
     ScheduleModule.forRoot(),
     OrderItemUserModule,
   ],
-  providers: [CleanupDatabaseService, Logger],
+  providers: [
+    Logger,
+    {
+      provide: APP_FILTER,
+      useClass: ErrorFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
-export class AppModule {
-  constructor(private _cleanupDatabaseService: CleanupDatabaseService) {
-    this._cleanupDatabaseService.cleanDatabase();
-  }
-}
+export class AppModule {}

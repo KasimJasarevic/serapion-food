@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { WebsocketGatewayService } from '../events/websocket-gateway.service';
 import { AddCommentDTO } from './comment.dto';
 import { CommentService } from './comment.service';
@@ -21,5 +29,11 @@ export class CommentController {
   @Get('order/:id')
   getCommentsByOrderId(@Param('id') id: number) {
     return this._commentService.getCommentsByOrderId(id);
+  }
+
+  @Delete(':id')
+  deleteCommentById(@Param('id') id: number) {
+    this._websocketGatewayService.sendCommmentDeletedMessage(id);
+    return this._commentService.deleteCommentById(id);
   }
 }

@@ -26,4 +26,8 @@ export class CommentService {
   addNewComment(comment: AddCommentDTO) {
     return from(this._commentsRepo.create(comment).save());
   }
+
+  deleteCommentById(id: number): Observable<any> {
+    return from(this._commentsRepo.delete(id));
+  }
 }

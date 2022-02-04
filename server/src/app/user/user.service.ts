@@ -41,7 +41,6 @@ export class UserService {
     return from(
       this.userRepo
         .createQueryBuilder('user')
-        .select('user')
         .where('user.id = :id', { id: userId })
         .getOne(),
     );

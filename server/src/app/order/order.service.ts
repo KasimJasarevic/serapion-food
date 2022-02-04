@@ -80,6 +80,8 @@ export class OrderService {
         .createQueryBuilder('order')
         .leftJoinAndSelect('order.user', 'user')
         .leftJoinAndSelect('order.restaurant', 'restaurant')
+        .leftJoinAndSelect('order.comments', 'comments')
+        .leftJoinAndSelect('comments.user', 'user')
         .where('order.id = :id', { id: id })
         .getOne(),
     );

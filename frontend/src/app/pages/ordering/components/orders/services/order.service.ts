@@ -27,6 +27,10 @@ export class OrderService {
     return this._http.get<IOrder[]>(environment.api_url + '/orders');
   }
 
+  getOrderById(id: number): Observable<IOrder> {
+    return this._http.get<IOrder>(environment.api_url + `/orders/${id}`);
+  }
+
   addNewOrder(orderData: any): Observable<IOrder> {
     return this._http.post<any>(environment.api_url + '/orders', orderData);
   }
@@ -118,5 +122,9 @@ export class OrderService {
     return this._http
       .put<any>(environment.api_url + `/orders/type/${id}`, { type: type })
       .subscribe();
+  }
+
+  deleteMessageWithId(id: number) {
+    return this._http.delete<number>(environment.api_url + `/comments/${id}`);
   }
 }

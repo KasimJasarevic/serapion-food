@@ -13,6 +13,12 @@ export class WebsocketMessagesService {
     return this._socket.fromEvent(WebsocketMessageTypes.COMMENT_EVENT);
   }
 
+  onCommentDeleted() {
+    return this._socket.fromEvent<number>(
+      WebsocketMessageTypes.COMMENT_DELETED
+    );
+  }
+
   onOrderItemAdded() {
     return this._socket.fromEvent(WebsocketMessageTypes.ORDER_ITEM_EVENT);
   }

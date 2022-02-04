@@ -3,7 +3,7 @@ import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
 import { IUser } from '@core/models/user.model';
 import { UserService } from '@core/services/user.service';
-import { switchMap } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { SidebarService } from 'src/app/shared/services/sidebar.service';
 
 @Component({
@@ -21,17 +21,26 @@ export class LandingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const currentUser = this._userService.user?.id;
+    // User id doesn't exist
+    const currentUser: IUser = this._userService.user!;
 
     const subsId = localStorage.getItem(LocalStorageTypes.SUBSCRIPTION_ID);
 
+    // Get user by email for this to work
     if (subsId) {
       this.subs.sink = this._userService
-        .getById(<number>currentUser)
+        .getAllUsers()
         .pipe(
-          switchMap((user: IUser) => {
-            user.subscriptionId = subsId;
-            return this._userService.updateOne(user);
+          switchMap((users: IUser[]) => {
+            const user = users.find((user) => user.email === currentUser.email);
+
+            if (user) {
+              user.subscriptionId = subsId;
+              this._userService.user = user;
+              return this._userService.updateOne(user);
+            }
+
+            return users;
           })
         )
         .subscribe();

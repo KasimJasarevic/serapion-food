@@ -52,6 +52,10 @@ export class UserService {
     return this._http.get<IUser>(environment.api_url + `/users/${userId}`);
   }
 
+  getByEmail(email: string) {
+    return this._http.get<IUser>(environment.api_url + `/users/${email}`);
+  }
+
   updateOne(user: IUser) {
     return this._http.put<IUser>(environment.api_url + `/users/`, user);
   }

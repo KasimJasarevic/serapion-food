@@ -34,17 +34,26 @@
         class="font-normal text-xs text-serapion-grey-100"
         *ngIf="message.user"
       >
-        {{ message.user.firstName }},
+        {{ isMessageOwner(message) ? "You" : message.user.firstName + "," }}
         {{ message.commentedOn | date: "shortTime" }}
       </strong>
-      <p
-        class="bg-serapion-blue-100 rounded-lg p-4 pt-2 pl-2 mr-36 xl:mr-24 dark:bg-serapion-black-100"
-        [ngClass]="{
-          'bg-serapion': isCurrentUser(message.user)
-        }"
+      <div
+        class="flex flex-row justify-between items-center mr-36 xl:mr-24 space-x-2"
       >
-        {{ message.comment }}
-      </p>
+        <p
+          class="bg-serapion-blue-100 rounded-lg p-4 pt-2 pl-2 dark:bg-serapion-black-100"
+          [ngClass]="{
+            'bg-serapion': isCurrentUser(message.user)
+          }"
+        >
+          {{ message.comment }}
+        </p>
+        <i
+          *ngIf="isMessageOwner(message)"
+          class="fas fa-sm fa-trash text-serapion-grey-100 hover:text-serapion-grey-200 transition-all duration-300 dark:hover:text-serapion-white cursor-pointer"
+          (click)="handleDeleteMessage(message)"
+        ></i>
+      </div>
     </div>
   </div>
 

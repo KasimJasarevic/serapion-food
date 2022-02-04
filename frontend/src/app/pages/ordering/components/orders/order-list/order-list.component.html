@@ -1,5 +1,5 @@
 <div
-  class="min-h-screen p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-100 bg-hero bg-cover bg-no-repeat bg-blend-soft-light rounded-t-xl shadow-md dark:bg-serapion-black-100"
+  class="min-h-screen p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-100 bg-opacity-95 bg-hero bg-cover bg-no-repeat bg-blend-soft-light rounded-t-xl shadow-md dark:bg-serapion-black-100"
   [ngClass]="{ 'lg:grid-cols-3 2xl:grid-cols-4': isSidebarCollapsed() }"
 >
   <!-- ORDER -->
@@ -48,10 +48,12 @@
             <i class="fas fa-xs fa-car pr-1"></i>
             <p class="flex-1">
               {{
-                order.orderer.firstName + " " + order.orderer.lastName
-                  | titlecase
+                isOrderOrderer(order)
+                  ? "You are "
+                  : (order.orderer.firstName + " " + order.orderer.lastName
+                      | titlecase) + " is"
               }}
-              is due to make the order
+              due to make the order
             </p>
           </div>
           <div class="text-xs uppercase text-serapion-grey-100">
@@ -148,7 +150,7 @@
             target="_blank"
             *ngIf="order.restaurant.menu"
           >
-            <i class="fas fa-globe fa-sm pr-1"></i> Visit
+            <i class="fas fa-globe fa-sm pr-1"></i> Menu
           </a>
         </div>
       </div>
@@ -190,8 +192,11 @@
             </svg>
           </button>
         </div>
+        <p class="text-xs text-serapion-grey-100 mt-2">
+          <span class="font-semibold">{{ order.orderer?.firstName }}</span
+          >, you have to finish this order, add arrival time!
+        </p>
         <div class="flex flex-row justify-between items-center space-x-6 mt-2">
-          <!-- <p>Date&time input here.</p> -->
           <div
             class="relative flex-1 mt-2 flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"
           >
@@ -216,7 +221,6 @@
         </div>
       </div>
       <!-- SOMETHING END -->
-
       <!-- SUBMIT BUTTONS -->
       <div
         class="flex-grow pt-8 flex flex-row-reverse justify-end items-center"

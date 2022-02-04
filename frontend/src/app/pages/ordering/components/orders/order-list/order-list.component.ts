@@ -12,7 +12,6 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { timeStamp } from 'console';
 import { switchMap, tap } from 'rxjs';
 import { OrderStatus } from '../models/order-status-types';
 import { OrderType } from '../models/order-type-types';
@@ -151,9 +150,13 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
       .onOrderCompleted()
       .pipe(
         switchMap((order: any) => {
-          this.orders[
-            this.orders.findIndex((el) => el.id === order.id)
-          ].status = order.status;
+          // this.orders[
+          //   this.orders.findIndex((el) => el.id === order.id)
+          // ].status = order.status;
+
+          this.orders[this.orders.findIndex((el) => el.id === order.id)] =
+            order;
+
           (<FormArray>this.ordersForm?.get('orders')).controls[
             this.orders.findIndex((el) => el.id === order.id)
           ]

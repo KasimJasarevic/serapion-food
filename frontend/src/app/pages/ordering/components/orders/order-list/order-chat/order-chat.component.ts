@@ -88,6 +88,16 @@ export class OrderChatComponent
     }
 
     this.subs.sink = this._websocketService
+      .onCommentDeleted()
+      .pipe(switchMap(() => this._orderService.getComments(this.order!.id)))
+      .subscribe((data: IMessage[]) => {
+        this.messages = data;
+        this.messages.sort((a, b) =>
+          a.commentedOn! < b.commentedOn! ? -1 : 1
+        );
+      });
+
+    this.subs.sink = this._websocketService
       .onOrderItemAdded()
       .pipe(switchMap(() => this._getUsers$()))
       .subscribe((users: IUser[]) => this._populateMentionList(users));
@@ -278,14 +288,37 @@ export class OrderChatComponent
       ...new Map(users.map((user) => [user['id'], user])).values(),
     ];
 
-    const dummyAll: IUser = {
-      id: -1,
-      firstName: 'All',
-      lastName: 'All',
-      email: 'All',
-    };
+    if (!!uniqueUsers.length) {
+      const dummyAll: IUser = {
+        id: -1,
+        firstName: 'All',
+        lastName: 'All',
+        email: 'All',
+      };
 
-    uniqueUsers.unshift(dummyAll);
-    this.users$.next(uniqueUsers);
+      uniqueUsers.unshift(dummyAll);
+      this.users$.next(uniqueUsers);
+    }
+  };
+
+  isMessageOwner = ({ user }: IMessage): boolean => {
+    const currentUser = JSON.parse(
+      <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
+    );
+
+    if (user) {
+      return user.id === currentUser.id;
+    }
+
+    return false;
+  };
+
+  handleDeleteMessage = ({ id }: IMessage) => {
+    if (id) {
+      this._orderService.deleteMessageWithId(id).subscribe();
+      this.messages = this.messages.filter(
+        (message: IMessage) => message.id !== id
+      );
+    }
   };
 }

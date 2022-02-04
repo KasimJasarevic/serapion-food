@@ -67,6 +67,10 @@ export class WebsocketGatewayService {
     this.server.emit('commentEvent', comment);
   }
 
+  sendCommmentDeletedMessage(commentId: number) {
+    this.server.emit('commentDeletedEvent', commentId);
+  }
+
   sendDeleteOrderItemMessage(itemId: number) {
     this.server.emit('orderItemDeleteEvent', itemId);
   }
