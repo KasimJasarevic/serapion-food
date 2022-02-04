@@ -34,7 +34,7 @@
         class="font-normal text-xs text-serapion-grey-100"
         *ngIf="message.user"
       >
-        {{ isMessageOwner(message) ? "You" : message.user.firstName + "," }}
+        {{ isMessageOwner(message) ? "You," : message.user.firstName + "," }}
         {{ message.commentedOn | date: "shortTime" }}
       </strong>
       <div

@@ -81,7 +81,7 @@ export class OrderService {
         .leftJoinAndSelect('order.user', 'user')
         .leftJoinAndSelect('order.restaurant', 'restaurant')
         .leftJoinAndSelect('order.comments', 'comments')
-        .leftJoinAndSelect('comments.user', 'user')
+        .leftJoinAndSelect('comments.user', 'users')
         .where('order.id = :id', { id: id })
         .getOne(),
     );

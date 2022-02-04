@@ -12,12 +12,12 @@ export class CleanupDatabaseService {
 
   private logger = new Logger(CleanupDatabaseService.name);
 
-  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_3PM)
   // @Cron('*/10 * * * * *')
+  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_3PM)
   cleanDatabase() {
     // TODO: Clean orders, order items, comments in past, keep current day
-    // console.log('Database cleaned');
     const today = new Date();
+    this.logger.warn(`TIME[${today}]`, `CleanUpDatabaseService`);
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
     this._orderRepo
