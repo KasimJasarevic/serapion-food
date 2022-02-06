@@ -144,7 +144,7 @@ export class OrderItemService {
 
     // orderItem.orderedItems.forEach((x) => console.log(x.user.id));
     // console.log(indx);
-    const indx = orderItem.orderedItems.findIndex((x) => x.user.id == userId);
+    const indx = orderItem?.orderedItems.findIndex((x) => x.user.id == userId);
     console.log(orderItem.orderedItems.length);
     orderItem.orderedItems.splice(indx, 1);
     console.log(orderItem.orderedItems.length);

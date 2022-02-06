@@ -37,8 +37,8 @@ export class AuthService {
             newUser.firstName = data.user.firstName;
             newUser.lastName = data.user.lastName;
             newUser.email = data.user.email;
-            newUser.photo = data.user.photo;
-            newUser.googleId = data.user.googleId;
+            newUser.photo = data.user.photoUrl;
+            newUser.googleId = data.user.id;
 
             this.usersService.store(newUser);
             return this.login(newUser);

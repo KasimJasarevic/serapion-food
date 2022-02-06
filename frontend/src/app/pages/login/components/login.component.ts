@@ -1,13 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { LocalStorageTypes } from 'src/app/core/enums/local-storage-types';
-import { IUser } from 'src/app/core/models/user.model';
-import { UserService } from 'src/app/core/services/user.service';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '@environments/environment';
-import { SubSink } from '@core/helpers/sub-sink';
-import { ThemeService } from 'src/app/shared/services/theme.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {LocalStorageTypes} from 'src/app/core/enums/local-storage-types';
+import {UserService} from 'src/app/core/services/user.service';
+import {HttpClient} from '@angular/common/http';
+import {SubSink} from '@core/helpers/sub-sink';
+import {ThemeService} from 'src/app/shared/services/theme.service';
+import {GoogleLoginProvider, SocialAuthService} from "angularx-social-login";
 
 @Component({
   selector: 'app-login',
@@ -24,50 +23,49 @@ export class LoginComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _userService: UserService,
     private _httpClient: HttpClient,
-    private _themeService: ThemeService
+    private _themeService: ThemeService,
+    private _socialAuthService: SocialAuthService
   ) {
     this.errorMessage = null;
-    this._activatedRoute.paramMap.subscribe((params) => {
-      const token = params.get('token');
+  }
 
-      if (token) {
-        //   this.errorMessage = 'Google login failed!';
-        // } else {
+  ngOnInit(): void {
+    this.subs.sink = this._socialAuthService.authState.subscribe((user) => {
+      if (user !== null && this._userService.user === null) {
+        this._httpClient.post('auth/google/callback', user).subscribe((response: any) => {
+          if (response.token) {
+            try {
+              const data = this._jwtHelperService.decodeToken(response.token);
 
-        try {
-          const data = this._jwtHelperService.decodeToken(token);
+              if (!data) {
+                this.errorMessage = 'Google login failed, token not found!';
+              } else {
+                localStorage.setItem(
+                  LocalStorageTypes.FOOD_ORDERING_AUTH_TOKEN,
+                  response.token
+                );
 
-          if (!data) {
-            this.errorMessage = 'Google login failed, token not found!';
-          } else {
-            localStorage.setItem(
-              LocalStorageTypes.FOOD_ORDERING_AUTH_TOKEN,
-              token
-            );
+                this._userService.user = {
+                  id: data.id,
+                  firstName: data.firstName,
+                  lastName: data.lastName,
+                  email: data.email,
+                  photo: data.photo,
+                };
 
-            const user: IUser = {
-              id: data.id,
-              firstName: data.firstName,
-              lastName: data.lastName,
-              email: data.email,
-              photo: data.photo,
-            };
-
-            this._userService.user = user;
-
-            this._router.navigate(['']);
+                this._router.navigate(['']);
+              }
+            } catch {
+              this.errorMessage = "Can't decode recieved token!";
+            }
           }
-        } catch {
-          this.errorMessage = "Can't decode recieved token!";
-        }
+        });
       }
     });
   }
 
-  ngOnInit(): void {}
-
   googleSignIn() {
-    window.location.href = environment.google_login_url;
+    this._socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
 
   changeTheme() {

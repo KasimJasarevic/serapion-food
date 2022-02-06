@@ -26,7 +26,7 @@ async function bootstrap() {
 
   app.enableCors();
   app.setGlobalPrefix('api', {
-    exclude: ['auth/google/callback'],
+    exclude: ['auth/google/callback', 'auth/google'],
   });
 
   await app.listen(port);
