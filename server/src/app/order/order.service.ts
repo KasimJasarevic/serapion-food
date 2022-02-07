@@ -62,6 +62,8 @@ export class OrderService {
   }
 
   getAllOrders(): Observable<OrderDTO[]> {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
     return from(
       this._orderRepo
         .createQueryBuilder('order')
@@ -70,6 +72,7 @@ export class OrderService {
         .leftJoinAndSelect('order.orderItems', 'orderItems')
         .leftJoinAndSelect('orderItems.orderedItems', 'orderedItems')
         .leftJoinAndSelect('orderedItems.user', 'users')
+        .where('order.openedAt >= :date', { date: date })
         .getMany(),
     );
   }
