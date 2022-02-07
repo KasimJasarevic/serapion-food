@@ -73,7 +73,9 @@
     <div class="uppercase text-xs font-semibold">
       <button
         (click)="removeItem(item)"
-        [disabled]="order?.status === orderStatus.INACTIVE"
+        [disabled]="
+          order?.status === orderStatus.INACTIVE || !haveThisItem(item)
+        "
       >
         <i
           class="fas fa-angle-left fa-sm pr-1 cursor-pointer"
@@ -91,4 +93,3 @@
   </div>
 </div>
 <!-- ITEMS END -->
-

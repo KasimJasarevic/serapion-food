@@ -9,6 +9,9 @@ import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { OrderType } from '../../orders/models/order-type-types';
 import { OrderStatus } from '../../orders/models/order-status-types';
 import { ModalService } from '../services/modal.service';
+import { switchMap } from 'rxjs';
+import { UserService } from '@core/services/user.service';
+import { IUser } from '@core/models/user.model';
 
 @Component({
   selector: 'app-place-list',
@@ -28,6 +31,7 @@ export class PlaceListComponent implements OnInit, OnDestroy {
     private _websocketService: WebsocketMessagesService,
     private _notificationService: NotificationService,
     private _orderService: OrderService,
+    private _userService: UserService,
     private _modalService: ModalService
   ) {}
 
@@ -91,8 +95,42 @@ export class PlaceListComponent implements OnInit, OnDestroy {
       status: OrderStatus.ACTIVE,
     };
 
-    this.subs.sink = this._orderService.addNewOrder(orderData).subscribe();
-    this._notificationService.sendOpenRestaurantMessage(place.name);
+    this.subs.sink = this._orderService
+      .addNewOrder(orderData)
+      .pipe(switchMap(() => this._userService.getAllUsers()))
+      .subscribe((users: IUser[]) => {
+        if (users && !!users.length) {
+          const currentUser = JSON.parse(
+            localStorage.getItem(
+              LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+            ) as string
+          );
+
+          if (currentUser && currentUser.subscriptionId) {
+            const ids: string[] = <string[]>(
+              users
+                .filter(
+                  ({ subscriptionId }: IUser) =>
+                    subscriptionId !== currentUser.subscriptionId
+                )
+                .map(({ subscriptionId }: IUser) => subscriptionId)
+            );
+
+            // console.log(ids);
+            if (!!ids.length) {
+              // const str = `Order ${order?.restaurant.name} completed! (${formatTime})`;
+              const str = `Restaurant ${place.name} opened!`;
+              this._notificationService.sendNotificationToUsers(ids, str);
+            }
+          }
+        }
+        // if (currentUser && currentUser.subscriptionId) {
+        //   ids = ids.filter((id) => id != currentUser.subscriptionId);
+        // }
+      });
+
+    // Change type of this notification
+    // this._notificationService.sendOpenRestaurantMessage(place.name);
   }
 
   editRestaurant(id: number) {

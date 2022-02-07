@@ -9,12 +9,49 @@
         order.status === orderStatus.ACTIVE
           ? 'border-serapion-green'
           : 'border-serapion-purple'
-      }} border-t-4 lg:hover:scale-102 dark:bg-serapion-black-200"
+      }} border-t-0 lg:hover:scale-102 dark:bg-serapion-black-200"
     >
       <!-- CARD HEADER -->
       <div class="flex flex-row items-start justify-items-between z-10">
         <div class="flex-1">
-          <div class="flex flex-row space-x-2 items-center">
+          <div
+            class="text-xs flex flex-row justify-between items-center space-x-6 w-full py-1 px-1 rounded-md bg-serapion-blue-100 dark:bg-serapion-black-100"
+          >
+            <div
+              class="{{
+                order.status === orderStatus.ACTIVE
+                  ? 'bg-serapion-green'
+                  : 'bg-serapion-purple'
+              }}
+              rounded-md px-6 py-1 uppercase text-serapion-white"
+            >
+              {{ order.status === orderStatus.ACTIVE ? "active" : "finished" }}
+            </div>
+            <a
+              class="group flex-1 flex flex-row items-center justify-between text-serapion-grey-100 cursor-pointer"
+              [href]="order.restaurant.menu"
+              target="_blank"
+              *ngIf="order.restaurant.menu"
+            >
+              <span
+                class="group-hover:text-serapion-grey-200 dark:group-hover:text-serapion-white transition-all"
+                >Check out restaurant menu</span
+              >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 group-hover:text-serapion-grey-200 dark:group-hover:text-serapion-white transition-all"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </a>
+          </div>
+          <div class="flex flex-row space-x-2 items-center mt-4">
             <i class="fas fa-store pr-1"></i>
             <span class="font-thin uppercase text-lg">
               {{ order.restaurant.name }}
@@ -38,7 +75,9 @@
           >
             <i class="fas fa-xs fa-user pr-1"></i>
             <p class="flex-1">
-              {{ getOwnerFullName(order) | titlecase }} has opened the order
+              {{ getOwnerFullName(order) | titlecase }} has opened the order @{{
+                order.openedAt | date: "shortTime"
+              }}
             </p>
           </div>
           <div
@@ -143,7 +182,7 @@
             </p>
           </div>
         </div>
-        <div>
+        <!-- <div>
           <a
             class="btn btn-white"
             [href]="order.restaurant.menu"
@@ -152,7 +191,7 @@
           >
             <i class="fas fa-globe fa-sm pr-1"></i> Menu
           </a>
-        </div>
+        </div> -->
       </div>
       <!-- CARD HEADER END -->
 

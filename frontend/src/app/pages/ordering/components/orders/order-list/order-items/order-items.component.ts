@@ -191,18 +191,27 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
   }
 
   haveThisItem(item: IItem) {
-    const currentUser = JSON.parse(
-      <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
-    );
-    const idx = item.orderedItems!.findIndex(
-      (oi) => oi.user?.id == currentUser.id
-    );
+    if (item) {
+      const currentUser = JSON.parse(
+        <string>(
+          localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
+        )
+      );
 
-    if (idx === -1) {
-      return false;
+      if (item.orderedItems) {
+        const idx = item.orderedItems.findIndex(
+          (oi) => oi.user?.id == currentUser.id
+        );
+
+        if (idx === -1) {
+          return false;
+        }
+
+        return true;
+      }
     }
 
-    return true;
+    return false;
   }
 
   ngOnDestroy(): void {

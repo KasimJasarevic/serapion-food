@@ -49,7 +49,9 @@
           {{ message.comment }}
         </p>
         <i
-          *ngIf="isMessageOwner(message)"
+          *ngIf="
+            isMessageOwner(message) && order?.status === orderStatus.ACTIVE
+          "
           class="fas fa-sm fa-trash text-serapion-grey-100 hover:text-serapion-grey-200 transition-all duration-300 dark:hover:text-serapion-white cursor-pointer"
           (click)="handleDeleteMessage(message)"
         ></i>

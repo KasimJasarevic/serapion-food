@@ -87,6 +87,17 @@ export class OrderChatComponent
       );
     }
 
+    // this.subs.sink = this._websocketService
+    //   .onOrderCompleted()
+    //   .pipe(
+    //     switchMap((data: IOrder) => this._orderService.getOrderById(data.id))
+    //   )
+    //   .subscribe((data: IOrder) => {
+    //     if (data && this.order && data.id === this.order.id) {
+    //       this.order = data;
+    //     }
+    //   });
+
     this.subs.sink = this._websocketService
       .onCommentDeleted()
       .pipe(switchMap(() => this._orderService.getComments(this.order!.id)))
@@ -191,10 +202,20 @@ export class OrderChatComponent
             });
           });
 
+          const currentUser = JSON.parse(
+            localStorage.getItem(
+              LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+            ) as string
+          );
           ids = [...new Set(ids)];
+          if (currentUser && currentUser.subscriptionId) {
+            ids = ids.filter((id) => id !== currentUser.subscriptionId);
+          }
 
-          const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
-          this._notificationService.sendNotificationToUsers(ids, str);
+          if (!!ids.length) {
+            const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
+            this._notificationService.sendNotificationToUsers(ids, str);
+          }
         }
       });
 
@@ -225,7 +246,15 @@ export class OrderChatComponent
         });
       }
 
+      const currentUser = JSON.parse(
+        localStorage.getItem(
+          LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+        ) as string
+      );
       ids = [...new Set(ids)];
+      if (currentUser && currentUser.subscriptionId) {
+        ids = ids.filter((id) => id != currentUser.subscriptionId);
+      }
 
       if (!!ids.length) {
         const str = `New mention in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
@@ -284,7 +313,19 @@ export class OrderChatComponent
   };
 
   private _populateMentionList = (users: IUser[]) => {
-    const uniqueUsers: IUser[] = [
+    const currentUser = JSON.parse(
+      localStorage.getItem(
+        LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+      ) as string
+    );
+
+    if (currentUser && currentUser.subscriptionId) {
+      users = users.filter(
+        (user) => user.subscriptionId !== currentUser.subscriptionId
+      );
+    }
+
+    let uniqueUsers: IUser[] = [
       ...new Map(users.map((user) => [user['id'], user])).values(),
     ];
 
@@ -297,8 +338,9 @@ export class OrderChatComponent
       };
 
       uniqueUsers.unshift(dummyAll);
-      this.users$.next(uniqueUsers);
     }
+
+    this.users$.next(uniqueUsers);
   };
 
   isMessageOwner = ({ user }: IMessage): boolean => {

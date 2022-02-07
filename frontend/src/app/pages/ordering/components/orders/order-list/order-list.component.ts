@@ -17,6 +17,7 @@ import { OrderStatus } from '../models/order-status-types';
 import { OrderType } from '../models/order-type-types';
 import { IOrder } from '../models/order.model';
 import { OrderService } from '../services/order.service';
+import { IMessage } from './order-chat/models/order-chat.model';
 import { IItem } from './order-items/models/order-item.model';
 
 @Component({
@@ -112,6 +113,23 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
 
     this.subs.sink = this._websocketService
+      .onCommentReceived()
+      .pipe(
+        switchMap(({ order }: any) => {
+          return this._orderService.getOrderById(order.id);
+        })
+      )
+      .subscribe((updateOrder: IOrder) => {
+        if (updateOrder) {
+          this.orders.forEach((order: IOrder) => {
+            if (order.id === updateOrder.id) {
+              order = updateOrder;
+            }
+          });
+        }
+      });
+
+    this.subs.sink = this._websocketService
       .onRestaurantAdded()
       .subscribe((next: any) => {
         console.log();
@@ -175,12 +193,18 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe((updatedUser: IUser) => {
         this.orders.forEach((order: IOrder) => {
           if (order.status === this.orderStatus.ACTIVE) {
-            order.orderItems.forEach((data) => {
-              data.orderedItems?.forEach((item) => {
-                item.user =
-                  item.user!.id === updatedUser.id ? updatedUser : item.user;
+            if (order.orderItems) {
+              order.orderItems.forEach((data) => {
+                if (data.orderedItems) {
+                  data.orderedItems?.forEach((item) => {
+                    item.user =
+                      item.user!.id === updatedUser.id
+                        ? updatedUser
+                        : item.user;
+                  });
+                }
               });
-            });
+            }
           }
         });
 
@@ -241,6 +265,12 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         .pipe(
           switchMap((items) => {
             order.orderItems = items;
+            return this._orderService.getComments(order.id);
+          })
+        )
+        .pipe(
+          switchMap((comments) => {
+            order.comments = comments;
             return this._orderService.completeOrder(order.id, order);
           })
         )
@@ -260,10 +290,33 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             });
           });
 
+          // Filter ids
+          const currentUser = JSON.parse(
+            localStorage.getItem(
+              LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+            ) as string
+          );
           ids = [...new Set(ids)];
+          if (currentUser && currentUser.subscriptionId) {
+            ids = ids.filter((id) => id != currentUser.subscriptionId);
+          }
 
-          const str = `Order ${order?.restaurant.name} completed!`;
-          this._notificationService.sendNotificationToUsers(ids, str);
+          if (!!ids.length && order.arrivalTime && order.type) {
+            const formatTime = order.arrivalTime.toLocaleTimeString(
+              navigator.language,
+              {
+                hour: '2-digit',
+                minute: '2-digit',
+              }
+            );
+
+            const str = `Order ${order?.restaurant.name} completed, and ${
+              order.type === this.orderType.DELIVERY
+                ? 'it will arrive'
+                : 'we depart'
+            } @${formatTime}!`;
+            this._notificationService.sendNotificationToUsers(ids, str);
+          }
         });
     }
   }
@@ -388,10 +441,20 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
           });
         });
 
+        const currentUser = JSON.parse(
+          localStorage.getItem(
+            LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+          ) as string
+        );
         ids = [...new Set(ids)];
+        if (currentUser && currentUser.subscriptionId) {
+          ids = ids.filter((id) => id != currentUser.subscriptionId);
+        }
 
-        const str = `Last call ${order?.restaurant.name}!`;
-        this._notificationService.sendNotificationToUsers(ids, str);
+        if (!!ids.length) {
+          const str = `Last call ${order?.restaurant.name}!`;
+          this._notificationService.sendNotificationToUsers(ids, str);
+        }
       });
   }
 
@@ -421,10 +484,20 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
           });
         });
 
+        const currentUser = JSON.parse(
+          localStorage.getItem(
+            LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+          ) as string
+        );
         ids = [...new Set(ids)];
+        if (currentUser && currentUser.subscriptionId) {
+          ids = ids.filter((id) => id != currentUser.subscriptionId);
+        }
 
-        const str = `Order arrived ${order?.restaurant.name}!`;
-        this._notificationService.sendNotificationToUsers(ids, str);
+        if (!!ids.length) {
+          const str = `Order arrived ${order?.restaurant.name}!`;
+          this._notificationService.sendNotificationToUsers(ids, str);
+        }
       });
   }
 }
