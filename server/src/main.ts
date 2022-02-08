@@ -11,12 +11,12 @@ async function bootstrap() {
         new winston.transports.File({
           filename: 'logs/fo-serapion.log',
           level: 'warn',
-          maxsize: 102400,
+          maxsize: 104857600,
         }),
         new winston.transports.File({
           filename: 'logs/fo-serapion.log',
           level: 'error',
-          maxsize: 102400,
+          maxsize: 104857600,
         }),
       ],
     }),

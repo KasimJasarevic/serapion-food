@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable, tap } from 'rxjs';
-import { CleanupDatabaseService } from '../database/cleanup-database.service';
 import { WebsocketGatewayService } from '../events/websocket-gateway.service';
 import { OrderDTO } from './order.dto';
 import { OrderService } from './order.service';
@@ -21,7 +20,6 @@ import { OrderService } from './order.service';
 export class OrderController {
   constructor(
     private _orderService: OrderService,
-    private _cleanUpService: CleanupDatabaseService,
     private _websocketGatewayService: WebsocketGatewayService,
   ) {}
 
@@ -61,16 +59,8 @@ export class OrderController {
     this._orderService.deleteOrderById(id);
   }
 
-  @Delete()
-  deleteAllOrders() {
-    this._cleanUpService.cleanDatabase();
-    // this._orderService.deleteAllOrders();
-  }
-
   @Put(':id')
   completeOrder(@Param('id') id: number, @Body() order: any) {
-    // console.log(id);
-    // console.log(order);
     return this._orderService.completeOrder(id, order).pipe(
       tap((next: OrderDTO) => {
         this._websocketGatewayService.sendOrderCompletedMessage(next);
@@ -83,12 +73,8 @@ export class OrderController {
     @Param('id') id: number,
     @Body() payload: any,
   ): Observable<any> {
-    // console.log(id);
-    // console.log(payload);
-
     return this._orderService.updateTypeById(id, payload).pipe(
       tap(() => {
-        // console.log('Event fired!');
         this._websocketGatewayService.sendOrderTypeUpdatedMessage(id);
       }),
     );
