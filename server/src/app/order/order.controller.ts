@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable, switchMap, tap } from 'rxjs';
-import { CleanupDatabaseService } from '../database/cleanup-database.service';
 import { WebsocketGatewayService } from '../events/websocket-gateway.service';
 import { OrderDTO } from './order.dto';
 import { OrderService } from './order.service';
@@ -22,7 +21,6 @@ export class OrderController {
   constructor(
     private _orderService: OrderService,
     private _websocketGatewayService: WebsocketGatewayService,
-    private _cleanUpService: CleanupDatabaseService,
   ) {}
 
   @Get()
@@ -48,21 +46,6 @@ export class OrderController {
 
   @Delete(':id')
   deleteOrderById(@Param('id') id: number) {
-    // this._orderService.getOrderById(id).subscribe((order: OrderDTO) => {
-    // Restaurant closed message?
-    // restaurantClosedMessage
-    // this._websocketGatewayService.sendNewRestaurantMessage(order.restaurant);
-
-    //   res.json(order);
-    // });
-
-    // this._orderService.getOrderById(id).pipe(
-    //   switchMap((order: OrderDTO) => {
-    //     res.json(order);
-    //     return this._orderService.deleteOrderById(id);
-    //   }),
-    // );
-
     this._orderService.deleteOrderById(id);
   }
 
@@ -83,8 +66,7 @@ export class OrderController {
 
   @Delete()
   deleteAllOrders() {
-    this._cleanUpService.cleanDatabase();
-    // this._orderService.deleteAllOrders();
+    this._orderService.deleteAllOrders();
   }
 
   @Put(':id')
@@ -106,12 +88,5 @@ export class OrderController {
         this._websocketGatewayService.sendOrderTypeUpdatedMessage(id);
       }),
     );
-  }
-
-  @Get('docs/:id')
-  testQueryBuilder() {
-    console.log('Testing TypeORMs QueryBuilder.');
-
-    return this._orderService.testQueryBuilder();
   }
 }

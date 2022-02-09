@@ -13,7 +13,6 @@ export class OrderItemToUserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // On delete set all order_id item of an order to null?
   @ManyToOne(() => OrderItemEntity, (orderItem) => orderItem.orderedItems, {
     onDelete: 'CASCADE',
   })

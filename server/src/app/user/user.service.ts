@@ -17,7 +17,6 @@ export class UserService {
   }
 
   findByGoogleId(googleId: string): Observable<UserDTO> {
-    // return from(this.userRepo.find(params));
     return from(
       this.userRepo
         .createQueryBuilder('user')
@@ -27,8 +26,6 @@ export class UserService {
   }
 
   findByEmail(email: string): Observable<UserDTO> {
-    // return from(this.userRepo.find(params));
-
     return from(
       this.userRepo
         .createQueryBuilder('user')
