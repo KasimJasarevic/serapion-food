@@ -20,7 +20,6 @@ import { IUser } from '@core/models/user.model';
 })
 export class PlaceListComponent implements OnInit, OnDestroy {
   @Input() filterStr: string = '';
-  // Trick to update pipe, maybe there is a better solution for this.
   collapsedPlaces$ = this._placeService.collapsedPlaces$;
   updated: Date = new Date();
 
@@ -139,13 +138,7 @@ export class PlaceListComponent implements OnInit, OnDestroy {
             }
           }
         }
-        // if (currentUser && currentUser.subscriptionId) {
-        //   ids = ids.filter((id) => id != currentUser.subscriptionId);
-        // }
       });
-
-    // Change type of this notification
-    // this._notificationService.sendOpenRestaurantMessage(place.name);
   }
 
   editRestaurant(id: number) {
@@ -165,7 +158,6 @@ export class PlaceListComponent implements OnInit, OnDestroy {
         .map((order) => order.status);
 
       if (!!activeOrders.length) {
-        // If place has active orders commands are disabled = true
         return true;
       }
     }

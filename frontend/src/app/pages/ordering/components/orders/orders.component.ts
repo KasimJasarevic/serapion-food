@@ -1,11 +1,10 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
-import {IUser} from '@core/models/user.model';
-import {UserService} from '@core/services/user.service';
-import {SidebarService} from 'src/app/shared/services/sidebar.service';
-import {ThemeService} from 'src/app/shared/services/theme.service';
-import {SocialAuthService} from "angularx-social-login";
-import {find} from "rxjs";
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { IUser } from '@core/models/user.model';
+import { UserService } from '@core/services/user.service';
+import { SidebarService } from 'src/app/shared/services/sidebar.service';
+import { ThemeService } from 'src/app/shared/services/theme.service';
+import { SocialAuthService } from 'angularx-social-login';
 
 @Component({
   selector: 'app-orders',

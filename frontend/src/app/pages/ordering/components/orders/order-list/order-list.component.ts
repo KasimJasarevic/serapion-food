@@ -268,21 +268,10 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
           .deleteOrderById(id)
           .subscribe((data: any) => {
             if (data && data.id) {
-              // Returns deleted order
               this.orders = this.orders.filter(
                 (order: IOrder) => order.id !== data.id
               );
             }
-
-            // I don't have any data here, but I can search orders field
-            // and get restaurant name...
-            // const restaurant = this.orders.find(
-            //   (order: IOrder) => order.id === id
-            // );
-            // console.log(restaurant);
-            // this._notificationService.sendCloseRestaurantMessage(
-            //   data.restaurant.name
-            // );
           });
       }
     }
@@ -328,7 +317,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             });
           });
 
-          // Filter ids
           const currentUser = JSON.parse(
             localStorage.getItem(
               LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
@@ -363,19 +351,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.subs.unsubscribe();
   }
 
-  // ngAfterViewInit(): void {
-  //   this.subs.sink = this.children?.changes.subscribe(() => {
-  //     this.children?.toArray().map((next) => console.log(next));
-  //   })!;
-  // }
-
-  // A lifecycle hook that is called after the default change detector has completed checking a component's view for changes.
-  // ngAfterViewChecked(): void {
-  //   if (this.children) {
-  //     console.log(this.children);
-  //   }
-  // }
-
   public getOwnerFullName(order: IOrder) {
     return `${order.user.firstName} ${order.user.lastName}`;
   }
@@ -400,17 +375,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     const currentUser = JSON.parse(
       <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
     );
-
-    // const order = this.orders.find((o) => o.id == next.order.id);
-    // this.subs.sink = this._orderService
-    //   .getOrderOrderer(order!.id)
-    //   .subscribe((data) => {
-    //     if (data) {
-    //       this.subs.sink = this._userService
-    //         .getById(data.user_id)
-    //         .subscribe((user) => (order!.orderer = user));
-    //     }
-    //   });
 
     if (currentUser) {
       const orderer = this.orders.find((ord) => ord.id == order.id)?.orderer;
@@ -442,14 +406,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
 
-  doSomething(order: IOrder) {
-    // this.orderTypeForm.get('orderType')?.setValue(order.type);
-
-    return true;
-  }
-
   onOrderTypeChange(order: IOrder) {
-    // Order id and order
     const id = order.id;
 
     const ind = this.orders.findIndex((order) => order.id == id);
@@ -464,8 +421,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   sendLastCall(order: IOrder) {
-    // console.log(`Last call for ${order.restaurant.name}!`);
-
     this.subs.sink = this._orderService
       .getOrderItems(order.id)
       .subscribe((item: IItem[]) => {
@@ -507,8 +462,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   sendArrivedCall(order: IOrder) {
-    // console.log(`Last call for ${order.restaurant.name}!`);
-
     this.subs.sink = this._orderService
       .getOrderItems(order.id)
       .subscribe((item: IItem[]) => {

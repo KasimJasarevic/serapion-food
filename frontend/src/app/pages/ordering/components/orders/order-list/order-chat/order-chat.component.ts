@@ -38,54 +38,25 @@ import { IMessage } from './models/order-chat.model';
   templateUrl: './order-chat.component.html',
   styleUrls: ['./order-chat.component.scss'],
 })
-export class OrderChatComponent
-  implements
-    OnInit,
-    OnDestroy,
-    AfterViewChecked,
-    AfterViewInit,
-    AfterContentInit
-{
+export class OrderChatComponent implements OnInit, OnDestroy {
   @Input() order: IOrder | undefined;
   @ViewChild('commentBox', { static: false }) commentBox!: ElementRef;
-  // private _scrollSub$: BehaviorSubject<number | null> = new BehaviorSubject<
-  //   number | null
-  // >(null);
-  // scrollPosition: Observable<number | null> = this._scrollSub$.asObservable();
-
   orderStatus = OrderStatus;
-  // items$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-
   users$: BehaviorSubject<IUser[]> = new BehaviorSubject<IUser[]>([]);
   toMention: IUser[] = [];
-
   messages: IMessage[] = [];
   private subs = new SubSink();
-
   commentForm = new FormGroup({
     comment: new FormControl(null, Validators.required),
   });
 
   constructor(
     private _orderService: OrderService,
-    private _userService: UserService,
     private _websocketService: WebsocketMessagesService,
     private _notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
-    // this.subs.sink = this._userService.getAllUsers().subscribe((data) => {
-    //   const dummyAll: IUser = {
-    //     id: -1,
-    //     firstName: 'All',
-    //     lastName: 'All',
-    //     email: 'All',
-    //   };
-
-    //   data.unshift(dummyAll);
-    //   this.users$.next(data);
-    // });
-
     if (this.order) {
       this.subs.sink = this._orderService
         .getComments(this.order.id)
@@ -100,17 +71,6 @@ export class OrderChatComponent
         this._populateMentionList(users)
       );
     }
-
-    // this.subs.sink = this._websocketService
-    //   .onOrderCompleted()
-    //   .pipe(
-    //     switchMap((data: IOrder) => this._orderService.getOrderById(data.id))
-    //   )
-    //   .subscribe((data: IOrder) => {
-    //     if (data && this.order && data.id === this.order.id) {
-    //       this.order = data;
-    //     }
-    //   });
 
     this.subs.sink = this._websocketService
       .onCommentDeleted()
@@ -160,47 +120,6 @@ export class OrderChatComponent
       });
   }
 
-  ngAfterContentInit(): void {
-    // this.commentBox.nativeElement.scrollTop =
-    //   this.commentBox.nativeElement.scrollHeight;
-  }
-
-  ngAfterViewInit(): void {
-    // this.subs.sink = this.scrollPosition
-    //   .pipe(
-    //     tap(() =>
-    //       this._scrollSub$.next(this.commentBox.nativeElement.scrollHeight)
-    //     ),
-    //     delay(0)
-    //   )
-    //   .subscribe();
-    // this.commentBox.nativeElement.scrollTop =
-    //   this.commentBox.nativeElement.scrollHeight;
-    // this.commentBox.nativeElement.scrollIntoView({ block: 'end' });
-    // this.users.forEach((user) => {
-    //   this.items.push(user.firstName);
-    // });
-  }
-
-  ngAfterViewChecked(): void {
-    // this.subs.sink = this._userService
-    //   .getAllUsers()
-    //   .subscribe((data: IUser[]) => {
-    //     data.forEach((user) => {
-    //       this.users.push(user.firstName);
-    //     });
-    //   });
-    // this._commentBox.nativeElement.scrollTop =
-    //   this._commentBox.nativeElement.scrollHeight;
-    // this.subs.sink = this._websocketService
-    //   .onCommentReceived()
-    //   .subscribe(
-    //     (next) =>
-    //       (this._commentBox.nativeElement.scrollTop =
-    //         this._commentBox.nativeElement.scrollHeight)
-    //   );
-  }
-
   onAddComment() {
     const comment: IMessage = {
       comment: this.commentForm.get('comment')?.value,
@@ -222,7 +141,6 @@ export class OrderChatComponent
       .subscribe((item: IItem[]) => {
         let ids: string[] = [];
 
-        // If items are found
         if (!!item.length) {
           item.forEach((data) => {
             data.orderedItems?.forEach((oi) => {
@@ -250,25 +168,18 @@ export class OrderChatComponent
       });
 
     if (!!this.toMention.length) {
-      // console.log('Mention!');
-      // const matches = [...comment.comment!.matchAll(/@(\w+)/g)];
-      // for (const match of matches) {
-      //   const matchedName = match[1];
-      // console.log(match[1]);
       const indAll = this.toMention.findIndex(
         (user) => user.firstName === 'All'
       );
 
       let ids: string[] = [];
       if (indAll !== -1) {
-        // console.log('All users');
         this.users$.value.forEach((user: IUser) => {
           if (user.subscriptionId) {
             ids.push(user.subscriptionId);
           }
         });
       } else {
-        // console.log('Specific users');
         this.toMention.forEach((user: IUser) => {
           if (user.subscriptionId) {
             ids.push(user.subscriptionId);
@@ -311,19 +222,9 @@ export class OrderChatComponent
   }
 
   onItemSelected(value: any, id: number) {
-    // console.log(value);
-    // console.log(id);
     if (id === this.order?.id) {
       this.toMention.push(value);
-      // console.log(this.toMention);
     }
-
-    // Use this later !!!
-    // const str = 'The @quick, brown fox @jumps @over @a lazy @dog.';
-    // const matches = [...str.matchAll(/@(\w+)/g)];
-    // for (const match of matches) {
-    //   console.log(match[1]);
-    // }
   }
 
   ngOnDestroy(): void {

@@ -182,16 +182,6 @@
             </p>
           </div>
         </div>
-        <!-- <div>
-          <a
-            class="btn btn-white"
-            [href]="order.restaurant.menu"
-            target="_blank"
-            *ngIf="order.restaurant.menu"
-          >
-            <i class="fas fa-globe fa-sm pr-1"></i> Menu
-          </a>
-        </div> -->
       </div>
       <!-- CARD HEADER END -->
 
@@ -264,11 +254,6 @@
       <div
         class="flex-grow pt-8 flex flex-row-reverse justify-end items-center"
       >
-        <!-- 'btn-disabled':
-              !isOrderOrderer(order) || order.status === orderStatus.INACTIVE -->
-        <!-- [disabled]="
-            !isOrderOrderer(order) || order.status === orderStatus.INACTIVE
-          " -->
         <button
           class="btn flex-1 ml-1"
           *ngIf="order.status === orderStatus.ACTIVE"
