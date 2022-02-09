@@ -21,8 +21,8 @@ import { OrderService } from './order.service';
 export class OrderController {
   constructor(
     private _orderService: OrderService,
-    private _cleanUpService: CleanupDatabaseService,
     private _websocketGatewayService: WebsocketGatewayService,
+    private _cleanUpService: CleanupDatabaseService,
   ) {}
 
   @Get()
@@ -89,8 +89,6 @@ export class OrderController {
 
   @Put(':id')
   completeOrder(@Param('id') id: number, @Body() order: any) {
-    // console.log(id);
-    // console.log(order);
     return this._orderService.completeOrder(id, order).pipe(
       tap((next: OrderDTO) => {
         this._websocketGatewayService.sendOrderCompletedMessage(next);
@@ -103,12 +101,8 @@ export class OrderController {
     @Param('id') id: number,
     @Body() payload: any,
   ): Observable<any> {
-    // console.log(id);
-    // console.log(payload);
-
     return this._orderService.updateTypeById(id, payload).pipe(
       tap(() => {
-        // console.log('Event fired!');
         this._websocketGatewayService.sendOrderTypeUpdatedMessage(id);
       }),
     );

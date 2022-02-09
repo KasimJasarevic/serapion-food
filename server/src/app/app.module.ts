@@ -17,6 +17,7 @@ import { OrderItemUserModule } from './order-item-user/order-item-user.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorFilter } from './core/error.filter';
 import { LoggingInterceptor } from './core/logging.interceptor';
+import { CleanupDatabaseService } from './database/cleanup-database.service';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { LoggingInterceptor } from './core/logging.interceptor';
     OrderItemUserModule,
   ],
   providers: [
+    CleanupDatabaseService,
     Logger,
     {
       provide: APP_FILTER,
@@ -55,4 +57,8 @@ import { LoggingInterceptor } from './core/logging.interceptor';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private _cleanupDatabaseService: CleanupDatabaseService) {
+    this._cleanupDatabaseService.cleanDatabase();
+  }
+}

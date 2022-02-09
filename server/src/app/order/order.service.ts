@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
@@ -9,36 +9,12 @@ import { OrderEntity } from './order.entity';
 
 @Injectable()
 export class OrderService {
+  private logger = new Logger(OrderService.name);
   constructor(
     @InjectRepository(OrderEntity) private _orderRepo: Repository<OrderEntity>,
   ) {}
 
   testQueryBuilder(): Observable<any> {
-    // return from(
-    //   this._orderRepo
-    //     .createQueryBuilder('order')
-    //     .leftJoin('order.user', 'user')
-    //     .leftJoin('order.restaurant', 'restaurant')
-    //     .leftJoin('order.orderItems', 'orderItems')
-    //     .leftJoin('orderItems.orderedItems', 'orderedItems')
-    //     .leftJoin('orderedItems.user', 'users')
-    //     .select(['order.id'])
-    //     .addSelect('user.firstName')
-    //     .getMany(),
-    // );
-    // return from(
-    //   this._orderRepo
-    //     .createQueryBuilder('order')
-    //     .leftJoin('order.user', 'user')
-    //     .leftJoin('order.restaurant', 'restaurant')
-    //     .leftJoin('order.orderItems', 'orderItems')
-    //     .leftJoin('orderItems.orderedItems', 'orderedItems')
-    //     .leftJoin('orderedItems.user', 'users')
-    //     .select(['order.id'])
-    //     .addSelect(['orderedItems.user'])
-    //     .getMany(),
-    // );
-
     return from(
       this._orderRepo
         .createQueryBuilder('o')
@@ -53,7 +29,6 @@ export class OrderService {
             .orderBy('user.last_order', 'DESC')
             .limit(1)
             .getQuery();
-          console.log(subquery);
 
           return 'u.id = ' + subquery;
         })
@@ -62,6 +37,8 @@ export class OrderService {
   }
 
   getAllOrders(): Observable<OrderDTO[]> {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
     return from(
       this._orderRepo
         .createQueryBuilder('order')
@@ -70,6 +47,7 @@ export class OrderService {
         .leftJoinAndSelect('order.orderItems', 'orderItems')
         .leftJoinAndSelect('orderItems.orderedItems', 'orderedItems')
         .leftJoinAndSelect('orderedItems.user', 'users')
+        .where('order.openedAt >= :date', { date: date })
         .getMany(),
     );
   }
@@ -127,15 +105,8 @@ export class OrderService {
     return from(this._orderRepo.update(id, payload));
   }
 
-  // @Cron('*/1 * * * *')
-  // testCron() {
-  //   console.log('Each minute');
-  // }
-
-  // @Cron('*/30 * * * * *')
   @Cron('0 17 * * *')
   deleteAllOrders() {
-    // console.log('Clear all orders!');
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -149,4 +120,17 @@ export class OrderService {
   deleteOrderByOrderId = (id: number): Observable<any> => {
     return from(this._orderRepo.delete(id));
   };
+
+  cleanupOrders() {
+    const today = new Date();
+    this.logger.warn(`TIME[${today}]`, `CleanUpDatabaseService`);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(23, 59, 59, 0);
+    this._orderRepo
+      .createQueryBuilder('order')
+      .delete()
+      .where('order.opened_at <= :date', { date: yesterday })
+      .execute();
+  }
 }
