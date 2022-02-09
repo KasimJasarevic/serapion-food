@@ -2,7 +2,7 @@ import {
   BaseEntity,
   Column,
   Entity,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderEntity } from '../order/order.entity';
@@ -28,6 +28,6 @@ export class RestaurantEntity extends BaseEntity {
   })
   phoneNumber: string;
 
-  @OneToOne(() => OrderEntity, (order) => order.restaurant)
-  order: OrderEntity;
+  @OneToMany(() => OrderEntity, (order) => order.restaurant)
+  orders: OrderEntity[];
 }

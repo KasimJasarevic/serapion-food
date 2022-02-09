@@ -109,6 +109,7 @@ export class OrderService {
     return from(this._orderRepo.create(order).save());
   }
 
+  // order has to be deleted by order id ...
   deleteOrderById(restaurantId: number) {
     this._orderRepo
       .createQueryBuilder('order')
@@ -144,4 +145,8 @@ export class OrderService {
       .where('order.openedAt <= :date', { date: yesterday })
       .execute();
   }
+
+  deleteOrderByOrderId = (id: number): Observable<any> => {
+    return from(this._orderRepo.delete(id));
+  };
 }

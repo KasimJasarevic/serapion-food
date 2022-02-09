@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CommentEntity } from '../comment/comment.entity';
@@ -50,7 +49,7 @@ export class OrderEntity extends BaseEntity {
   @OneToMany(() => CommentEntity, (comment) => comment.order)
   comments: CommentEntity[];
 
-  @OneToOne(() => RestaurantEntity, (restaurant) => restaurant.order, {
+  @ManyToOne(() => RestaurantEntity, (restaurant) => restaurant.orders, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'restaurant_id' })

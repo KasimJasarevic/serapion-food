@@ -2,6 +2,7 @@ export enum WebsocketMessageTypes {
   COMMENT_EVENT = 'commentEvent',
   RESTAURANT_NEW_EVENT = 'newRestaurantEvent',
   ORDER_COMPLETED_EVENT = 'orderCompletedEvent',
+  ORDER_CLOSED_EVENT = 'orderClosedEvent',
   RESTAURANT_NEW_UPDATE_EVENT = 'newRestaurantUpdateEvent',
   RESTAURANT_DELETED_EVENT = 'deleteRestaurantEvent',
   ORDER_ITEM_EVENT = 'orderItemEvent',

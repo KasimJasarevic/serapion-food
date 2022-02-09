@@ -51,6 +51,10 @@ export class WebsocketGatewayService {
     this.server.emit('orderCompletedEvent', order);
   }
 
+  sendOrderClosedMessage(order: OrderDTO) {
+    this.server.emit('orderClosedEvent', order);
+  }
+
   sendNewRestaurantUpdateMessage(restaurant: RestaurantDTO) {
     this.server.emit('newRestaurantUpdateEvent', restaurant);
   }

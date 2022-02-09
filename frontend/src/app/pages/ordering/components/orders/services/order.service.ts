@@ -35,6 +35,13 @@ export class OrderService {
     return this._http.post<any>(environment.api_url + '/orders', orderData);
   }
 
+  deleteOrderById(id: number) {
+    return this._http.delete<number>(
+      environment.api_url + `/orders/order/${id}`
+    );
+  }
+
+  // This has to be order id ...
   deleteOrder(restaurantId: number) {
     return this._http.delete<number>(
       environment.api_url + `/orders/${restaurantId}`

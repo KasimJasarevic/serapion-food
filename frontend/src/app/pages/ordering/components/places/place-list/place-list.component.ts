@@ -21,6 +21,7 @@ import { IUser } from '@core/models/user.model';
 export class PlaceListComponent implements OnInit, OnDestroy {
   @Input() filterStr: string = '';
   // Trick to update pipe, maybe there is a better solution for this.
+  collapsedPlaces$ = this._placeService.collapsedPlaces$;
   updated: Date = new Date();
 
   places: IPlace[] = [];
@@ -49,11 +50,25 @@ export class PlaceListComponent implements OnInit, OnDestroy {
 
     this.subs.sink = this._websocketService
       .onOrderOpened()
+      .pipe(switchMap(() => this._placeService.getAllPlaces()))
       .subscribe((data: any) => {
-        const index = this.places.findIndex(
-          (place) => place.id === data.restaurant.id
-        );
-        this.places.splice(index, 1);
+        this.places = data;
+        this.updated = new Date();
+      });
+
+    this.subs.sink = this._websocketService
+      .onOrderClosed()
+      .pipe(switchMap(() => this._placeService.getAllPlaces()))
+      .subscribe((data: any) => {
+        this.places = data;
+        this.updated = new Date();
+      });
+
+    this.subs.sink = this._websocketService
+      .onOrderCompleted()
+      .pipe(switchMap(() => this._placeService.getAllPlaces()))
+      .subscribe((data: any) => {
+        this.places = data;
         this.updated = new Date();
       });
 
@@ -138,6 +153,40 @@ export class PlaceListComponent implements OnInit, OnDestroy {
   }
 
   deletePlace(name: string) {
-    this._placeService.deletePlace(name).subscribe();
+    if (confirm(`Are you sure you want to delete this restaurant?`)) {
+      this._placeService.deletePlace(name).subscribe();
+    }
   }
+
+  hasActiveOrders = ({ orders }: IPlace) => {
+    if (orders && !!orders.length) {
+      const activeOrders = orders
+        .filter((order) => order.status === OrderStatus.ACTIVE)
+        .map((order) => order.status);
+
+      if (!!activeOrders.length) {
+        // If place has active orders commands are disabled = true
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  togglePlace = (id?: number) => {
+    if (id) {
+      this._placeService.togglePlace(id);
+    }
+  };
+
+  isExpanded = (ids: number[], placeId: number | undefined) => {
+    if (placeId) {
+      const index = ids.findIndex((id) => id === placeId);
+      if (index !== -1) {
+        return true;
+      }
+    }
+
+    return false;
+  };
 }

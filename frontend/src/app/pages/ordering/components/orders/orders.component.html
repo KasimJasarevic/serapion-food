@@ -4,7 +4,7 @@
 >
   <div class="flex flex-row items-center justify-between space-x-4">
     <div
-      class="hidden lg:flex flex-row items-center justify-center bg-serapion-blue-100 dark:bg-serapion-black-100 bg-opacity-90 w-14 h-14 rounded-full cursor-pointer"
+      class="hidden lg:flex flex-row items-center justify-center bg-serapion-blue-100 dark:bg-serapion-black-100 bg-opacity-90 w-12 h-12 rounded-full cursor-pointer"
       *ngIf="!!(isHidden$ | async)"
       (click)="openSidebar()"
     >
@@ -25,7 +25,7 @@
     *ngIf="user"
   >
     <img
-      class="w-14 h-14 rounded-full"
+      class="w-12 h-12 rounded-full"
       src="{{ user.photo }}"
       alt="{{ user!.firstName + ' ' + user!.lastName + ' Profile Picture' }}"
       title="{{ user!.firstName + ' ' + user!.lastName }}"

@@ -8,10 +8,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({
       transports: [
-        new winston.transports.File({
-          filename: 'logs/fo-serapion.log',
+        new winston.transports.Console({
           level: 'warn',
-          maxsize: 102400,
         }),
         new winston.transports.File({
           filename: 'logs/fo-serapion.log',
