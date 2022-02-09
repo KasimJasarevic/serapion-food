@@ -20,8 +20,7 @@ export class RestaurantService {
     return from(
       this._restaurantRepo
         .createQueryBuilder('restaurant')
-        .leftJoinAndSelect('restaurant.order', 'order')
-        .where(`order.id is null`)
+        .leftJoinAndSelect('restaurant.orders', 'orders')
         .getMany(),
     );
   }

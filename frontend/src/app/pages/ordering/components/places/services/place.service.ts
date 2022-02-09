@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { IPlace } from '../models/place.model';
 import { environment } from '@environments/environment';
 
@@ -8,6 +8,16 @@ import { environment } from '@environments/environment';
   providedIn: 'root',
 })
 export class PlaceService {
+  private _collapsedPlacesSub$: BehaviorSubject<number[]> = new BehaviorSubject<
+    number[]
+  >([]);
+  private _collapsedPlaces$: Observable<number[]> =
+    this._collapsedPlacesSub$.asObservable();
+
+  get collapsedPlaces$() {
+    return this._collapsedPlaces$;
+  }
+
   constructor(private _http: HttpClient) {}
 
   addNewPlace(placeData: IPlace): Observable<IPlace> {
@@ -37,4 +47,32 @@ export class PlaceService {
       `${environment.api_url}/restaurants/${name}`
     );
   }
+
+  collapsePlace = (id: number) => {
+    const placeIds: number[] = this._collapsedPlacesSub$.value;
+    placeIds.push(id);
+    this._collapsedPlacesSub$.next(placeIds);
+  };
+
+  expandPlace = (id: number) => {
+    let placeIds: number[] = this._collapsedPlacesSub$.value;
+    placeIds = placeIds.filter((placeId) => placeId !== id);
+
+    this._collapsedPlacesSub$.next(placeIds);
+  };
+
+  togglePlace = (id: number) => {
+    let placeIds: number[] = this._collapsedPlacesSub$.value;
+    const index = placeIds.findIndex((placeId) => placeId === id);
+
+    if (index !== -1) {
+      // found
+      placeIds = placeIds.filter((placeId) => placeId !== id);
+    } else {
+      // not found
+      placeIds.push(id);
+    }
+
+    this._collapsedPlacesSub$.next(placeIds);
+  };
 }

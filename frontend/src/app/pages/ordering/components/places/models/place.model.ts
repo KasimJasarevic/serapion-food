@@ -5,7 +5,7 @@ export interface IPlace {
   name: string;
   menu?: string;
   phoneNumber?: string;
-  order?: IOrder;
+  orders?: IOrder[];
 }
 
 export interface IPlaceSub {

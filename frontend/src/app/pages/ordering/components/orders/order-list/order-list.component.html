@@ -53,7 +53,7 @@
           </div>
           <div class="flex flex-row space-x-2 items-center mt-4">
             <i class="fas fa-store pr-1"></i>
-            <span class="font-thin uppercase text-lg">
+            <span class="font-thin uppercase text-lg select-all">
               {{ order.restaurant.name }}
             </span>
           </div>
@@ -295,7 +295,7 @@
           [disabled]="
             !isOrderOwner(order) && order.status === orderStatus.ACTIVE
           "
-          (click)="closeRestaurant(order.restaurant.id)"
+          (click)="closeRestaurant(order)"
         >
           <i class="fas fa-times pr-1"></i> Close
         </button>

@@ -45,6 +45,12 @@ export class WebsocketMessagesService {
     );
   }
 
+  onOrderClosed() {
+    return this._socket.fromEvent<IOrder>(
+      WebsocketMessageTypes.ORDER_CLOSED_EVENT
+    );
+  }
+
   onRestaurantAdded() {
     return this._socket.fromEvent(WebsocketMessageTypes.RESTAURANT_NEW_EVENT);
   }

@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Observable, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { WebsocketGatewayService } from '../events/websocket-gateway.service';
 import { OrderDTO } from './order.dto';
 import { OrderService } from './order.service';
@@ -45,18 +45,28 @@ export class OrderController {
   }
 
   @Delete(':id')
-  deleteOrderById(@Param('id') id: number, @Res() res) {
-    this._orderService
-      .getOrderByRestaurantId(id)
-      .subscribe((order: OrderDTO) => {
-        this._websocketGatewayService.sendNewRestaurantMessage(
-          order.restaurant,
-        );
-
-        res.json(order);
-      });
-
+  deleteOrderById(@Param('id') id: number) {
     this._orderService.deleteOrderById(id);
+  }
+
+  @Delete('order/:id')
+  deleteOrderByOrderId(@Param('id') id: number, @Res() res) {
+    this.getOrderById(id)
+      .pipe(
+        switchMap((order: OrderDTO) => {
+          if (order) {
+            res.json(order);
+            this._websocketGatewayService.sendOrderClosedMessage(order);
+          }
+          return this._orderService.deleteOrderByOrderId(id);
+        }),
+      )
+      .subscribe();
+  }
+
+  @Delete()
+  deleteAllOrders() {
+    this._orderService.deleteAllOrders();
   }
 
   @Put(':id')
@@ -78,12 +88,5 @@ export class OrderController {
         this._websocketGatewayService.sendOrderTypeUpdatedMessage(id);
       }),
     );
-  }
-
-  @Get('docs/:id')
-  testQueryBuilder() {
-    console.log('Testing TypeORMs QueryBuilder.');
-
-    return this._orderService.testQueryBuilder();
   }
 }

@@ -17,7 +17,16 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  delay,
+  map,
+  Observable,
+  of,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { OrderStatus } from '../../models/order-status-types';
 import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
@@ -38,7 +47,12 @@ export class OrderChatComponent
     AfterContentInit
 {
   @Input() order: IOrder | undefined;
-  @ViewChild('commentBox', { static: false }) private _commentBox!: ElementRef;
+  @ViewChild('commentBox', { static: false }) commentBox!: ElementRef;
+  // private _scrollSub$: BehaviorSubject<number | null> = new BehaviorSubject<
+  //   number | null
+  // >(null);
+  // scrollPosition: Observable<number | null> = this._scrollSub$.asObservable();
+
   orderStatus = OrderStatus;
   // items$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
@@ -137,16 +151,32 @@ export class OrderChatComponent
             a.commentedOn! < b.commentedOn! ? -1 : 1
           );
 
-          this._commentBox.nativeElement.scrollTop =
-            this._commentBox.nativeElement.scrollHeight;
+          this.commentBox.nativeElement.scroll({
+            top: Number.MAX_SAFE_INTEGER,
+            left: 0,
+            behavior: 'smooth',
+          });
         }
       });
   }
 
-  ngAfterContentInit(): void {}
+  ngAfterContentInit(): void {
+    // this.commentBox.nativeElement.scrollTop =
+    //   this.commentBox.nativeElement.scrollHeight;
+  }
 
   ngAfterViewInit(): void {
-    this._commentBox.nativeElement.scrollIntoView({ block: 'end' });
+    // this.subs.sink = this.scrollPosition
+    //   .pipe(
+    //     tap(() =>
+    //       this._scrollSub$.next(this.commentBox.nativeElement.scrollHeight)
+    //     ),
+    //     delay(0)
+    //   )
+    //   .subscribe();
+    // this.commentBox.nativeElement.scrollTop =
+    //   this.commentBox.nativeElement.scrollHeight;
+    // this.commentBox.nativeElement.scrollIntoView({ block: 'end' });
     // this.users.forEach((user) => {
     //   this.items.push(user.firstName);
     // });

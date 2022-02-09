@@ -87,6 +87,17 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
       });
 
     this.subs.sink = this._websocketService
+      .onRestaurantUpdated()
+      .pipe(switchMap(() => this._orderService.getAllOrders()))
+      .subscribe((orders: IOrder[]) => this._populateOrders(orders));
+
+    this.subs.sink = this._websocketService
+      .onRestaurantDeleted()
+      .pipe(switchMap(() => this._orderService.getAllOrders()))
+      .subscribe((orders: IOrder[]) => this._populateOrders(orders));
+
+    // Change this
+    this.subs.sink = this._websocketService
       .onOrderOpened()
       .subscribe((data: any) => {
         this.orders.push(data);
@@ -130,10 +141,24 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
       });
 
     this.subs.sink = this._websocketService
+      .onOrderClosed()
+      .subscribe((next: IOrder) => {
+        if (next) {
+          const index = this.orders.findIndex((order) => order.id === next.id);
+
+          if (index !== -1) {
+            // console.log('Close');
+            this.orders.splice(index, 1);
+            (<FormArray>this.ordersForm?.get('orders')).removeAt(index);
+            this.orderArrivalArr.removeAt(index);
+          }
+        }
+      });
+
+    // This should be different
+    this.subs.sink = this._websocketService
       .onRestaurantAdded()
       .subscribe((next: any) => {
-        console.log();
-
         const index = this.orders.findIndex(
           (order) => order.restaurant.id === next.id
         );
@@ -236,12 +261,25 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     // console.log(this.drb?.nativeElement);
   }
 
-  closeRestaurant(id: number | undefined) {
+  closeRestaurant({ id }: IOrder) {
     if (confirm(`Are you sure you want to close this order?`)) {
       if (id) {
         this.subs.sink = this._orderService
-          .deleteOrder(id)
+          .deleteOrderById(id)
           .subscribe((data: any) => {
+            if (data && data.id) {
+              // Returns deleted order
+              this.orders = this.orders.filter(
+                (order: IOrder) => order.id !== data.id
+              );
+            }
+
+            // I don't have any data here, but I can search orders field
+            // and get restaurant name...
+            // const restaurant = this.orders.find(
+            //   (order: IOrder) => order.id === id
+            // );
+            // console.log(restaurant);
             // this._notificationService.sendCloseRestaurantMessage(
             //   data.restaurant.name
             // );
@@ -275,7 +313,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
           })
         )
         .pipe(
-          switchMap((_) => {
+          switchMap(() => {
             return this._orderService.getOrderItems(order.id);
           })
         )
@@ -500,4 +538,31 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       });
   }
+
+  private _populateOrders = (orders: IOrder[]) => {
+    if (orders) {
+      this.orders = orders;
+
+      this.orders.forEach((order: IOrder) => {
+        (<FormArray>this.ordersForm?.get('orders')).push(
+          this._formBuilder.group({
+            orderType: [
+              {
+                value: order.type,
+                disabled: order.status === this.orderStatus.INACTIVE,
+              },
+            ],
+          })
+        );
+
+        const orderArrivalTime: FormControl = new FormControl(
+          null,
+          Validators.required
+        );
+        this.orderArrivalArr.push(orderArrivalTime);
+      });
+
+      this._setOrderers();
+    }
+  };
 }

@@ -43,11 +43,6 @@ export class OrderItemController {
     @Body() payload: any,
     @Res() res,
   ) {
-    // this._orderItemService.appendOrderItemUser({ id, ...payload });
-    // console.log(orderItem, payload.user);
-    // this._websocketGatewayService.sendNewOrderItemUserMessage(data);
-    // res.json(data);
-
     this._orderItemService.getOrderItemById(id).subscribe((orderItem) => {
       this._orderItemService
         .appendOrderItemUser(orderItem, payload.user)
@@ -68,18 +63,12 @@ export class OrderItemController {
     @Query('_item') itemId: number,
     @Query('_user') userId: number,
   ) {
-    // this._orderItemService.getOrderItemById(itemId).subscribe((next) => {
-    //   this._orderItemService.removeOrderItemUser(next, userId);
-    // });
-
     this._orderItemUserService
       .getOrderItemUserByItemAndUserId(itemId, userId)
       .subscribe((next) => {
         this._orderItemUserService.removeOrderItemUserById(next.id);
         this._websocketGatewayService.sendDeleteOrderItemUserMessage(next);
       });
-
-    // this._orderItemUserService.removeOrderItemUser(id);
   }
 
   @Put()
@@ -90,7 +79,6 @@ export class OrderItemController {
         user,
       });
     });
-    // this._orderItemService.updateOrderItem(itemToDelete);
   }
 
   @Delete(':id')

@@ -41,7 +41,6 @@ export class RestaurantController {
     return this._restaurantService.getPlaceById(id);
   }
 
-  // 2 places with same name ???
   @Delete(':name')
   deletePlaceByName(@Param('name') name: string, @Res() res) {
     this._restaurantService

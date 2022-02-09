@@ -3,7 +3,6 @@ import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../user/user.entity';
 import { OrderDTO } from './order.dto';
 import { OrderEntity } from './order.entity';
 
@@ -13,29 +12,6 @@ export class OrderService {
   constructor(
     @InjectRepository(OrderEntity) private _orderRepo: Repository<OrderEntity>,
   ) {}
-
-  testQueryBuilder(): Observable<any> {
-
-    return from(
-      this._orderRepo
-        .createQueryBuilder('o')
-        .innerJoinAndSelect('o.user', 'u', 'u.firstName = :name', {
-          name: 'Emir',
-        })
-        .where((querybuilder) => {
-          const subquery = querybuilder
-            .subQuery()
-            .select('user.id')
-            .from(UserEntity, 'user')
-            .orderBy('user.last_order', 'DESC')
-            .limit(1)
-            .getQuery();
-
-          return 'u.id = ' + subquery;
-        })
-        .getMany(),
-    );
-  }
 
   getAllOrders(): Observable<OrderDTO[]> {
     const date = new Date();
@@ -116,6 +92,10 @@ export class OrderService {
       .where('order.openedAt <= :date', { date: yesterday })
       .execute();
   }
+
+  deleteOrderByOrderId = (id: number): Observable<any> => {
+    return from(this._orderRepo.delete(id));
+  };
 
   cleanupOrders() {
     const today = new Date();
