@@ -19,7 +19,7 @@ export class PlaceModalComponent implements OnInit, OnDestroy, AfterViewInit {
     name: new FormControl(null, Validators.required),
     phone: new FormControl(
       null,
-      Validators.pattern('^\\d{3}\\s\\d{3}\\s\\d{3}$')
+      Validators.pattern('^\\d{3}\\s\\d{3,4}\\s\\d{3,4}$')
     ),
     menu: new FormControl(
       null,
