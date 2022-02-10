@@ -1,8 +1,33 @@
-<div class="z-50 fixed inset-0 justify-center items-center flex">
+<div
+  class="z-100 fixed inset-0 justify-center items-center flex"
+  *ngIf="(isVisible$ | async) === id"
+>
   <div class="relative mx-auto w-1/2 max-w-2xl">
-    <div class="bg-serapion-white rounded-md p-4 flex flex-col">
+    <div
+      class="bg-serapion-white rounded-md p-8 shadow-lg flex flex-col dark:bg-serapion-black-200"
+    >
       <ng-content></ng-content>
+      <div class="pt-8 flex flex-row-reverse justify-between items-center">
+        <button
+          class="btn btn-primary w-1/2 ml-1"
+          type="button"
+          (click)="yesModal()"
+        >
+          <i class="fas fa-check pr-1"></i> Yes
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary w-1/2"
+          (click)="noModal()"
+        >
+          <i class="fas fa-times pr-1"></i> No
+        </button>
+      </div>
     </div>
   </div>
 </div>
-<div class="modal-background"></div>
+
+<div
+  class="absolute backdrop-filter backdrop-blur-lg inset-0 bg-opacity-10 bg-serapion-blue-300 z-90"
+  *ngIf="(isVisible$ | async) === id"
+></div>

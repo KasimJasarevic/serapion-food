@@ -1,7 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SubSink } from '@core/helpers/sub-sink';
 import { ModalService } from './services/modal.service';
 import { SidebarService } from 'src/app/shared/services/sidebar.service';
+import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-places',
@@ -31,4 +32,15 @@ export class PlacesComponent implements OnInit, OnDestroy {
   hideSidebar() {
     this._sidebarService.toggleSidebar();
   }
+
+  // @ViewChild('confirmDialog') confirmDialog!: ModalComponent;
+  // @ViewChild('cancelDialog') cancelDialog!: ModalComponent;
+  // openModal() {
+  //   console.log(this.confirmDialog.id);
+  //   this.confirmDialog.toggleModal();
+  // }
+  // openModal2() {
+  //   console.log(this.cancelDialog.id);
+  //   console.log(this.cancelDialog.toggleModal());
+  // }
 }

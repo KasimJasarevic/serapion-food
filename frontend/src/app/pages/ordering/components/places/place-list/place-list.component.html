@@ -2,7 +2,7 @@
   class="min-h-screen p-4 z-10 lg:pt-8 2xl:pt-8 rounded-t-xl bg-serapion-blue-100 shadow-md dark:bg-serapion-black-100"
 >
   <div class="grid grid-cols-4 gap-2 lg:grid-cols-2 lg:gap-4">
-    <div class="z-10" *ngFor="let place of places | filter: filterStr:updated">
+    <div *ngFor="let place of places | filter: filterStr:updated">
       <!-- (click)="togglePlace(place.id)" -->
       <div
         class="border-serapion-blue-300 px-2 py-4 bg-serapion-white rounded-md lg:transform lg:hover:scale-102 lg:hover:shadow-lg transition-all duration-300 dark:bg-serapion-black-200"
@@ -85,6 +85,17 @@
           </button>
         </div>
       </div>
+      <app-modal id="delete-{{ place.name }}" #deleteDialog>
+        <div class="uppercase">
+          Are you sure you want to delete {{ place.name }}?
+        </div>
+        <!-- <div class="flex flex-row justify-center items-center my-6">
+        <img
+          class="w-1/2"
+          src="../../../../../../assets/images/closed-store.svg"
+        />
+      </div> -->
+      </app-modal>
     </div>
   </div>
 </div>

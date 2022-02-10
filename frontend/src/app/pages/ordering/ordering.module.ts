@@ -16,6 +16,8 @@ import { FilterPipe } from './components/places/place-list/pipes/filter.pipe';
 import { PlaceModalComponent } from './components/places/place-modal/place-modal.component';
 import { UniqueFilterPipe } from './components/orders/order-list/order-items/pipes/unique-filter.pipe';
 import { MentionModule } from 'angular-mentions';
+import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 // import { FilterPipe } from './components/orders/order-list/order-chat/pipes/filter.pipe';
 
 @NgModule({
@@ -39,6 +41,7 @@ import { MentionModule } from 'angular-mentions';
     FormsModule,
     MentionModule,
     ReactiveFormsModule,
+    SharedModule,
   ],
 })
 export class OrderingModule {

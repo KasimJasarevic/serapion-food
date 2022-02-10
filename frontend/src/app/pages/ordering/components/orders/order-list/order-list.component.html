@@ -270,6 +270,7 @@
           <i class="fas fa-check pr-1"></i> Order
         </button>
         <button
+          *ngIf="isOrderOwner(order) || order.status === orderStatus.INACTIVE"
           class="btn flex-1"
           [ngClass]="{
             'btn-secondary':
@@ -287,6 +288,42 @@
       </div>
       <!-- SUBMIT BUTTONS END -->
     </div>
+
+    <app-modal id="cancel-{{ order.id }}" #cancelDialog>
+      <div class="uppercase">
+        Are you sure you want to close {{ order.restaurant.name }}?
+      </div>
+      <!-- <div class="flex flex-row justify-center items-center my-6">
+        <img
+          class="w-1/2"
+          src="../../../../../../assets/images/closed-store.svg"
+        />
+      </div> -->
+    </app-modal>
+
+    <app-modal id="confirm-{{ order.id }}" #confirmDialog>
+      <div class="uppercase">
+        Are you sure you want to confirm {{ order.restaurant.name }}?
+      </div>
+      <div class="mt-4">
+        <ul
+          role="list"
+          class="divide-y divide-serapion-grey-100 text-xs text-serapion-grey-100"
+        >
+          <li
+            class="flex flex-row justify-between items-center py-4 first:pt-0 last:pb-0"
+            *ngFor="let item of order.orderItems"
+          >
+            <div class="uppercase">{{ item.name }}</div>
+            <div class="">
+              <p class="text-sm text-slate-500 truncate">
+                {{ item.orderedItems?.length }}x
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </app-modal>
   </div>
   <!--ORDER END -->
 </div>

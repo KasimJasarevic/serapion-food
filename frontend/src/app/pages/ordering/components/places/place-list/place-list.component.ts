@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IPlace } from '../models/place.model';
 import { PlaceService } from '../services/place.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
@@ -12,6 +12,7 @@ import { ModalService } from '../services/modal.service';
 import { switchMap } from 'rxjs';
 import { UserService } from '@core/services/user.service';
 import { IUser } from '@core/models/user.model';
+import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-place-list',
@@ -22,7 +23,7 @@ export class PlaceListComponent implements OnInit, OnDestroy {
   @Input() filterStr: string = '';
   collapsedPlaces$ = this._placeService.collapsedPlaces$;
   updated: Date = new Date();
-
+  @ViewChild('deleteDialog') deleteDialog!: ModalComponent;
   places: IPlace[] = [];
   private subs = new SubSink();
 
@@ -146,9 +147,14 @@ export class PlaceListComponent implements OnInit, OnDestroy {
   }
 
   deletePlace(name: string) {
-    if (confirm(`Are you sure you want to delete this restaurant?`)) {
-      this._placeService.deletePlace(name).subscribe();
-    }
+    // if (confirm(`Are you sure you want to delete this restaurant?`)) {
+    this.subs.sink = this.deleteDialog
+      .toggleModal(`delete-${name}`)
+      .subscribe((confirmation) => {
+        if (confirmation) {
+          this._placeService.deletePlace(name).subscribe();
+        }
+      });
   }
 
   hasActiveOrders = ({ orders }: IPlace) => {

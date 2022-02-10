@@ -1,11 +1,12 @@
 import {
   Component,
-  ElementRef,
   Input,
   OnDestroy,
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
+import { BehaviorSubject, mergeMap, Observable, take } from 'rxjs';
+import { SharedModalService } from './service/shared-modal.service';
 
 @Component({
   selector: 'app-modal',
@@ -15,46 +16,27 @@ import {
 })
 export class ModalComponent implements OnInit, OnDestroy {
   @Input() id!: string;
-  private element: any;
+  isVisible$: Observable<string> = this._sharedModalService.showModal$;
+  actionResult$: Observable<boolean> = this._sharedModalService.result$;
 
-  constructor(private el: ElementRef) {
-    this.element = el.nativeElement;
-  }
+  constructor(private _sharedModalService: SharedModalService) {}
 
-  ngOnInit(): void {
-    // ensure id attribute exists
-    if (!this.id) {
-      console.error('modal must have an id');
-      return;
-    }
+  ngOnInit(): void {}
 
-    // move element to bottom of page (just before </body>) so it can be displayed above everything else
-    document.body.appendChild(this.element);
+  ngOnDestroy(): void {}
 
-    // close modal on background click
-    // this.element.addEventListener('click', (el) => {
-    //   if (el.target.className === 'jw-modal') {
-    //     this.close();
-    //   }
-    // });
+  yesModal = () => {
+    this._sharedModalService.yesModal(this.id);
+    this._sharedModalService.toggleModal(this.id);
+  };
 
-    // add self (this modal instance) to the modal service so it's accessible from controllers
-  }
+  noModal = () => {
+    this._sharedModalService.noModal(this.id);
+    this._sharedModalService.toggleModal(this.id);
+  };
 
-  // remove self from modal service when component is destroyed
-  ngOnDestroy(): void {
-    this.element.remove();
-  }
-
-  // open modal
-  open(): void {
-    this.element.classList.add = 'flex';
-    this.element.classList.remove = 'hidden';
-  }
-
-  // close modal
-  close(): void {
-    this.element.classList.remove = 'flex';
-    this.element.classList.add = 'hidden';
-  }
+  toggleModal = (id: string) => {
+    this._sharedModalService.toggleModal(id);
+    return this.actionResult$.pipe(take(1));
+  };
 }

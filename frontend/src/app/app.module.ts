@@ -8,7 +8,12 @@ import { CoreModule } from './core/core.module';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { environment } from '@environments/environment';
 import { MentionModule } from 'angular-mentions';
-import {GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule} from "angularx-social-login";
+import {
+  GoogleLoginProvider,
+  SocialAuthServiceConfig,
+  SocialLoginModule,
+} from 'angularx-social-login';
+import { ModalComponent } from './shared/components/modal/modal.component';
 
 const config: SocketIoConfig = {
   url: environment.ws_url,
@@ -23,7 +28,7 @@ const config: SocketIoConfig = {
     AppRoutingModule,
     HttpClientModule,
     SocketIoModule.forRoot(config),
-    SocialLoginModule
+    SocialLoginModule,
   ],
   bootstrap: [AppComponent],
   providers: [
@@ -36,11 +41,11 @@ const config: SocketIoConfig = {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
               '895104585556-t3i4u6236nkjhjf4cnr3ua81l9dq7kt0.apps.googleusercontent.com'
-            )
-          }
-        ]
+            ),
+          },
+        ],
       } as SocialAuthServiceConfig,
-    }
-  ]
+    },
+  ],
 })
 export class AppModule {}
