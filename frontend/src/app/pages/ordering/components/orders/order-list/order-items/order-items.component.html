@@ -53,7 +53,11 @@
     class="pt-8 flex flex-row justify-between items-center"
     *ngFor="let item of items"
   >
-    <div class="uppercase text-xs font-thin">{{ item.name }}</div>
+    <div class="uppercase text-xs font-thin">
+      {{
+        item.name!.length < 25 ? item.name : (item.name | slice: 0:25) + "..."
+      }}
+    </div>
     <div class="-space-x-2 ml-auto mr-1">
       <img
         class="relative z-30 inline object-cover w-5 h-5 border-2 border-serapion-white rounded-full dark:border-serapion-black-200"
@@ -69,7 +73,7 @@
         *ngFor="
           let orderItem of item.orderedItems!
             | uniqueFilter: updated
-            | slice: 0:8
+            | slice: 0:5
         "
       />
     </div>
