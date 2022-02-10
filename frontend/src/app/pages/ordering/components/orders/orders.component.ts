@@ -28,6 +28,7 @@ export class OrdersComponent {
   async logout() {
     try {
       await this._socialAuthService.signOut(true);
+    } catch (err) {
     } finally {
       this._userService.removeUser();
       await this._router.navigate(['login']);
