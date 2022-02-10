@@ -14,7 +14,7 @@
           <div
             (click)="togglePlace(place.id)"
             class="uppercase flex-1 mr-2 cursor-pointer"
-            title="{{ place.name }}"
+            title="{{ place.name | uppercase }}"
             [ngClass]="{
               'line-through': hasActiveOrders(place)
             }"
