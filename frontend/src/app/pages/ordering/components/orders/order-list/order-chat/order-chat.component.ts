@@ -111,11 +111,13 @@ export class OrderChatComponent implements OnInit, OnDestroy {
             a.commentedOn! < b.commentedOn! ? -1 : 1
           );
 
-          this.commentBox.nativeElement.scroll({
-            top: Number.MAX_SAFE_INTEGER,
-            left: 0,
-            behavior: 'smooth',
-          });
+          setTimeout(() => {
+            this.commentBox.nativeElement.scroll({
+              top: Number.MAX_SAFE_INTEGER,
+              left: 0,
+              behavior: 'smooth',
+            });
+          }, 100);
         }
       });
   }
