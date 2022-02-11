@@ -47,7 +47,11 @@ export class OrderChatComponent implements OnInit, OnDestroy {
   messages: IMessage[] = [];
   private subs = new SubSink();
   commentForm = new FormGroup({
-    comment: new FormControl(null, Validators.required),
+    comment: new FormControl(null, [
+      Validators.required,
+      Validators.minLength(1),
+      Validators.maxLength(140),
+    ]),
   });
 
   constructor(

@@ -16,7 +16,11 @@ export class PlaceModalComponent implements OnInit, OnDestroy, AfterViewInit {
   public place: IPlace | undefined;
 
   placeForm = new FormGroup({
-    name: new FormControl(null, Validators.required),
+    name: new FormControl(null, [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(140),
+    ]),
     phone: new FormControl(
       null,
       Validators.pattern('^\\d{3}\\s\\d{3,4}\\s\\d{3,4}$')

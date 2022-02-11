@@ -33,19 +33,8 @@ export class OrderItemService {
         .orderBy('user.lastOrder', 'ASC')
         .getRawOne(),
     );
-
-    // return this._orderitemRepo.find({
-    //   join: {
-    //     alias: 'items',
-    //     leftJoinAndSelect: {
-    //       order: 'items.order',
-    //       orderItems: 'items.orderedItems',
-    //     },
-    //   },
-    // });
   }
 
-  // THIS IS THE QUERY I NEED
   getOrderItemsByOrderIds(orderId: number): Observable<OrderItemGetRequest[]> {
     return from(
       this._orderitemRepo
@@ -97,6 +86,7 @@ export class OrderItemService {
 
   addNewOrderItem(place: OrderItemPostRequest): Observable<OrderItemDTO> {
     return from(this._orderitemRepo.create(place).save());
+    // .catch(() => null),
   }
 
   deleteOrderItem({ name, order, user }: OrderItemDeleteRequest) {
@@ -119,19 +109,6 @@ export class OrderItemService {
     return from(this._orderitemRepo.save(data));
   }
 
-  // This works!!!!
-  // appendOrderItemUser({ id, ...payload }: OrderItemAppendRequest) {
-  //   this.getOrderItemById(id).subscribe((data) => {
-  //     const appendItem: OrderItemUserDTO = {
-  //       orderItem: data,
-  //       user: payload.user,
-  //     };
-  //     data.orderedItems.push(appendItem);
-
-  //     this._orderitemRepo.save(data);
-  //   });
-  // }
-
   appendOrderItemUser(orderItem, user: UserEntity) {
     const appendItem = new OrderItemToUserEntity();
     appendItem.user = user;
@@ -140,10 +117,6 @@ export class OrderItemService {
   }
 
   removeOrderItemUser(orderItem, userId: number) {
-    // console.log(orderItem);
-
-    // orderItem.orderedItems.forEach((x) => console.log(x.user.id));
-    // console.log(indx);
     const indx = orderItem?.orderedItems.findIndex((x) => x.user.id == userId);
     console.log(orderItem.orderedItems.length);
     orderItem.orderedItems.splice(indx, 1);

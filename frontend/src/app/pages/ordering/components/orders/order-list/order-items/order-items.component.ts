@@ -26,7 +26,11 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
   orderStatus = OrderStatus;
 
   itemForm = new FormGroup({
-    item: new FormControl(null, Validators.required),
+    item: new FormControl(null, [
+      Validators.required,
+      Validators.minLength(1),
+      Validators.maxLength(140),
+    ]),
   });
 
   constructor(
