@@ -25,6 +25,7 @@
     "angular-mentions": "^1.4.0",
     "angularx-social-login": "^4.0.1",
     "ngx-socket-io": "^4.1.0",
+    "ngx-toastr": "^14.2.1",
     "onesignal-ngx": "^1.0.0-beta4",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",

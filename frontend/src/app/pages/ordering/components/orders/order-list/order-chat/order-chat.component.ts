@@ -17,8 +17,10 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { ToastrService } from 'ngx-toastr';
 import {
   BehaviorSubject,
+  catchError,
   delay,
   map,
   Observable,
@@ -57,7 +59,8 @@ export class OrderChatComponent implements OnInit, OnDestroy {
   constructor(
     private _orderService: OrderService,
     private _websocketService: WebsocketMessagesService,
-    private _notificationService: NotificationService
+    private _notificationService: NotificationService,
+    private _toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -140,74 +143,84 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     this._orderService
       .addNewComment(comment)
       .pipe(
+        catchError((err) => {
+          this._toastr.error('Something went wrong.', 'Hmmm...');
+          return of(undefined);
+        }),
         switchMap((data) => {
-          return this._orderService.getOrderItems(data.order?.id!);
-        })
-      )
-      .subscribe((item: IItem[]) => {
-        let ids: string[] = [];
-
-        if (!!item.length) {
-          item.forEach((data) => {
-            data.orderedItems?.forEach((oi) => {
-              if (oi.user?.subscriptionId) {
-                ids.push(oi.user.subscriptionId);
-              }
-            });
-          });
-
-          const currentUser = JSON.parse(
-            localStorage.getItem(
-              LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-            ) as string
-          );
-          ids = [...new Set(ids)];
-          if (currentUser && currentUser.subscriptionId) {
-            ids = ids.filter((id) => id !== currentUser.subscriptionId);
+          if (data) {
+            return this._orderService.getOrderItems(data.order?.id!);
           }
 
-          if (!!ids.length) {
-            const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
-            this._notificationService.sendNotificationToUsers(ids, str);
+          return of(undefined);
+        })
+      )
+      .subscribe((item: IItem[] | undefined) => {
+        if (item) {
+          let ids: string[] = [];
+
+          if (!!item.length) {
+            item.forEach((data) => {
+              data.orderedItems?.forEach((oi) => {
+                if (oi.user?.subscriptionId) {
+                  ids.push(oi.user.subscriptionId);
+                }
+              });
+            });
+
+            const currentUser = JSON.parse(
+              localStorage.getItem(
+                LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+              ) as string
+            );
+            ids = [...new Set(ids)];
+            if (currentUser && currentUser.subscriptionId) {
+              ids = ids.filter((id) => id !== currentUser.subscriptionId);
+            }
+
+            if (!!ids.length) {
+              const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
+              this._notificationService.sendNotificationToUsers(ids, str);
+            }
+          }
+
+          if (!!this.toMention.length) {
+            const indAll = this.toMention.findIndex(
+              (user) => user.firstName === 'All'
+            );
+
+            let ids: string[] = [];
+            if (indAll !== -1) {
+              this.users$.value.forEach((user: IUser) => {
+                if (user.subscriptionId) {
+                  ids.push(user.subscriptionId);
+                }
+              });
+            } else {
+              this.toMention.forEach((user: IUser) => {
+                if (user.subscriptionId) {
+                  ids.push(user.subscriptionId);
+                }
+              });
+            }
+
+            const currentUser = JSON.parse(
+              localStorage.getItem(
+                LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+              ) as string
+            );
+            ids = [...new Set(ids)];
+            if (currentUser && currentUser.subscriptionId) {
+              ids = ids.filter((id) => id != currentUser.subscriptionId);
+            }
+
+            if (!!ids.length) {
+              const str = `New mention in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
+              this._notificationService.sendMentionToUsers(ids, str);
+            }
           }
         }
       });
-
-    if (!!this.toMention.length) {
-      const indAll = this.toMention.findIndex(
-        (user) => user.firstName === 'All'
-      );
-
-      let ids: string[] = [];
-      if (indAll !== -1) {
-        this.users$.value.forEach((user: IUser) => {
-          if (user.subscriptionId) {
-            ids.push(user.subscriptionId);
-          }
-        });
-      } else {
-        this.toMention.forEach((user: IUser) => {
-          if (user.subscriptionId) {
-            ids.push(user.subscriptionId);
-          }
-        });
-      }
-
-      const currentUser = JSON.parse(
-        localStorage.getItem(
-          LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-        ) as string
-      );
-      ids = [...new Set(ids)];
-      if (currentUser && currentUser.subscriptionId) {
-        ids = ids.filter((id) => id != currentUser.subscriptionId);
-      }
-
-      if (!!ids.length) {
-        const str = `New mention in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
-        this._notificationService.sendMentionToUsers(ids, str);
-      }
-    }
 
     this.toMention = [];
     this.commentForm.reset();

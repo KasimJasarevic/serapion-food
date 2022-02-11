@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
@@ -14,6 +14,7 @@ import {
   SocialLoginModule,
 } from 'angularx-social-login';
 import { ModalComponent } from './shared/components/modal/modal.component';
+import { ToastrModule } from 'ngx-toastr';
 
 const config: SocketIoConfig = {
   url: environment.ws_url,
@@ -29,6 +30,14 @@ const config: SocketIoConfig = {
     HttpClientModule,
     SocketIoModule.forRoot(config),
     SocialLoginModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 2000,
+      progressBar: true,
+      progressAnimation: 'increasing',
+      positionClass: 'toast-bottom-left',
+      preventDuplicates: true,
+    }),
   ],
   bootstrap: [AppComponent],
   providers: [

@@ -8,6 +8,7 @@ import {
   Put,
   Res,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
@@ -24,7 +25,10 @@ export class RestaurantController {
   ) {}
 
   @Post()
-  addNewPlace(@Body() payload: RestaurantDTO, @Res() res) {
+  addNewPlace(
+    @Body(new ValidationPipe({ transform: true })) payload: RestaurantDTO,
+    @Res() res,
+  ) {
     this._restaurantService.addNewPlace(payload).subscribe((place) => {
       this._websocketGatewayService.sendNewRestaurantMessage(place);
       res.json(place);
@@ -56,7 +60,7 @@ export class RestaurantController {
   @Put(':id')
   updatePlace(
     @Param('id') withId: number,
-    @Body() payload: RestaurantDTO,
+    @Body(new ValidationPipe({ transform: true })) payload: RestaurantDTO,
     @Res() res,
   ) {
     this._restaurantService.updatePlace(withId, payload).subscribe(() => {

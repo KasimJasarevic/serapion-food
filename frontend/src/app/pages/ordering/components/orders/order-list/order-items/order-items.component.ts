@@ -3,6 +3,8 @@ import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { ToastrService } from 'ngx-toastr';
+import { catchError, of, throwError } from 'rxjs';
 import { OrderStatus } from '../../models/order-status-types';
 import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
@@ -35,7 +37,8 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
 
   constructor(
     private _orderService: OrderService,
-    private _websocketService: WebsocketMessagesService
+    private _websocketService: WebsocketMessagesService,
+    private _toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -130,16 +133,27 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
 
     this.subs.sink = this._orderService
       .addNewOrderItem(newOrderItem)
+      .pipe(
+        catchError((err) => {
+          // this._toastr.error(err.error.message, 'Hmmm...');
+          this._toastr.error('Something went wrong.', 'Hmmm...');
+          return of(undefined);
+        })
+      )
       .subscribe((item) => {
-        const orderItemUser: any = {
-          ...item,
-          user: JSON.parse(
-            <string>(
-              localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
-            )
-          ),
-        };
-        this._orderService.addOrderItemUser(orderItemUser);
+        if (item) {
+          const orderItemUser: any = {
+            ...item,
+            user: JSON.parse(
+              <string>(
+                localStorage.getItem(
+                  LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+                )
+              )
+            ),
+          };
+          this._orderService.addOrderItemUser(orderItemUser);
+        }
       });
 
     this.itemForm.reset();

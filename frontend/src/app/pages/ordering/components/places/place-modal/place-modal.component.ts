@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { SubSink } from '@core/helpers/sub-sink';
+import { ToastrService } from 'ngx-toastr';
+import { catchError, of } from 'rxjs';
 import { IPlace } from '../models/place.model';
 import { ModalService } from '../services/modal.service';
 import { PlaceService } from '../services/place.service';
@@ -47,7 +49,8 @@ export class PlaceModalComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private _modalService: ModalService,
-    private _placeService: PlaceService
+    private _placeService: PlaceService,
+    private _toastr: ToastrService
   ) {}
 
   closeModal() {
@@ -66,9 +69,23 @@ export class PlaceModalComponent implements OnInit, OnDestroy, AfterViewInit {
       const withId = this.place.id;
       this.subs.sink = this._placeService
         .updatePlace(withId!, newPlace)
+        .pipe(
+          catchError((err) => {
+            this._toastr.error('Something went wrong.', 'Hmmm...');
+            return of(undefined);
+          })
+        )
         .subscribe();
     } else {
-      this.subs.sink = this._placeService.addNewPlace(newPlace).subscribe();
+      this.subs.sink = this._placeService
+        .addNewPlace(newPlace)
+        .pipe(
+          catchError((err) => {
+            this._toastr.error('Something went wrong.', 'Hmmm...');
+            return of(undefined);
+          })
+        )
+        .subscribe();
     }
 
     this.closeModal();

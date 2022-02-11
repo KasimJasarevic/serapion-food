@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Res,
+  ValidationPipe,
 } from '@nestjs/common';
 import { WebsocketGatewayService } from '../events/websocket-gateway.service';
 import { AddCommentDTO } from './comment.dto';
@@ -19,7 +20,10 @@ export class CommentController {
   ) {}
 
   @Post()
-  addNewOrderItem(@Body() payload: AddCommentDTO, @Res() res) {
+  addNewOrderItem(
+    @Body(new ValidationPipe({ transform: true })) payload: AddCommentDTO,
+    @Res() res,
+  ) {
     this._commentService.addNewComment(payload).subscribe((comment) => {
       this._websocketGatewayService.sendNewCommentMessage(comment);
       res.json(comment);
