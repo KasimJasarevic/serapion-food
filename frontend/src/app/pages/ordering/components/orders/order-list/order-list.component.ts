@@ -1,4 +1,10 @@
-import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -12,7 +18,8 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { switchMap, tap } from 'rxjs';
+import { from, map, Observable, switchMap, take, tap } from 'rxjs';
+import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { OrderStatus } from '../models/order-status-types';
 import { OrderType } from '../models/order-type-types';
 import { IOrder } from '../models/order.model';
@@ -32,13 +39,9 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   orderType = OrderType;
   ordersForm: FormGroup | undefined;
   private subs = new SubSink();
-
-  // orderForms = new FormArray([]);
-  // orderTypeForm = new FormGroup({
-  //   orderType: new FormControl(),
-  // });
-
   orderArrivalArr!: FormArray;
+  @ViewChild('cancelDialog') cancelDialog!: ModalComponent;
+  @ViewChild('confirmDialog') confirmDialog!: ModalComponent;
 
   constructor(
     private _orderService: OrderService,
@@ -262,119 +265,124 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   closeRestaurant({ id }: IOrder) {
-    if (confirm(`Are you sure you want to close this order?`)) {
-      if (id) {
-        this.subs.sink = this._orderService
-          .deleteOrderById(id)
-          .subscribe((data: any) => {
-            if (data && data.id) {
-              // Returns deleted order
-              this.orders = this.orders.filter(
-                (order: IOrder) => order.id !== data.id
-              );
-            }
-
-            // I don't have any data here, but I can search orders field
-            // and get restaurant name...
-            // const restaurant = this.orders.find(
-            //   (order: IOrder) => order.id === id
-            // );
-            // console.log(restaurant);
-            // this._notificationService.sendCloseRestaurantMessage(
-            //   data.restaurant.name
-            // );
-          });
-      }
-    }
+    this.subs.sink = this.cancelDialog
+      .toggleModal(`cancel-${id}`)
+      .subscribe((confirmation) => {
+        if (id && confirmation) {
+          this.subs.sink = this._orderService
+            .deleteOrderById(id)
+            .subscribe((data: any) => {
+              if (data && data.id) {
+                this.orders = this.orders.filter(
+                  (order: IOrder) => order.id !== data.id
+                );
+              }
+            });
+        }
+      });
+    // if (confirm(`Are you sure you want to close this order?`)) {
+    //   if (id) {
+    //     this.subs.sink = this._orderService
+    //       .deleteOrderById(id)
+    //       .subscribe((data: any) => {
+    //         if (data && data.id) {
+    //           this.orders = this.orders.filter(
+    //             (order: IOrder) => order.id !== data.id
+    //           );
+    //         }
+    //       });
+    //   }
+    // }
   }
 
   confirmOrder(order: IOrder) {
-    if (confirm(`Are you sure you want to confirm this order?`)) {
-      // Save it!
-      order.status = OrderStatus.INACTIVE;
-      const today = new Date();
-      const ind = this.orders.findIndex((o) => o.id == order.id);
-      order.arrivalTime = new Date(
-        today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value
-      );
+    // if (confirm(`Are you sure you want to confirm this order?`))
+    this.subs.sink = this._orderService
+      .getOrderItems(order.id)
+      .pipe(
+        switchMap((items) => {
+          this.orders.forEach((o) => {
+            if (o.id === order.id) {
+              o.orderItems = items;
+            }
+          });
+          return this.confirmDialog.toggleModal(`confirm-${order.id}`);
+        })
+      )
+      .subscribe((confirmation) => {
+        // Save it!
+        if (order && confirmation) {
+          order.status = OrderStatus.INACTIVE;
+          const today = new Date();
+          const ind = this.orders.findIndex((o) => o.id == order.id);
+          order.arrivalTime = new Date(
+            today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value
+          );
 
-      this.subs.sink = this._orderService
-        .getOrderItems(order.id)
-        .pipe(
-          switchMap((items) => {
-            order.orderItems = items;
-            return this._orderService.getComments(order.id);
-          })
-        )
-        .pipe(
-          switchMap((comments) => {
-            order.comments = comments;
-            return this._orderService.completeOrder(order.id, order);
-          })
-        )
-        .pipe(
-          switchMap(() => {
-            return this._orderService.getOrderItems(order.id);
-          })
-        )
-        .subscribe((item: IItem[]) => {
-          let ids: string[] = [];
+          this.subs.sink = this._orderService
+            .getOrderItems(order.id)
+            .pipe(
+              switchMap((items) => {
+                order.orderItems = items;
+                return this._orderService.getComments(order.id);
+              })
+            )
+            .pipe(
+              switchMap((comments) => {
+                order.comments = comments;
+                return this._orderService.completeOrder(order.id, order);
+              })
+            )
+            .pipe(
+              switchMap(() => {
+                return this._orderService.getOrderItems(order.id);
+              })
+            )
+            .subscribe((item: IItem[]) => {
+              let ids: string[] = [];
 
-          item.forEach((data) => {
-            data.orderedItems?.forEach((oi) => {
-              if (oi.user?.subscriptionId) {
-                ids.push(oi.user.subscriptionId);
+              item.forEach((data) => {
+                data.orderedItems?.forEach((oi) => {
+                  if (oi.user?.subscriptionId) {
+                    ids.push(oi.user.subscriptionId);
+                  }
+                });
+              });
+
+              const currentUser = JSON.parse(
+                localStorage.getItem(
+                  LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+                ) as string
+              );
+              ids = [...new Set(ids)];
+              if (currentUser && currentUser.subscriptionId) {
+                ids = ids.filter((id) => id != currentUser.subscriptionId);
+              }
+
+              if (!!ids.length && order.arrivalTime && order.type) {
+                const formatTime = order.arrivalTime.toLocaleTimeString(
+                  navigator.language,
+                  {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  }
+                );
+
+                const str = `Order ${order?.restaurant.name} completed, and ${
+                  order.type === this.orderType.DELIVERY
+                    ? 'it will arrive'
+                    : 'we depart'
+                } @${formatTime}!`;
+                this._notificationService.sendNotificationToUsers(ids, str);
               }
             });
-          });
-
-          // Filter ids
-          const currentUser = JSON.parse(
-            localStorage.getItem(
-              LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-            ) as string
-          );
-          ids = [...new Set(ids)];
-          if (currentUser && currentUser.subscriptionId) {
-            ids = ids.filter((id) => id != currentUser.subscriptionId);
-          }
-
-          if (!!ids.length && order.arrivalTime && order.type) {
-            const formatTime = order.arrivalTime.toLocaleTimeString(
-              navigator.language,
-              {
-                hour: '2-digit',
-                minute: '2-digit',
-              }
-            );
-
-            const str = `Order ${order?.restaurant.name} completed, and ${
-              order.type === this.orderType.DELIVERY
-                ? 'it will arrive'
-                : 'we depart'
-            } @${formatTime}!`;
-            this._notificationService.sendNotificationToUsers(ids, str);
-          }
-        });
-    }
+        }
+      });
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
-
-  // ngAfterViewInit(): void {
-  //   this.subs.sink = this.children?.changes.subscribe(() => {
-  //     this.children?.toArray().map((next) => console.log(next));
-  //   })!;
-  // }
-
-  // A lifecycle hook that is called after the default change detector has completed checking a component's view for changes.
-  // ngAfterViewChecked(): void {
-  //   if (this.children) {
-  //     console.log(this.children);
-  //   }
-  // }
 
   public getOwnerFullName(order: IOrder) {
     return `${order.user.firstName} ${order.user.lastName}`;
@@ -400,17 +408,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     const currentUser = JSON.parse(
       <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
     );
-
-    // const order = this.orders.find((o) => o.id == next.order.id);
-    // this.subs.sink = this._orderService
-    //   .getOrderOrderer(order!.id)
-    //   .subscribe((data) => {
-    //     if (data) {
-    //       this.subs.sink = this._userService
-    //         .getById(data.user_id)
-    //         .subscribe((user) => (order!.orderer = user));
-    //     }
-    //   });
 
     if (currentUser) {
       const orderer = this.orders.find((ord) => ord.id == order.id)?.orderer;
@@ -442,14 +439,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
 
-  doSomething(order: IOrder) {
-    // this.orderTypeForm.get('orderType')?.setValue(order.type);
-
-    return true;
-  }
-
   onOrderTypeChange(order: IOrder) {
-    // Order id and order
     const id = order.id;
 
     const ind = this.orders.findIndex((order) => order.id == id);
@@ -464,8 +454,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   sendLastCall(order: IOrder) {
-    // console.log(`Last call for ${order.restaurant.name}!`);
-
     this.subs.sink = this._orderService
       .getOrderItems(order.id)
       .subscribe((item: IItem[]) => {
@@ -507,8 +495,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   sendArrivedCall(order: IOrder) {
-    // console.log(`Last call for ${order.restaurant.name}!`);
-
     this.subs.sink = this._orderService
       .getOrderItems(order.id)
       .subscribe((item: IItem[]) => {
@@ -538,6 +524,11 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       });
   }
+
+  getOrderItems$ = (id: number) => {
+    return this._orderService.getOrderItems(id);
+    // .pipe(switchMap((order) => order.orderItems))
+  };
 
   private _populateOrders = (orders: IOrder[]) => {
     if (orders) {

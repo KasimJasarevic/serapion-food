@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   Res,
+  ValidationPipe,
 } from '@nestjs/common';
 import { WebsocketGatewayService } from '../events/websocket-gateway.service';
 import { OrderItemUserService } from '../order-item-user/order-item-user.service';
@@ -30,7 +31,13 @@ export class OrderItemController {
   }
 
   @Post()
-  addNewOrderItem(@Body() payload: OrderItemPostRequest, @Res() res) {
+  addNewOrderItem(
+    @Body(new ValidationPipe({ transform: true }))
+    payload: OrderItemPostRequest,
+    @Res() res,
+  ) {
+    // Here I need a validation pipe
+
     this._orderItemService.addNewOrderItem(payload).subscribe((orderItem) => {
       this._websocketGatewayService.sendNewOrderItemMessage(orderItem);
       res.json(orderItem);

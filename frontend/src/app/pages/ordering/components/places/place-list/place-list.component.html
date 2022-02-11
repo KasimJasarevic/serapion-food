@@ -1,8 +1,8 @@
 <div
   class="min-h-screen p-4 z-10 lg:pt-8 2xl:pt-8 rounded-t-xl bg-serapion-blue-100 shadow-md dark:bg-serapion-black-100"
 >
-  <div class="grid grid-cols-2 gap-2 lg:grid-cols-2 lg:gap-4">
-    <div class="z-10" *ngFor="let place of places | filter: filterStr:updated">
+  <div class="grid grid-cols-3 gap-2 lg:grid-cols-2 lg:gap-4">
+    <div *ngFor="let place of places | filter: filterStr:updated">
       <!-- (click)="togglePlace(place.id)" -->
       <div
         class="border-serapion-blue-300 px-2 py-4 bg-serapion-white rounded-md lg:transform lg:hover:scale-102 lg:hover:shadow-lg transition-all duration-300 dark:bg-serapion-black-200"
@@ -14,13 +14,14 @@
           <div
             (click)="togglePlace(place.id)"
             class="uppercase flex-1 mr-2 cursor-pointer"
+            title="{{ place.name | uppercase }}"
             [ngClass]="{
               'line-through': hasActiveOrders(place)
             }"
           >
             {{
-              place.name.length > 10
-                ? (place.name | slice: 0:10) + "..."
+              place.name.length > 8
+                ? (place.name | slice: 0:8) + "..."
                 : place.name
             }}
           </div>
@@ -65,22 +66,12 @@
               ></i>
             </button>
           </div>
-          <!-- <button class="btn btn-secondary" (click)="deletePlace(place.name)">
-          <i class="fas fa-sm fa-trash pr-1"></i> Delete
-        </button> -->
         </div>
-
-        <!-- <strong class="text-xs font-semibold">{{
-        place.phoneNumber ? place.phoneNumber : "No phone number"
-      }}</strong> -->
 
         <div
           class="flex pt-8 space-x-2 justify-center"
           *ngIf="isExpanded((this.collapsedPlaces$ | async) || [], place.id)"
         >
-          <!-- <button class="btn btn-warn flex-1" (click)="editRestaurant(place.id!)">
-          <i class="far fa-sm fa-edit pr-1"></i> Edit
-        </button> -->
           <button
             class="btn flex-1 mt-2"
             (click)="openRestaurant(place)"
@@ -95,6 +86,17 @@
           </button>
         </div>
       </div>
+      <app-modal id="delete-{{ place.name }}" #deleteDialog>
+        <div class="uppercase font-thin text-lg">
+          Are you sure you want to delete {{ place.name }}?
+        </div>
+        <!-- <div class="flex flex-row justify-center items-center my-6">
+        <img
+          class="w-1/2"
+          src="../../../../../../assets/images/closed-store.svg"
+        />
+      </div> -->
+      </app-modal>
     </div>
   </div>
 </div>

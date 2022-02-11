@@ -17,8 +17,10 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { ToastrService } from 'ngx-toastr';
 import {
   BehaviorSubject,
+  catchError,
   delay,
   map,
   Observable,
@@ -38,54 +40,30 @@ import { IMessage } from './models/order-chat.model';
   templateUrl: './order-chat.component.html',
   styleUrls: ['./order-chat.component.scss'],
 })
-export class OrderChatComponent
-  implements
-    OnInit,
-    OnDestroy,
-    AfterViewChecked,
-    AfterViewInit,
-    AfterContentInit
-{
+export class OrderChatComponent implements OnInit, OnDestroy {
   @Input() order: IOrder | undefined;
   @ViewChild('commentBox', { static: false }) commentBox!: ElementRef;
-  // private _scrollSub$: BehaviorSubject<number | null> = new BehaviorSubject<
-  //   number | null
-  // >(null);
-  // scrollPosition: Observable<number | null> = this._scrollSub$.asObservable();
-
   orderStatus = OrderStatus;
-  // items$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-
   users$: BehaviorSubject<IUser[]> = new BehaviorSubject<IUser[]>([]);
   toMention: IUser[] = [];
-
   messages: IMessage[] = [];
   private subs = new SubSink();
-
   commentForm = new FormGroup({
-    comment: new FormControl(null, Validators.required),
+    comment: new FormControl(null, [
+      Validators.required,
+      Validators.minLength(1),
+      Validators.maxLength(140),
+    ]),
   });
 
   constructor(
     private _orderService: OrderService,
-    private _userService: UserService,
     private _websocketService: WebsocketMessagesService,
-    private _notificationService: NotificationService
+    private _notificationService: NotificationService,
+    private _toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
-    // this.subs.sink = this._userService.getAllUsers().subscribe((data) => {
-    //   const dummyAll: IUser = {
-    //     id: -1,
-    //     firstName: 'All',
-    //     lastName: 'All',
-    //     email: 'All',
-    //   };
-
-    //   data.unshift(dummyAll);
-    //   this.users$.next(data);
-    // });
-
     if (this.order) {
       this.subs.sink = this._orderService
         .getComments(this.order.id)
@@ -100,17 +78,6 @@ export class OrderChatComponent
         this._populateMentionList(users)
       );
     }
-
-    // this.subs.sink = this._websocketService
-    //   .onOrderCompleted()
-    //   .pipe(
-    //     switchMap((data: IOrder) => this._orderService.getOrderById(data.id))
-    //   )
-    //   .subscribe((data: IOrder) => {
-    //     if (data && this.order && data.id === this.order.id) {
-    //       this.order = data;
-    //     }
-    //   });
 
     this.subs.sink = this._websocketService
       .onCommentDeleted()
@@ -151,54 +118,15 @@ export class OrderChatComponent
             a.commentedOn! < b.commentedOn! ? -1 : 1
           );
 
-          this.commentBox.nativeElement.scroll({
-            top: Number.MAX_SAFE_INTEGER,
-            left: 0,
-            behavior: 'smooth',
-          });
+          setTimeout(() => {
+            this.commentBox.nativeElement.scroll({
+              top: Number.MAX_SAFE_INTEGER,
+              left: 0,
+              behavior: 'smooth',
+            });
+          }, 100);
         }
       });
-  }
-
-  ngAfterContentInit(): void {
-    // this.commentBox.nativeElement.scrollTop =
-    //   this.commentBox.nativeElement.scrollHeight;
-  }
-
-  ngAfterViewInit(): void {
-    // this.subs.sink = this.scrollPosition
-    //   .pipe(
-    //     tap(() =>
-    //       this._scrollSub$.next(this.commentBox.nativeElement.scrollHeight)
-    //     ),
-    //     delay(0)
-    //   )
-    //   .subscribe();
-    // this.commentBox.nativeElement.scrollTop =
-    //   this.commentBox.nativeElement.scrollHeight;
-    // this.commentBox.nativeElement.scrollIntoView({ block: 'end' });
-    // this.users.forEach((user) => {
-    //   this.items.push(user.firstName);
-    // });
-  }
-
-  ngAfterViewChecked(): void {
-    // this.subs.sink = this._userService
-    //   .getAllUsers()
-    //   .subscribe((data: IUser[]) => {
-    //     data.forEach((user) => {
-    //       this.users.push(user.firstName);
-    //     });
-    //   });
-    // this._commentBox.nativeElement.scrollTop =
-    //   this._commentBox.nativeElement.scrollHeight;
-    // this.subs.sink = this._websocketService
-    //   .onCommentReceived()
-    //   .subscribe(
-    //     (next) =>
-    //       (this._commentBox.nativeElement.scrollTop =
-    //         this._commentBox.nativeElement.scrollHeight)
-    //   );
   }
 
   onAddComment() {
@@ -215,82 +143,84 @@ export class OrderChatComponent
     this._orderService
       .addNewComment(comment)
       .pipe(
+        catchError((err) => {
+          this._toastr.error('Something went wrong.', 'Hmmm...');
+          return of(undefined);
+        }),
         switchMap((data) => {
-          return this._orderService.getOrderItems(data.order?.id!);
-        })
-      )
-      .subscribe((item: IItem[]) => {
-        let ids: string[] = [];
-
-        // If items are found
-        if (!!item.length) {
-          item.forEach((data) => {
-            data.orderedItems?.forEach((oi) => {
-              if (oi.user?.subscriptionId) {
-                ids.push(oi.user.subscriptionId);
-              }
-            });
-          });
-
-          const currentUser = JSON.parse(
-            localStorage.getItem(
-              LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-            ) as string
-          );
-          ids = [...new Set(ids)];
-          if (currentUser && currentUser.subscriptionId) {
-            ids = ids.filter((id) => id !== currentUser.subscriptionId);
+          if (data) {
+            return this._orderService.getOrderItems(data.order?.id!);
           }
 
-          if (!!ids.length) {
-            const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
-            this._notificationService.sendNotificationToUsers(ids, str);
+          return of(undefined);
+        })
+      )
+      .subscribe((item: IItem[] | undefined) => {
+        if (item) {
+          let ids: string[] = [];
+
+          if (!!item.length) {
+            item.forEach((data) => {
+              data.orderedItems?.forEach((oi) => {
+                if (oi.user?.subscriptionId) {
+                  ids.push(oi.user.subscriptionId);
+                }
+              });
+            });
+
+            const currentUser = JSON.parse(
+              localStorage.getItem(
+                LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+              ) as string
+            );
+            ids = [...new Set(ids)];
+            if (currentUser && currentUser.subscriptionId) {
+              ids = ids.filter((id) => id !== currentUser.subscriptionId);
+            }
+
+            if (!!ids.length) {
+              const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
+              this._notificationService.sendNotificationToUsers(ids, str);
+            }
+          }
+
+          if (!!this.toMention.length) {
+            const indAll = this.toMention.findIndex(
+              (user) => user.firstName === 'All'
+            );
+
+            let ids: string[] = [];
+            if (indAll !== -1) {
+              this.users$.value.forEach((user: IUser) => {
+                if (user.subscriptionId) {
+                  ids.push(user.subscriptionId);
+                }
+              });
+            } else {
+              this.toMention.forEach((user: IUser) => {
+                if (user.subscriptionId) {
+                  ids.push(user.subscriptionId);
+                }
+              });
+            }
+
+            const currentUser = JSON.parse(
+              localStorage.getItem(
+                LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+              ) as string
+            );
+            ids = [...new Set(ids)];
+            if (currentUser && currentUser.subscriptionId) {
+              ids = ids.filter((id) => id != currentUser.subscriptionId);
+            }
+
+            if (!!ids.length) {
+              const str = `New mention in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
+              this._notificationService.sendMentionToUsers(ids, str);
+            }
           }
         }
       });
-
-    if (!!this.toMention.length) {
-      // console.log('Mention!');
-      // const matches = [...comment.comment!.matchAll(/@(\w+)/g)];
-      // for (const match of matches) {
-      //   const matchedName = match[1];
-      // console.log(match[1]);
-      const indAll = this.toMention.findIndex(
-        (user) => user.firstName === 'All'
-      );
-
-      let ids: string[] = [];
-      if (indAll !== -1) {
-        // console.log('All users');
-        this.users$.value.forEach((user: IUser) => {
-          if (user.subscriptionId) {
-            ids.push(user.subscriptionId);
-          }
-        });
-      } else {
-        // console.log('Specific users');
-        this.toMention.forEach((user: IUser) => {
-          if (user.subscriptionId) {
-            ids.push(user.subscriptionId);
-          }
-        });
-      }
-
-      const currentUser = JSON.parse(
-        localStorage.getItem(
-          LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-        ) as string
-      );
-      ids = [...new Set(ids)];
-      if (currentUser && currentUser.subscriptionId) {
-        ids = ids.filter((id) => id != currentUser.subscriptionId);
-      }
-
-      if (!!ids.length) {
-        const str = `New mention in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
-        this._notificationService.sendMentionToUsers(ids, str);
-      }
-    }
 
     this.toMention = [];
     this.commentForm.reset();
@@ -311,19 +241,9 @@ export class OrderChatComponent
   }
 
   onItemSelected(value: any, id: number) {
-    // console.log(value);
-    // console.log(id);
     if (id === this.order?.id) {
       this.toMention.push(value);
-      // console.log(this.toMention);
     }
-
-    // Use this later !!!
-    // const str = 'The @quick, brown fox @jumps @over @a lazy @dog.';
-    // const matches = [...str.matchAll(/@(\w+)/g)];
-    // for (const match of matches) {
-    //   console.log(match[1]);
-    // }
   }
 
   ngOnDestroy(): void {

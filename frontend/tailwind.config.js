@@ -7,6 +7,10 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {
+      zIndex: {
+        90: "90",
+        100: "100",
+      },
       colors: {
         "serapion-blue": {
           100: "#def2ff",

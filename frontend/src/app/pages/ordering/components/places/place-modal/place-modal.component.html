@@ -15,7 +15,20 @@
             class="text-xs text-serapion-purple pb-2"
             *ngIf="name.invalid && (name.dirty || name.touched)"
           >
-            <span class="font-semibold">*</span> Name is required!
+            <p *ngIf="name.errors?.['required']">
+              <span class="font-semibold">*</span>
+              Name is required!
+            </p>
+
+            <p *ngIf="name.errors?.['minlength']">
+              <span class="font-semibold">*</span>
+              Name must be at least 4 characters long.
+            </p>
+
+            <p *ngIf="name.errors?.['maxlength']">
+              <span class="font-semibold">*</span>
+              Name must be less than 140 characters.
+            </p>
           </div>
           <div
             class="flex items-center rounded border border-serapion-grey-100 text-serapion-grey-200 dark:text-serapion-white"

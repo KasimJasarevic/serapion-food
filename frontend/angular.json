@@ -31,12 +31,14 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
+              "src/assets/images/favicon.png",
               "src/assets",
               "src/OneSignalSDKWorker.js",
               "src/OneSignalSDKUpdaterWorker.js"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": []
           },

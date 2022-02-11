@@ -1,3 +1,4 @@
+import { IsEmail, MaxLength } from 'class-validator';
 import { OrderEntity } from '../order/order.entity';
 import { UserEntity } from '../user/user.entity';
 import { OrderItemEntity } from './order-item.entity';
@@ -20,6 +21,7 @@ export class OrderItemGetRequest {
 }
 
 export class OrderItemPostRequest {
+  @MaxLength(140)
   name: string;
   order: OrderEntity;
   orderedItems: OrderItemDTO[];
@@ -68,4 +70,17 @@ export class OrderItemUserDTO {
 export class OrderItemUserDeleteResponse {
   orderItem: OrderItemEntity;
   user: UserEntity;
+}
+
+export class ValidationPipeDto {
+  @MaxLength(4)
+  name: string;
+
+  @IsEmail()
+  email: string;
+}
+
+export class NewOrderItemDto {
+  @MaxLength(140)
+  name?: string;
 }
