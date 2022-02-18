@@ -24,7 +24,8 @@ module.exports = {
           100: "#a3abbd",
           200: "#3f4756",
         },
-        "serapion-white": "#f3faff",
+
+        "serapion-white": "#eef5fa",
         "serapion-black": {
           100: "#1e2122",
           200: "#14171d",

@@ -35,7 +35,7 @@ const config: SocketIoConfig = {
       timeOut: 2000,
       progressBar: true,
       progressAnimation: 'increasing',
-      positionClass: 'toast-bottom-left',
+      positionClass: 'toast-bottom-center',
       preventDuplicates: true,
     }),
   ],
