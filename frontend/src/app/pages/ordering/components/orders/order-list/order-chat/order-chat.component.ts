@@ -149,6 +149,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
         }),
         switchMap((data) => {
           if (data) {
+            // this._toastr.success('Message sent!');
             return this._orderService.getOrderItems(data.order?.id!);
           }
 
