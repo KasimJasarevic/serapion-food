@@ -60,60 +60,63 @@
       class="uppercase text-xs font-thin"
       title="{{ item.name | uppercase }}"
     >
-      {{
-        item.name!.length < 25 ? item.name : (item.name | slice: 0:25) + "..."
-      }}
+      {{ item.name }}
     </div>
-    <div class="-space-x-2 ml-auto mr-1">
-      <img
-        class="relative z-30 inline object-cover w-5 h-5 border-2 border-serapion-white rounded-full dark:border-serapion-black-200"
-        src="{{ orderItem.user!.photo }}"
-        alt="{{
-          orderItem.user!.firstName +
-            ' ' +
-            orderItem.user!.lastName +
-            ' Profile Picture'
-        }}"
-        title="{{ orderItem.user!.firstName + ' ' + orderItem.user!.lastName }}"
-        referrerpolicy="no-referrer"
-        *ngFor="
-          let orderItem of item.orderedItems!
-            | uniqueFilter: updated
-            | slice: 0:5
-        "
-      />
-    </div>
+    <!-- item.name!.length < 25 ? item.name : (item.name | slice: 0:25) + "..." -->
+    <div class="flex flex-row justify-between items-center flex-none ml-1">
+      <div class="-space-x-2 ml-auto mr-1">
+        <img
+          class="relative z-30 inline object-cover w-5 h-5 border-2 border-serapion-white rounded-full dark:border-serapion-black-200"
+          src="{{ orderItem.user!.photo }}"
+          alt="{{
+            orderItem.user!.firstName +
+              ' ' +
+              orderItem.user!.lastName +
+              ' Profile Picture'
+          }}"
+          title="{{
+            orderItem.user!.firstName + ' ' + orderItem.user!.lastName
+          }}"
+          referrerpolicy="no-referrer"
+          *ngFor="
+            let orderItem of item.orderedItems!
+              | uniqueFilter: updated
+              | slice: 0:5
+          "
+        />
+      </div>
 
-    <div class="uppercase text-xs font-semibold">
-      <button
-        (click)="removeItem(item)"
-        [disabled]="
-          order?.status === orderStatus.INACTIVE || !haveThisItem(item)
-        "
-      >
-        <i
-          class="fas fa-angle-left fa-sm pr-1 cursor-pointer"
-          [ngClass]="{}"
-          [ngClass]="{
-            'text-serapion-grey-100':
-              !haveThisItem(item) || order?.status === orderStatus.INACTIVE,
-            'cursor-not-allowed': order?.status === orderStatus.INACTIVE
-          }"
-        ></i>
-      </button>
-      <span>{{ item.orderedItems!.length }}x</span>
-      <button
-        (click)="addItem(item)"
-        [disabled]="order?.status === orderStatus.INACTIVE"
-      >
-        <i
-          class="fas fa-angle-right fa-sm pl-1 cursor-pointer"
-          [ngClass]="{
-            'text-serapion-grey-100': order?.status === orderStatus.INACTIVE,
-            'cursor-not-allowed': order?.status === orderStatus.INACTIVE
-          }"
-        ></i>
-      </button>
+      <div class="uppercase text-xs font-semibold">
+        <button
+          (click)="removeItem(item)"
+          [disabled]="
+            order?.status === orderStatus.INACTIVE || !haveThisItem(item)
+          "
+        >
+          <i
+            class="fas fa-angle-left fa-sm pr-1 cursor-pointer"
+            [ngClass]="{}"
+            [ngClass]="{
+              'text-serapion-grey-100':
+                !haveThisItem(item) || order?.status === orderStatus.INACTIVE,
+              'cursor-not-allowed': order?.status === orderStatus.INACTIVE
+            }"
+          ></i>
+        </button>
+        <span>{{ item.orderedItems!.length }}x</span>
+        <button
+          (click)="addItem(item)"
+          [disabled]="order?.status === orderStatus.INACTIVE"
+        >
+          <i
+            class="fas fa-angle-right fa-sm pl-1 cursor-pointer"
+            [ngClass]="{
+              'text-serapion-grey-100': order?.status === orderStatus.INACTIVE,
+              'cursor-not-allowed': order?.status === orderStatus.INACTIVE
+            }"
+          ></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>

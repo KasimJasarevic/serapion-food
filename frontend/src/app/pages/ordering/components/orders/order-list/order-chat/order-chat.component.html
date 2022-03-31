@@ -49,12 +49,13 @@
           {{ message.comment }}
         </p>
         <i
-          *ngIf="
-            isMessageOwner(message) && order?.status === orderStatus.ACTIVE
-          "
+          *ngIf="isMessageOwner(message)"
           class="fas fa-sm fa-trash text-serapion-grey-100 hover:text-serapion-grey-200 transition-all duration-300 dark:hover:text-serapion-white cursor-pointer"
           (click)="handleDeleteMessage(message)"
         ></i>
+        <!-- *ngIf="
+            isMessageOwner(message) && order?.status === orderStatus.ACTIVE
+          " -->
       </div>
     </div>
   </div>
@@ -103,34 +104,32 @@
           name="comment"
           formControlName="comment"
           class="mentions flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
-          [ngClass]="{
-            'cursor-not-allowed': order?.status === orderStatus.INACTIVE
-          }"
           (itemSelected)="onItemSelected($event, order!.id)"
           [mention]="(users$ | async)!"
           [mentionConfig]="{ labelKey: 'firstName', dropUp: true }"
           [mentionListTemplate]="mentionListTemplate"
-          [attr.disabled]="order?.status === orderStatus.INACTIVE ? '' : null"
         />
       </div>
+      <!-- [ngClass]="{
+            'cursor-not-allowed': order?.status === orderStatus.INACTIVE
+          }" -->
+      <!-- [attr.disabled]="order?.status === orderStatus.INACTIVE ? '' : null" -->
     </div>
     <div class="w-full py-2 pt-4 lg:w-max lg:py-0">
       <button
         class="btn btn-primary w-full"
         [ngClass]="{
-          'btn-primary':
-            !commentForm.invalid && order?.status === orderStatus.ACTIVE,
-          'btn-disabled':
-            commentForm.invalid || order?.status === orderStatus.INACTIVE
+          'btn-primary': !commentForm.invalid,
+          'btn-disabled': commentForm.invalid
         }"
-        [disabled]="
-          commentForm.invalid || order?.status === orderStatus.INACTIVE
-        "
         type="submit"
       >
         <i class="fas fa-paper-plane fa-xs pr-1"></i>
         Send
       </button>
+      <!-- [disabled]="
+          commentForm.invalid || order?.status === orderStatus.INACTIVE
+        " -->
     </div>
   </form>
 </div>
