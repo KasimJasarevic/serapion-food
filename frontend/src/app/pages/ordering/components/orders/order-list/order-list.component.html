@@ -1,11 +1,11 @@
 <div
-  class="min-h-screen p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-100 bg-opacity-90 bg-hero bg-cover bg-no-repeat bg-blend-soft-light rounded-t-xl shadow-md dark:bg-serapion-black-100"
+  class="overflow-orders p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-100 bg-opacity-50 bg-hero bg-cover bg-no-repeat bg-blend-soft-light shadow-md dark:bg-serapion-black-100"
   [ngClass]="{ 'lg:grid-cols-3 2xl:grid-cols-4': isSidebarCollapsed() }"
 >
   <!-- ORDER -->
   <div *ngFor="let order of orders; let i = index" class="place-self-strech">
     <div
-      class="rounded-md bg-serapion-white p-4 z-10 lg:transform lg:hover:shadow-lg transition-all duration-300 {{
+      class="rounded-md bg-serapion-white p-4 z-10 lg:transform{{
         order.status === orderStatus.ACTIVE
           ? 'border-serapion-green'
           : 'border-serapion-purple'

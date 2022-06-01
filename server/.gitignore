@@ -4,7 +4,7 @@
 
 # Logs
 logs
-front
+dist/front
 *.log
 npm-debug.log*
 pnpm-debug.log*

@@ -51,7 +51,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      "serapion-sans": ["Rubik, sans-serif"],
+      "serapion-sans": ["sans-serif"],
     },
   },
   variants: {
