@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { OneSignalService } from 'onesignal-ngx';
-import { UserService } from './user.service';
-import { LocalStorageTypes } from '../enums/local-storage-types';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import {Injectable} from '@angular/core';
+import {OneSignalService} from 'onesignal-ngx';
+import {UserService} from './user.service';
+import {LocalStorageTypes} from '../enums/local-storage-types';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,8 @@ export class NotificationService {
     private _oneSignal: OneSignalService,
     private _http: HttpClient,
     private _userService: UserService
-  ) {}
+  ) {
+  }
 
   init() {
     this._oneSignal
@@ -25,6 +26,10 @@ export class NotificationService {
           console.log("USER ID", userId);
           if (userId) {
             localStorage.setItem(LocalStorageTypes.SUBSCRIPTION_ID, userId);
+            if (this._userService.user) {
+              this._userService.user.subscriptionId = userId;
+              this._userService.updateOne(this._userService.user).subscribe();
+            }
           }
         });
       });
@@ -65,7 +70,7 @@ export class NotificationService {
   private createContent(message: string) {
     return {
       app_id: environment.notificationId,
-      contents: { en: message },
+      contents: {en: message},
       included_segments: ['Active Users', 'Inactive Users'],
     };
   }
@@ -87,7 +92,7 @@ export class NotificationService {
   private createContentForUsers(ids: string[], message: string) {
     return {
       app_id: environment.notificationId,
-      contents: { en: message },
+      contents: {en: message},
       include_player_ids: ids,
     };
   }
