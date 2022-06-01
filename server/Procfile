@@ -1,1 +1,1 @@
-web: npm run final:prod
+web: npm run build && npm run final:prod
