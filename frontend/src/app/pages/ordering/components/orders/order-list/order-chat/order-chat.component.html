@@ -118,6 +118,7 @@
     <div class="w-full py-2 pt-4 lg:w-max lg:py-0">
       <button
         class="btn btn-primary w-full"
+        [disabled]="commentForm.invalid"
         [ngClass]="{
           'btn-primary': !commentForm.invalid,
           'btn-disabled': commentForm.invalid
@@ -127,9 +128,6 @@
         <i class="fas fa-paper-plane fa-xs pr-1"></i>
         Send
       </button>
-      <!-- [disabled]="
-          commentForm.invalid || order?.status === orderStatus.INACTIVE
-        " -->
     </div>
   </form>
 </div>

@@ -1,39 +1,17 @@
-import { isNgTemplate } from '@angular/compiler';
-import {
-  AfterContentInit,
-  AfterViewChecked,
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
-import { LocalStorageTypes } from '@core/enums/local-storage-types';
-import { SubSink } from '@core/helpers/sub-sink';
-import { IUser } from '@core/models/user.model';
-import { NotificationService } from '@core/services/notification.service';
-import { UserService } from '@core/services/user.service';
-import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { ToastrService } from 'ngx-toastr';
-import {
-  BehaviorSubject,
-  catchError,
-  delay,
-  map,
-  Observable,
-  of,
-  startWith,
-  switchMap,
-  tap,
-} from 'rxjs';
-import { OrderStatus } from '../../models/order-status-types';
-import { IOrder } from '../../models/order.model';
-import { OrderService } from '../../services/order.service';
-import { IItem } from '../order-items/models/order-item.model';
-import { IMessage } from './models/order-chat.model';
+import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild,} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {LocalStorageTypes} from '@core/enums/local-storage-types';
+import {SubSink} from '@core/helpers/sub-sink';
+import {IUser} from '@core/models/user.model';
+import {NotificationService} from '@core/services/notification.service';
+import {WebsocketMessagesService} from '@core/services/websocket-messages.service';
+import {ToastrService} from 'ngx-toastr';
+import {BehaviorSubject, catchError, map, of, switchMap,} from 'rxjs';
+import {OrderStatus} from '../../models/order-status-types';
+import {IOrder} from '../../models/order.model';
+import {OrderService} from '../../services/order.service';
+import {IItem} from '../order-items/models/order-item.model';
+import {IMessage} from './models/order-chat.model';
 
 @Component({
   selector: 'app-order-chat',
@@ -42,7 +20,7 @@ import { IMessage } from './models/order-chat.model';
 })
 export class OrderChatComponent implements OnInit, OnDestroy {
   @Input() order: IOrder | undefined;
-  @ViewChild('commentBox', { static: false }) commentBox!: ElementRef;
+  @ViewChild('commentBox', {static: false}) commentBox!: ElementRef;
   orderStatus = OrderStatus;
   users$: BehaviorSubject<IUser[]> = new BehaviorSubject<IUser[]>([]);
   toMention: IUser[] = [];
@@ -61,7 +39,8 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     private _websocketService: WebsocketMessagesService,
     private _notificationService: NotificationService,
     private _toastr: ToastrService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     if (this.order) {
@@ -255,8 +234,8 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     return this._orderService.getOrderItems(this.order!.id).pipe(
       map((data: IItem[]): IUser[] => {
         return data
-          .map(({ orderedItems }) => {
-            return orderedItems?.map(({ user }) => user);
+          .map(({orderedItems}) => {
+            return orderedItems?.map(({user}) => user);
           })
           .flat() as IUser[];
       })
@@ -294,7 +273,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     this.users$.next(uniqueUsers);
   };
 
-  isMessageOwner = ({ user }: IMessage): boolean => {
+  isMessageOwner = ({user}: IMessage): boolean => {
     const currentUser = JSON.parse(
       <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
     );
@@ -306,7 +285,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     return false;
   };
 
-  handleDeleteMessage = ({ id }: IMessage) => {
+  handleDeleteMessage = ({id}: IMessage) => {
     if (id) {
       this._orderService.deleteMessageWithId(id).subscribe();
       this.messages = this.messages.filter(

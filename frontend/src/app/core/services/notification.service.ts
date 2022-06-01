@@ -22,6 +22,7 @@ export class NotificationService {
       })
       .then(() => {
         this._oneSignal.getUserId((userId) => {
+          console.log("USER ID", userId);
           if (userId) {
             localStorage.setItem(LocalStorageTypes.SUBSCRIPTION_ID, userId);
           }
