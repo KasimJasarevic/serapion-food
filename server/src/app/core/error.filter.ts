@@ -19,7 +19,7 @@ export class ErrorFilter implements ExceptionFilter {
     try {
       errorRes.code = exception.getStatus();
     } catch (e) {
-      errorRes.code = 1000;
+      errorRes.code = 500;
     }
 
     this.logger.error(
