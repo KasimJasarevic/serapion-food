@@ -60,4 +60,8 @@ export class UserService {
   updateOne(user: UserDTO): Observable<UserDTO> {
     return from(this.userRepo.save(user));
   }
+
+  updateSubscriptionId(userId: number, subId: string): Observable<any> {
+    return from(this.userRepo.createQueryBuilder('user').update(UserEntity).set({subscriptionId: subId}).where("id = :id", { id: userId }).execute());
+  }
 }

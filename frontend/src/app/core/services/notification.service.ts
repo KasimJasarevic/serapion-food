@@ -27,8 +27,7 @@ export class NotificationService {
           if (userId) {
             localStorage.setItem(LocalStorageTypes.SUBSCRIPTION_ID, userId);
             if (this._userService.user) {
-              this._userService.user.subscriptionId = userId;
-              this._userService.updateOne(this._userService.user).subscribe();
+              this._userService.updateSubscriptionId(this._userService.user.id, userId).subscribe();
             }
           }
         });

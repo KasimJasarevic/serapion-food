@@ -21,4 +21,9 @@ export class UserController {
   updateOne(@Body() user: UserDTO): Observable<UserDTO> {
     return this.userService.updateOne(user);
   }
+
+  @Put('update-subscription-id/:userId/:subId')
+  updateSubscriptionId(@Param('userId') userId: number, @Param('subId') subId: string): Observable<boolean> {
+    return this.userService.updateSubscriptionId(userId, subId);
+  }
 }

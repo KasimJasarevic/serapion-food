@@ -59,4 +59,8 @@ export class UserService {
   updateOne(user: IUser) {
     return this._http.put<IUser>(environment.api_url + `/users/`, user);
   }
+
+  updateSubscriptionId(id: number, subId: string) {
+    return this._http.put<IUser>(environment.api_url + `/users/update-subscription-id/${id}/${subId}`, null);
+  }
 }
