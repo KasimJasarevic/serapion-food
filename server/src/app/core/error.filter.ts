@@ -1,10 +1,4 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  Logger,
-} from '@nestjs/common';
+import {ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger,} from '@nestjs/common';
 
 @Catch()
 export class ErrorFilter implements ExceptionFilter {
@@ -15,14 +9,18 @@ export class ErrorFilter implements ExceptionFilter {
     const req = ctx.getRequest();
     const res = ctx.getResponse();
 
-    const status = exception !== null ? exception.getStatus() : 'Unknown';
-    const errorRes = {
-      code: status,
+    let errorRes: any = {
       now: new Date(),
       path: req.url,
       method: req.method,
       message: exception.message || null,
     };
+
+    try {
+      errorRes.code = exception.getStatus();
+    } catch (e) {
+      errorRes.code = 1000;
+    }
 
     this.logger.error(
       `METHOD:[${req.method}] URL:[${req.url}] TIME:[${errorRes.now}]`,
