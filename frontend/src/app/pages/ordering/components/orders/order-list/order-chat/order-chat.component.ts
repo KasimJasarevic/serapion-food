@@ -159,7 +159,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
             }
 
             if (!!ids.length) {
-              const str = `New message in ${this.order?.restaurant.name}!\n${this.order?.user.firstName} ${this.order?.user.lastName}\n${comment.comment}`;
+              const str = `New message in ${this.order?.restaurant.name}!\n${comment.comment}`;
               this._notificationService.sendNotificationToUsers(ids, str);
             }
           }

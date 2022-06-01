@@ -1,18 +1,18 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IPlace } from '../models/place.model';
-import { PlaceService } from '../services/place.service';
-import { NotificationService } from '../../../../../core/services/notification.service';
-import { SubSink } from '../../../../../core/helpers/sub-sink';
-import { WebsocketMessagesService } from '../../../../../core/services/websocket-messages.service';
-import { OrderService } from '../../orders/services/order.service';
-import { LocalStorageTypes } from '@core/enums/local-storage-types';
-import { OrderType } from '../../orders/models/order-type-types';
-import { OrderStatus } from '../../orders/models/order-status-types';
-import { ModalService } from '../services/modal.service';
-import { switchMap } from 'rxjs';
-import { UserService } from '@core/services/user.service';
-import { IUser } from '@core/models/user.model';
-import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {IPlace} from '../models/place.model';
+import {PlaceService} from '../services/place.service';
+import {NotificationService} from '../../../../../core/services/notification.service';
+import {SubSink} from '../../../../../core/helpers/sub-sink';
+import {WebsocketMessagesService} from '../../../../../core/services/websocket-messages.service';
+import {OrderService} from '../../orders/services/order.service';
+import {LocalStorageTypes} from '@core/enums/local-storage-types';
+import {OrderType} from '../../orders/models/order-type-types';
+import {OrderStatus} from '../../orders/models/order-status-types';
+import {ModalService} from '../services/modal.service';
+import {switchMap} from 'rxjs';
+import {UserService} from '@core/services/user.service';
+import {IUser} from '@core/models/user.model';
+import {ModalComponent} from 'src/app/shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-place-list',
@@ -34,7 +34,8 @@ export class PlaceListComponent implements OnInit, OnDestroy {
     private _orderService: OrderService,
     private _userService: UserService,
     private _modalService: ModalService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.subs.sink = this._placeService.getAllPlaces().subscribe((places) => {
@@ -103,6 +104,10 @@ export class PlaceListComponent implements OnInit, OnDestroy {
       <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
     );
 
+    if (!user) {
+      return;
+    }
+
     const orderData = {
       restaurant: place.id,
       user: user.id,
@@ -125,10 +130,10 @@ export class PlaceListComponent implements OnInit, OnDestroy {
             const ids: string[] = <string[]>(
               users
                 .filter(
-                  ({ subscriptionId }: IUser) =>
+                  ({subscriptionId}: IUser) =>
                     subscriptionId !== currentUser.subscriptionId
                 )
-                .map(({ subscriptionId }: IUser) => subscriptionId)
+                .map(({subscriptionId}: IUser) => subscriptionId)
             );
 
             // console.log(ids);
@@ -157,7 +162,7 @@ export class PlaceListComponent implements OnInit, OnDestroy {
       });
   }
 
-  hasActiveOrders = ({ orders }: IPlace) => {
+  hasActiveOrders = ({orders}: IPlace) => {
     if (orders && !!orders.length) {
       const activeOrders = orders
         .filter((order) => order.status === OrderStatus.ACTIVE)

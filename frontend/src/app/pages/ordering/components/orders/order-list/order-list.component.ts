@@ -385,7 +385,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   public getOwnerFullName(order: IOrder) {
-    return `${order.user.firstName} ${order.user.lastName}`;
+    return `${order.user?.firstName} ${order.user?.lastName}`;
   }
 
   private getOwnerId(order: IOrder) {
