@@ -28,6 +28,6 @@ export class ErrorFilter implements ExceptionFilter {
       'ErrorFilter',
     );
 
-    res.status(status).json(errorRes);
+    res.status(errorRes.code).json(errorRes);
   }
 }
