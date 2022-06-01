@@ -389,7 +389,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private getOwnerId(order: IOrder) {
-    return order.user.id;
+    return order.user?.id;
   }
 
   public isOrderOwner(order: IOrder) {

@@ -15,7 +15,7 @@ export class ErrorFilter implements ExceptionFilter {
     const req = ctx.getRequest();
     const res = ctx.getResponse();
 
-    const status = exception.getStatus();
+    const status = exception?.getStatus() || 'Unknown';
     const errorRes = {
       code: status,
       now: new Date(),
