@@ -20,18 +20,23 @@ export class NotificationService {
     this._oneSignal
       .init({
         appId: environment.notificationId,
-      })
-      .then(() => {
-        this._oneSignal.getUserId((userId) => {
-          console.log("USER ID", userId);
-          if (userId) {
-            localStorage.setItem(LocalStorageTypes.SUBSCRIPTION_ID, userId);
-            if (this._userService.user) {
-              this._userService.updateSubscriptionId(this._userService.user.id, userId).subscribe();
-            }
-          }
-        });
       });
+
+    this._oneSignal.on('subscriptionChange', () => {
+      this.getSubscriptionUserId();
+    });
+  }
+
+  getSubscriptionUserId() {
+    this._oneSignal.getUserId((userId) => {
+      if (userId) {
+        localStorage.setItem(LocalStorageTypes.SUBSCRIPTION_ID, userId);
+        let user = this._userService.user;
+        if (user && user.subscriptionId !== userId) {
+          this._userService.updateSubscriptionId(user.id, userId).subscribe();
+        }
+      }
+    });
   }
 
   sendOpenRestaurantMessage(restaurant: string) {

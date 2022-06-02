@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { LocalStorageTypes } from '../enums/local-storage-types';
 import { IUser } from '../models/user.model';
 import { environment } from '@environments/environment';
+import {Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root',
@@ -10,12 +11,17 @@ import { environment } from '@environments/environment';
 export class UserService {
   private _user: IUser | null;
 
+  private userSubject = new Subject<IUser | null>();
+  public userSubjectChange = this.userSubject.asObservable();
+
   set user(user: IUser | null) {
     this._user = user;
     localStorage.setItem(
       LocalStorageTypes.FOOD_ORDERING_CURRENT_USER,
       JSON.stringify(this._user)
     );
+
+    this.userSubject.next(this._user);
   }
 
   get user(): IUser | null {
