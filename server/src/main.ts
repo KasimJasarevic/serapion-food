@@ -19,6 +19,16 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('port');
 
+  process.on('uncaughtException', (error) => {
+    console.log("---- Uncaught exception ----");
+    console.log(error);
+  });
+
+    process.on('unhandledRejection', (error) => {
+        console.log("---- Unhandled rejection ----");
+        console.log(error);
+    });
+
   app.enableCors();
   app.setGlobalPrefix('api', {
     exclude: ['auth/google/callback', 'auth/google'],
