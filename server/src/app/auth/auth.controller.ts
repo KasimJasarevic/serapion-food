@@ -12,7 +12,7 @@ export class AuthController {
     }
 
     this.authService.signInWithGoogle({ user: user }).subscribe((user) => {
-      const token: string = user.access_token;
+      const token: string = user?.access_token;
       if (token) {
         res.json({ token });
       } else {

@@ -1,6 +1,6 @@
-import {Injectable, BadRequestException} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
-import {map} from 'rxjs';
+import {map, Observable, switchMap} from 'rxjs';
 import {UserDTO} from '../user/user.dto';
 import {UserEntity} from '../user/user.entity';
 import {UserService} from '../user/user.service';
@@ -28,12 +28,12 @@ export class AuthService {
     signInWithGoogle(data) {
         if (!data.user) throw new BadRequestException();
 
-        return this.usersService.findByEmail(data.user.email).pipe(
-            map((user: any) => {
-                if (user) {
-                    return this.login(user);
-                } else {
-                    try {
+        return new Observable<any>(subscriber => {
+            this.usersService.findByEmail(data.user.email).pipe(
+                map(user => {
+                    if (user) {
+                        return user;
+                    } else {
                         const newUser = new UserEntity();
                         newUser.firstName = data.user.firstName;
                         newUser.lastName = data.user.lastName;
@@ -41,15 +41,20 @@ export class AuthService {
                         newUser.photo = data.user.photoUrl;
                         newUser.googleId = data.user.id;
 
-                        this.usersService.store(newUser).subscribe((u) => {
+                        return newUser;
+                    }
+                }),
+                switchMap(newUser => {
+                    return this.usersService.store(newUser).pipe(
+                        map((u) => {
                             newUser.id = u.id;
                             return this.login(newUser);
-                        });
-                    } catch (e) {
-                        throw new Error(e);
-                    }
-                }
+                        })
+                    );
+                })
+            ).subscribe(us => {
+                subscriber.next(us);
             })
-        );
+        });
     }
 }

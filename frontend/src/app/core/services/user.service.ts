@@ -1,15 +1,16 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { LocalStorageTypes } from '../enums/local-storage-types';
-import { IUser } from '../models/user.model';
-import { environment } from '@environments/environment';
-import {Subject} from "rxjs";
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {LocalStorageTypes} from '../enums/local-storage-types';
+import {IUser} from '../models/user.model';
+import {environment} from '@environments/environment';
+import {of, Subject, tap} from "rxjs";
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   private _user: IUser | null;
+  private _userCache: Map<number, IUser> = new Map();
 
   private userSubject = new Subject<IUser | null>();
   public userSubjectChange = this.userSubject.asObservable();
@@ -50,12 +51,14 @@ export class UserService {
     return this._http.get<IUser[]>(environment.api_url + '/users');
   }
 
-  getUserById(id: number) {
-    return this._http.get<IUser>(environment.api_url + '/orders');
-  }
-
   getById(userId: number) {
-    return this._http.get<IUser>(environment.api_url + `/users/${userId}`);
+    if (this._userCache.has(userId)) {
+      return of(this._userCache.get(userId) as IUser);
+    } else {
+      return this._http.get<IUser>(environment.api_url + `/users/${userId}`).pipe(tap(user => {
+        this._userCache.set(userId, user);
+      }));
+    }
   }
 
   getByEmail(email: string) {
