@@ -4,7 +4,7 @@ import { LocalStorageTypes } from '@core/enums/local-storage-types';
 import { SubSink } from '@core/helpers/sub-sink';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, of, throwError } from 'rxjs';
+import { catchError, Observable, of, throwError } from 'rxjs';
 import { OrderStatus } from '../../models/order-status-types';
 import { IOrder } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';

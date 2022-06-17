@@ -1,17 +1,31 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild,} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {LocalStorageTypes} from '@core/enums/local-storage-types';
-import {SubSink} from '@core/helpers/sub-sink';
-import {IUser} from '@core/models/user.model';
-import {NotificationService} from '@core/services/notification.service';
-import {WebsocketMessagesService} from '@core/services/websocket-messages.service';
-import {ToastrService} from 'ngx-toastr';
-import {BehaviorSubject, catchError, map, of, switchMap,} from 'rxjs';
-import {OrderStatus} from '../../models/order-status-types';
-import {IOrder} from '../../models/order.model';
-import {OrderService} from '../../services/order.service';
-import {IItem} from '../order-items/models/order-item.model';
-import {IMessage} from './models/order-chat.model';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LocalStorageTypes } from '@core/enums/local-storage-types';
+import { SubSink } from '@core/helpers/sub-sink';
+import { IUser } from '@core/models/user.model';
+import { NotificationService } from '@core/services/notification.service';
+import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { ToastrService } from 'ngx-toastr';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  switchMap,
+} from 'rxjs';
+import { OrderStatus } from '../../models/order-status-types';
+import { IOrder } from '../../models/order.model';
+import { OrderService } from '../../services/order.service';
+import { IItem } from '../order-items/models/order-item.model';
+import { IMessage } from './models/order-chat.model';
 
 @Component({
   selector: 'app-order-chat',
@@ -20,7 +34,7 @@ import {IMessage} from './models/order-chat.model';
 })
 export class OrderChatComponent implements OnInit, OnDestroy {
   @Input() order: IOrder | undefined;
-  @ViewChild('commentBox', {static: false}) commentBox!: ElementRef;
+  @ViewChild('commentBox', { static: false }) commentBox!: ElementRef;
   orderStatus = OrderStatus;
   users$: BehaviorSubject<IUser[]> = new BehaviorSubject<IUser[]>([]);
   toMention: IUser[] = [];
@@ -39,8 +53,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     private _websocketService: WebsocketMessagesService,
     private _notificationService: NotificationService,
     private _toastr: ToastrService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     if (this.order) {
@@ -70,23 +83,40 @@ export class OrderChatComponent implements OnInit, OnDestroy {
 
     this.subs.sink = this._websocketService
       .onOrderItemAdded()
-      .pipe(switchMap(() => this._getUsers$()))
-      .subscribe((users: IUser[]) => this._populateMentionList(users));
+      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
+      .subscribe(
+        (users: IUser[] | undefined) =>
+          users && this._populateMentionList(users)
+      );
 
     this.subs.sink = this._websocketService
       .onOrderItemDeleted()
-      .pipe(switchMap(() => this._getUsers$()))
-      .subscribe((users: IUser[]) => this._populateMentionList(users));
+      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
+      .subscribe(
+        (users: IUser[] | undefined) =>
+          users && this._populateMentionList(users)
+      );
 
     this.subs.sink = this._websocketService
       .onOrderItemUserAdded()
-      .pipe(switchMap(() => this._getUsers$()))
-      .subscribe((users: IUser[]) => this._populateMentionList(users));
+      .pipe(
+        switchMap((data: any) => {
+          return this._getUsers$();
+        })
+      )
+      .subscribe((users: IUser[] | undefined) => {
+        if (users) {
+          this._populateMentionList(users);
+        }
+      });
 
     this.subs.sink = this._websocketService
       .onOrderItemUserDeleted()
-      .pipe(switchMap(() => this._getUsers$()))
-      .subscribe((users: IUser[]) => this._populateMentionList(users));
+      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
+      .subscribe(
+        (users: IUser[] | undefined) =>
+          users && this._populateMentionList(users)
+      );
 
     this.subs.sink = this._websocketService
       .onCommentReceived()
@@ -234,12 +264,26 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     return this._orderService.getOrderItems(this.order!.id).pipe(
       map((data: IItem[]): IUser[] => {
         return data
-          .map(({orderedItems}) => {
-            return orderedItems?.map(({user}) => user);
+          .map(({ orderedItems }) => {
+            return orderedItems?.map(({ user }) => user);
           })
           .flat() as IUser[];
       })
     );
+  };
+
+  private _getNewUsers$ = (thisOrder: IOrder) => {
+    return thisOrder.id === this.order?.id
+      ? this._orderService.getOrderItems(this.order!.id).pipe(
+          map((data: IItem[]): IUser[] => {
+            return data
+              .map(({ orderedItems }) => {
+                return orderedItems?.map(({ user }) => user);
+              })
+              .flat() as IUser[];
+          })
+        )
+      : of(undefined);
   };
 
   private _populateMentionList = (users: IUser[]) => {
@@ -273,7 +317,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     this.users$.next(uniqueUsers);
   };
 
-  isMessageOwner = ({user}: IMessage): boolean => {
+  isMessageOwner = ({ user }: IMessage): boolean => {
     const currentUser = JSON.parse(
       <string>localStorage.getItem(LocalStorageTypes.FOOD_ORDERING_CURRENT_USER)
     );
@@ -285,7 +329,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     return false;
   };
 
-  handleDeleteMessage = ({id}: IMessage) => {
+  handleDeleteMessage = ({ id }: IMessage) => {
     if (id) {
       this._orderService.deleteMessageWithId(id).subscribe();
       this.messages = this.messages.filter(
