@@ -1,5 +1,5 @@
 <div
-  class="overflow-orders p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-100 bg-opacity-50 bg-hero bg-cover bg-no-repeat bg-blend-soft-light shadow-md dark:bg-serapion-black-100"
+  class="overflow-orders p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-200 bg-opacity-5 bg-hero bg-cover bg-no-repeat dark:bg-opacity-95 bg-blend-lighten shadow-md dark:bg-serapion-black-100"
   [ngClass]="{ 'lg:grid-cols-3 2xl:grid-cols-4': isSidebarCollapsed() }"
 >
   <!-- ORDER -->
@@ -23,23 +23,23 @@
                   ? 'bg-serapion-green'
                   : 'bg-serapion-purple'
               }}
-              rounded-md px-6 py-1 uppercase text-serapion-white"
+              rounded-md px-6 py-1 font-normal tracking-widest uppercase text-serapion-grey-200"
             >
               {{ order.status === orderStatus.ACTIVE ? "active" : "finished" }}
             </div>
             <a
-              class="group flex-1 flex flex-row items-center justify-between text-serapion-grey-100 cursor-pointer"
+              class="group flex-1 flex flex-row items-center justify-between text-serapion-grey-200 cursor-pointer dark:text-serapion-grey-100"
               [href]="order.restaurant.menu"
               target="_blank"
               *ngIf="order.restaurant.menu"
             >
               <span
-                class="group-hover:text-serapion-grey-200 dark:group-hover:text-serapion-white transition-all"
+                class="group-hover:text-serapion-grey-100 dark:group-hover:text-serapion-white transition-all"
                 >Check out restaurant menu</span
               >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4 group-hover:text-serapion-grey-200 dark:group-hover:text-serapion-white transition-all"
+                class="h-4 w-4 group-hover:text-serapion-grey-100 dark:group-hover:text-serapion-white transition-all"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -70,7 +70,7 @@
             </p>
           </div>
           <div
-            class="pt-2 flex flex-row space-x-2 justify-between items-center text-xs text-serapion-grey-100"
+            class="pt-2 flex flex-row space-x-2 justify-between items-center text-xs text-serapion-grey-200 dark:text-serapion-grey-100"
             *ngIf="order?.status !== orderStatus.INACTIVE"
           >
             <i class="fas fa-xs fa-user pr-1"></i>
@@ -95,7 +95,9 @@
               due to make the order
             </p>
           </div>
-          <div class="text-xs uppercase text-serapion-grey-100">
+          <div
+            class="text-xs uppercase text-serapion-grey-200 dark:text-serapion-grey-100"
+          >
             <form
               *ngIf="
                 isOrderOwner(order) && order?.status === orderStatus.ACTIVE
@@ -141,7 +143,7 @@
               </div>
             </form>
             <div
-              class="py-2 flex flex-row space-x-2 justify-between items-center text-xs font-thin text-serapion-grey-100"
+              class="py-2 flex flex-row space-x-2 justify-between items-center text-xs font-thin text-serapion-grey-200 dark:text-serapion-grey-100"
               *ngIf="
                 !isOrderOwner(order) || order?.status === orderStatus.INACTIVE
               "

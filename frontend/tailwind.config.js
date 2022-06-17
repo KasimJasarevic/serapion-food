@@ -16,13 +16,18 @@ module.exports = {
           100: "#def2ff",
           200: "#94c3ff",
           300: "#5a8ed1",
+          400: "#3671b1",
+          500: "#005491",
+          600: "#003a73",
+          700: "#002256",
         },
         "serapion-green": "#07e1b8",
         "serapion-yellow": "#dba11c",
         "serapion-purple": "#8182e4",
         "serapion-grey": {
           100: "#a3abbd",
-          200: "#3f4756",
+          200: "#2d323d",
+          300: "#2b3341",
         },
 
         "serapion-white": "#eef5fa",
@@ -56,7 +61,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ["responsive", "hover", "focus", "group-focus"],
+      backgroundColor: ["responsive", "hover", "focus", "group-focus", "dark"],
+      backgroundOpacity: ["dark"],
       ringOpacity: [
         "responsive",
         "dark",
