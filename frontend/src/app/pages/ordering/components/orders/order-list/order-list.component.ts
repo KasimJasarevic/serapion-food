@@ -122,9 +122,20 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.orderArrivalArr.push(orderArrivalTime);
       });
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemAdded()
       .subscribe((item: any) => {
+        this.orders.forEach((order: IOrder) => {
+          if (item.order.id && order.id === item.order.id) {
+            if (order.orderItems) {
+              order.orderItems.push(item);
+            } else {
+              order.orderItems = [item];
+            }
+          }
+        });
+
         this._setNewOrderer(item.order);
       });
 
@@ -176,27 +187,49 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       });
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemUserAdded()
-      .subscribe((data) => {
-        this._setOrderers();
+      .subscribe((item: any) => {
+        this.orders.forEach((order: IOrder) => {
+          order.orderItems &&
+            order.orderItems.forEach((orderItem: IItem) => {
+              if (orderItem.id === item.id) {
+                this._setNewOrderer(order);
+              }
+            });
+        });
       });
 
+    // Fixed works well now.
     this.subs.sink = this._websocketService
       .onOrderItemUserDeleted()
-      .subscribe((data: any) => {
-        // console.log(data);
-        this._setNewOrderer(data);
-        // this._setOrderers();
-        // UPDATED !!!!!
+      .subscribe((deletedData: any) => {
+        this.orders.forEach((order: IOrder) => {
+          order.orderItems &&
+            order.orderItems.forEach((item: IItem) => {
+              if (
+                deletedData.orderItem &&
+                deletedData.orderItem.id === item.id
+              ) {
+                this._setNewOrderer(order);
+              }
+            });
+        });
       });
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemDeleted()
-      .subscribe((data: any) => {
-        // console.log(data);
-        this._setNewOrderer(data);
-        // this._setOrderers();
+      .subscribe((itemId: any) => {
+        this.orders.forEach((order: IOrder) => {
+          order.orderItems &&
+            order.orderItems.forEach((item: IItem) => {
+              if (itemId && +itemId === item.id) {
+                this._setNewOrderer(order);
+              }
+            });
+        });
       });
 
     this.subs.sink = this._websocketService
@@ -303,83 +336,83 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   confirmOrder(order: IOrder) {
-    if (confirm(`Are you sure you want to confirm this order?`))
-      this.subs.sink = this._orderService
-        .getOrderItems(order.id)
-        .pipe(
-          switchMap((items) => {
-            this.orders.forEach((o) => {
-              if (o.id === order.id) {
-                o.orderItems = items;
+    // if (confirm(`Are you sure you want to confirm this order?`))
+    this.subs.sink = this._orderService
+      .getOrderItems(order.id)
+      .pipe(
+        switchMap((items) => {
+          this.orders.forEach((o) => {
+            if (o.id === order.id) {
+              o.orderItems = items;
+            }
+          });
+          return this.confirmDialog.toggleModal(`confirm-${order.id}`);
+        })
+      )
+      .subscribe((confirmation) => {
+        // Save it!
+        if (order && confirmation) {
+          order.status = OrderStatus.INACTIVE;
+          const today = new Date();
+          const ind = this.orders.findIndex((o) => o.id == order.id);
+          order.arrivalTime = new Date(
+            today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value
+          );
+          this.subs.sink = this._orderService
+            .getOrderItems(order.id)
+            .pipe(
+              switchMap((items) => {
+                order.orderItems = items;
+                return this._orderService.getComments(order.id);
+              })
+            )
+            .pipe(
+              switchMap((comments) => {
+                order.comments = comments;
+                return this._orderService.completeOrder(order.id, order);
+              })
+            )
+            .pipe(
+              switchMap(() => {
+                return this._orderService.getOrderItems(order.id);
+              })
+            )
+            .subscribe((item: IItem[]) => {
+              let ids: string[] = [];
+              item.forEach((data) => {
+                data.orderedItems?.forEach((oi) => {
+                  if (oi.user?.subscriptionId) {
+                    ids.push(oi.user.subscriptionId);
+                  }
+                });
+              });
+              const currentUser = JSON.parse(
+                localStorage.getItem(
+                  LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+                ) as string
+              );
+              ids = [...new Set(ids)];
+              if (currentUser && currentUser.subscriptionId) {
+                ids = ids.filter((id) => id != currentUser.subscriptionId);
+              }
+              if (!!ids.length && order.arrivalTime && order.type) {
+                const formatTime = order.arrivalTime.toLocaleTimeString(
+                  navigator.language,
+                  {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  }
+                );
+                const str = `Order ${order?.restaurant.name} completed, and ${
+                  order.type === this.orderType.DELIVERY
+                    ? 'it will arrive'
+                    : 'we depart'
+                } @${formatTime}!`;
+                this._notificationService.sendNotificationToUsers(ids, str);
               }
             });
-            return this.confirmDialog.toggleModal(`confirm-${order.id}`);
-          })
-        )
-        .subscribe((confirmation) => {
-          // Save it!
-          if (order && confirmation) {
-            order.status = OrderStatus.INACTIVE;
-            const today = new Date();
-            const ind = this.orders.findIndex((o) => o.id == order.id);
-            order.arrivalTime = new Date(
-              today.toDateString() + ' ' + this.orderArrivalArr.at(ind).value
-            );
-            this.subs.sink = this._orderService
-              .getOrderItems(order.id)
-              .pipe(
-                switchMap((items) => {
-                  order.orderItems = items;
-                  return this._orderService.getComments(order.id);
-                })
-              )
-              .pipe(
-                switchMap((comments) => {
-                  order.comments = comments;
-                  return this._orderService.completeOrder(order.id, order);
-                })
-              )
-              .pipe(
-                switchMap(() => {
-                  return this._orderService.getOrderItems(order.id);
-                })
-              )
-              .subscribe((item: IItem[]) => {
-                let ids: string[] = [];
-                item.forEach((data) => {
-                  data.orderedItems?.forEach((oi) => {
-                    if (oi.user?.subscriptionId) {
-                      ids.push(oi.user.subscriptionId);
-                    }
-                  });
-                });
-                const currentUser = JSON.parse(
-                  localStorage.getItem(
-                    LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-                  ) as string
-                );
-                ids = [...new Set(ids)];
-                if (currentUser && currentUser.subscriptionId) {
-                  ids = ids.filter((id) => id != currentUser.subscriptionId);
-                }
-                if (!!ids.length && order.arrivalTime && order.type) {
-                  const formatTime = order.arrivalTime.toLocaleTimeString(
-                    navigator.language,
-                    {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    }
-                  );
-                  const str = `Order ${order?.restaurant.name} completed, and ${
-                    order.type === this.orderType.DELIVERY
-                      ? 'it will arrive'
-                      : 'we depart'
-                  } @${formatTime}!`;
-                  this._notificationService.sendNotificationToUsers(ids, str);
-                }
-              });
-          }
-        });
+        }
+      });
   }
 
   ngOnDestroy(): void {

@@ -81,42 +81,42 @@ export class OrderChatComponent implements OnInit, OnDestroy {
         );
       });
 
-    this.subs.sink = this._websocketService
-      .onOrderItemAdded()
-      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
-      .subscribe(
-        (users: IUser[] | undefined) =>
-          users && this._populateMentionList(users)
-      );
+    // this.subs.sink = this._websocketService
+    //   .onOrderItemAdded()
+    //   .pipe(switchMap((data: any) => this._getNewUsers$(data.order)))
+    //   .subscribe(
+    //     (users: IUser[] | undefined) =>
+    //       users && this._populateMentionList(users)
+    //   );
 
-    this.subs.sink = this._websocketService
-      .onOrderItemDeleted()
-      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
-      .subscribe(
-        (users: IUser[] | undefined) =>
-          users && this._populateMentionList(users)
-      );
+    // this.subs.sink = this._websocketService
+    //   .onOrderItemDeleted()
+    //   .pipe(switchMap((data: any) => this._getUsers$()))
+    //   .subscribe(
+    //     (users: IUser[] | undefined) =>
+    //       users && this._populateMentionList(users)
+    //   );
 
-    this.subs.sink = this._websocketService
-      .onOrderItemUserAdded()
-      .pipe(
-        switchMap((data: any) => {
-          return this._getUsers$();
-        })
-      )
-      .subscribe((users: IUser[] | undefined) => {
-        if (users) {
-          this._populateMentionList(users);
-        }
-      });
+    // this.subs.sink = this._websocketService
+    //   .onOrderItemUserAdded()
+    //   .pipe(
+    //     switchMap((data: any) => {
+    //       return this._getUsers$();
+    //     })
+    //   )
+    //   .subscribe((users: IUser[] | undefined) => {
+    //     if (users) {
+    //       this._populateMentionList(users);
+    //     }
+    //   });
 
-    this.subs.sink = this._websocketService
-      .onOrderItemUserDeleted()
-      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
-      .subscribe(
-        (users: IUser[] | undefined) =>
-          users && this._populateMentionList(users)
-      );
+    // this.subs.sink = this._websocketService
+    //   .onOrderItemUserDeleted()
+    //   .pipe(switchMap((data: any) => this._getUsers$()))
+    //   .subscribe(
+    //     (users: IUser[] | undefined) =>
+    //       users && this._populateMentionList(users)
+    //   );
 
     this.subs.sink = this._websocketService
       .onCommentReceived()
