@@ -24,6 +24,7 @@ module.exports = {
         "serapion-green": "#07e1b8",
         "serapion-yellow": "#dba11c",
         "serapion-purple": "#8182e4",
+        "serapion-red": "#ff1f43",
         "serapion-grey": {
           100: "#a3abbd",
           200: "#2d323d",
