@@ -106,9 +106,20 @@ export class OrderListComponent implements OnInit, OnDestroy {
         this.orderArrivalArr.push(orderArrivalTime);
       });
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemAdded()
       .subscribe((item: any) => {
+        this.orders.forEach((order: IOrder) => {
+          if (item.order.id && order.id === item.order.id) {
+            if (order.orderItems) {
+              order.orderItems.push(item);
+            } else {
+              order.orderItems = [item];
+            }
+          }
+        });
+
         this._setNewOrderer(item.order);
       });
 
@@ -158,22 +169,49 @@ export class OrderListComponent implements OnInit, OnDestroy {
         }
       });
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemUserAdded()
-      .subscribe((data) => {
-        this._setOrderers();
+      .subscribe((item: any) => {
+        this.orders.forEach((order: IOrder) => {
+          order.orderItems &&
+            order.orderItems.forEach((orderItem: IItem) => {
+              if (orderItem.id === item.id) {
+                this._setNewOrderer(order);
+              }
+            });
+        });
       });
 
+    // Fixed works well now.
     this.subs.sink = this._websocketService
       .onOrderItemUserDeleted()
-      .subscribe((data: any) => {
-        this._setNewOrderer(data);
+      .subscribe((deletedData: any) => {
+        this.orders.forEach((order: IOrder) => {
+          order.orderItems &&
+            order.orderItems.forEach((item: IItem) => {
+              if (
+                deletedData.orderItem &&
+                deletedData.orderItem.id === item.id
+              ) {
+                this._setNewOrderer(order);
+              }
+            });
+        });
       });
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemDeleted()
-      .subscribe((data: any) => {
-        this._setNewOrderer(data);
+      .subscribe((itemId: any) => {
+        this.orders.forEach((order: IOrder) => {
+          order.orderItems &&
+            order.orderItems.forEach((item: IItem) => {
+              if (itemId && +itemId === item.id) {
+                this._setNewOrderer(order);
+              }
+            });
+        });
       });
 
     this.subs.sink = this._websocketService
@@ -240,7 +278,11 @@ export class OrderListComponent implements OnInit, OnDestroy {
     });
   }
 
-  closeRestaurant({id}: IOrder) {
+  ngAfterViewChecked(): void {
+    // console.log(this.drb?.nativeElement);
+  }
+
+  closeRestaurant({ id }: IOrder) {
     this.subs.sink = this.cancelDialog
       .toggleModal(`cancel-${id}`)
       .subscribe((confirmation) => {
@@ -462,7 +504,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
   }
 
   isSidebarCollapsed() {
-    const {sidebar} = JSON.parse(
+    const { sidebar } = JSON.parse(
       localStorage.getItem(
         LocalStorageTypes.FOOD_ORDERING_UI_PREFERENCES
       ) as string

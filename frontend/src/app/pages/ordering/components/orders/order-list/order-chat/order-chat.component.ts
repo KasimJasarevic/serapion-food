@@ -16,6 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 import {
   BehaviorSubject,
   catchError,
+  empty,
   map,
   Observable,
   of,
@@ -81,27 +82,71 @@ export class OrderChatComponent implements OnInit, OnDestroy {
         );
       });
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemAdded()
-      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
+      .pipe(
+        switchMap((orderItem: any) => {
+          if (orderItem.order.id === this.order?.id) {
+            // Push item to this order?
+            if (this.order) {
+              if (this.order.orderItems) {
+                this.order.orderItems.push(orderItem);
+              } else {
+                this.order.orderItems = [orderItem];
+              }
+            }
+          }
+
+          return this._getNewUsers$(orderItem.order);
+        })
+      )
       .subscribe(
         (users: IUser[] | undefined) =>
           users && this._populateMentionList(users)
       );
 
+    // Fixed works well now.
     this.subs.sink = this._websocketService
       .onOrderItemDeleted()
-      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
+      .pipe(
+        switchMap((itemId: any) => {
+          let isFound = false;
+          if (this.order && this.order.orderItems) {
+            this.order.orderItems.forEach((item: IItem) => {
+              if (item.id === +itemId) {
+                isFound = true;
+              }
+            });
+          }
+
+          return this.order && isFound
+            ? this._getNewUsers$(this.order)
+            : of(undefined);
+        })
+      )
       .subscribe(
         (users: IUser[] | undefined) =>
           users && this._populateMentionList(users)
       );
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemUserAdded()
       .pipe(
-        switchMap((data: any) => {
-          return this._getUsers$();
+        switchMap((item: any) => {
+          let isFound = false;
+          if (this.order && this.order.orderItems) {
+            this.order.orderItems.forEach((orderItem: IItem) => {
+              if (item.id === orderItem.id && this.order) {
+                isFound = true;
+              }
+            });
+          }
+
+          return this.order && isFound
+            ? this._getNewUsers$(this.order)
+            : of(undefined);
         })
       )
       .subscribe((users: IUser[] | undefined) => {
@@ -110,9 +155,27 @@ export class OrderChatComponent implements OnInit, OnDestroy {
         }
       });
 
+    // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemUserDeleted()
-      .pipe(switchMap((data: any) => this._getNewUsers$(data)))
+      .pipe(
+        switchMap((deletedData: any) => {
+          let isFound = false;
+          if (this.order && this.order.orderItems) {
+            this.order.orderItems.forEach((item: IItem) => {
+              if (
+                deletedData.orderItem &&
+                item.id === deletedData.orderItem.id
+              ) {
+                isFound = true;
+              }
+            });
+          }
+          return this.order && isFound
+            ? this._getNewUsers$(this.order)
+            : of(undefined);
+        })
+      )
       .subscribe(
         (users: IUser[] | undefined) =>
           users && this._populateMentionList(users)
