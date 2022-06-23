@@ -31,6 +31,7 @@ export class OrderItemService {
         .select('user.id')
         .where('order.id = :id', { id: id })
         .orderBy('user.lastOrder', 'ASC')
+        .addOrderBy('user.id', 'ASC')
         .getRawOne(),
     );
   }
