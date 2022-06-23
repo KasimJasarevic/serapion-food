@@ -1,4 +1,6 @@
 import {
+  AfterViewChecked,
+  AfterViewInit,
   Component,
   ElementRef,
   Input,
@@ -33,7 +35,9 @@ import { IMessage } from './models/order-chat.model';
   templateUrl: './order-chat.component.html',
   styleUrls: ['./order-chat.component.scss'],
 })
-export class OrderChatComponent implements OnInit, OnDestroy {
+export class OrderChatComponent
+  implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit
+{
   @Input() order: IOrder | undefined;
   @ViewChild('commentBox', { static: false }) commentBox!: ElementRef;
   orderStatus = OrderStatus;
@@ -201,6 +205,22 @@ export class OrderChatComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngAfterViewInit(): void {
+    // this.commentBox.nativeElement.scroll({
+    //   top: Number.MAX_SAFE_INTEGER,
+    //   left: 0,
+    //   behavior: 'smooth',
+    // });
+  }
+
+  ngAfterViewChecked(): void {
+    this.commentBox.nativeElement.scroll({
+      top: Number.MAX_SAFE_INTEGER,
+      left: 0,
+      behavior: 'smooth',
+    });
+  }
+
   onAddComment() {
     const comment: IMessage = {
       comment: this.commentForm.get('comment')?.value,
@@ -313,11 +333,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  onItemSelected(value: any, id: number) {
-    if (id === this.order?.id) {
-      this.toMention.push(value);
-    }
-  }
+  onItemSelected(value: any, id: number) {}
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
