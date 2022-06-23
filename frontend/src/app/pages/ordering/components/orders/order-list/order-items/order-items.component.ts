@@ -1,19 +1,15 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
-import { LocalStorageTypes } from '@core/enums/local-storage-types';
-import { SubSink } from '@core/helpers/sub-sink';
-import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { ToastrService } from 'ngx-toastr';
-import { catchError, Observable, of, throwError } from 'rxjs';
-import { OrderStatus } from '../../models/order-status-types';
-import { IOrder } from '../../models/order.model';
-import { OrderService } from '../../services/order.service';
-import {
-  AddOrderItem,
-  IAddItemEx,
-  IItem,
-  IRemoveOrderItemUser,
-} from './models/order-item.model';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {LocalStorageTypes} from '@core/enums/local-storage-types';
+import {SubSink} from '@core/helpers/sub-sink';
+import {WebsocketMessagesService} from '@core/services/websocket-messages.service';
+import {ToastrService} from 'ngx-toastr';
+import {catchError, of} from 'rxjs';
+import {OrderStatus} from '../../models/order-status-types';
+import {IOrder} from '../../models/order.model';
+import {OrderService} from '../../services/order.service';
+import {AddOrderItem, IAddItemEx, IItem, IRemoveOrderItemUser,} from './models/order-item.model';
+
 
 @Component({
   selector: 'app-order-items',
@@ -39,7 +35,8 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
     private _orderService: OrderService,
     private _websocketService: WebsocketMessagesService,
     private _toastr: ToastrService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     if (this.order!.id) {
@@ -135,7 +132,6 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
       .addNewOrderItem(newOrderItem)
       .pipe(
         catchError((err) => {
-          // this._toastr.error(err.error.message, 'Hmmm...');
           this._toastr.error('Something went wrong.', 'Hmmm...');
           return of(undefined);
         })
@@ -207,11 +203,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
           (oi) => oi.user?.id == currentUser.id
         );
 
-        if (idx === -1) {
-          return false;
-        }
-
-        return true;
+        return idx !== -1;
       }
     }
 
