@@ -1,18 +1,24 @@
-import {Component, OnDestroy, OnInit, ViewChild,} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators,} from '@angular/forms';
-import {LocalStorageTypes} from '@core/enums/local-storage-types';
-import {SubSink} from '@core/helpers/sub-sink';
-import {IUser} from '@core/models/user.model';
-import {NotificationService} from '@core/services/notification.service';
-import {UserService} from '@core/services/user.service';
-import {WebsocketMessagesService} from '@core/services/websocket-messages.service';
-import {switchMap} from 'rxjs';
-import {ModalComponent} from 'src/app/shared/components/modal/modal.component';
-import {OrderStatus} from '../models/order-status-types';
-import {OrderType} from '../models/order-type-types';
-import {IOrder} from '../models/order.model';
-import {OrderService} from '../services/order.service';
-import {IItem} from './order-items/models/order-item.model';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { LocalStorageTypes } from '@core/enums/local-storage-types';
+import { SubSink } from '@core/helpers/sub-sink';
+import { IUser } from '@core/models/user.model';
+import { NotificationService } from '@core/services/notification.service';
+import { UserService } from '@core/services/user.service';
+import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { switchMap } from 'rxjs';
+import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
+import { OrderStatus } from '../models/order-status-types';
+import { OrderType } from '../models/order-type-types';
+import { IOrder } from '../models/order.model';
+import { OrderService } from '../services/order.service';
+import { IItem } from './order-items/models/order-item.model';
 
 @Component({
   selector: 'app-order-list',
@@ -36,8 +42,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     private _websocketService: WebsocketMessagesService,
     private _notificationService: NotificationService,
     private _formBuilder: FormBuilder
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.ordersForm = this._formBuilder.group({
@@ -126,7 +131,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this.subs.sink = this._websocketService
       .onCommentReceived()
       .pipe(
-        switchMap(({order}: any) => {
+        switchMap(({ order }: any) => {
           return this._orderService.getOrderById(order.id);
         })
       )
@@ -223,7 +228,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
           (<FormArray>this.ordersForm?.get('orders')).controls[
             this.orders.findIndex((el) => el.id === order.id)
-            ]
+          ]
             .get('orderType')
             ?.disable();
 
@@ -495,6 +500,36 @@ export class OrderListComponent implements OnInit, OnDestroy {
         if (currentUser && currentUser.subscriptionId) {
           ids = ids.filter((id) => id != currentUser.subscriptionId);
         }
+
+        if (!!ids.length) {
+          const str = `Last call ${order?.restaurant.name}!`;
+          this._notificationService.sendNotificationToUsers(ids, str);
+        }
+      });
+  }
+
+  sendLastCallToAll(order: IOrder) {
+    this.subs.sink = this._userService
+      .getAllUsers()
+      .subscribe((users: IUser[]) => {
+        const currentUser = JSON.parse(
+          localStorage.getItem(
+            LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
+          ) as string
+        );
+
+        let ids: string[] = [];
+        if (currentUser && currentUser.subscriptionId) {
+          ids = users
+            .filter(
+              (user: IUser) =>
+                user.subscriptionId &&
+                user.subscriptionId !== currentUser.subscriptionId
+            )
+            .map((user: IUser) => user.subscriptionId)
+            .map(String);
+        }
+        ids = [...new Set(ids)];
 
         if (!!ids.length) {
           const str = `Last call ${order?.restaurant.name}!`;

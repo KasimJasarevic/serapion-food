@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
+
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { from, Observable } from 'rxjs';
+
 import { Repository } from 'typeorm';
+
 import { UserDTO } from './user.dto';
+
 import { UserEntity } from './user.entity';
 
 @Injectable()
@@ -19,8 +24,11 @@ export class UserService {
   findByGoogleId(googleId: string): Observable<UserDTO> {
     return from(
       this.userRepo
+
         .createQueryBuilder('user')
+
         .where('user.googleId = :googleId', { googleId: googleId })
+
         .getOne(),
     );
   }
@@ -28,8 +36,11 @@ export class UserService {
   findByEmail(email: string): Observable<UserDTO> {
     return from(
       this.userRepo
+
         .createQueryBuilder('user')
+
         .where('user.email = :email', { email: email })
+
         .getOne(),
     );
   }
@@ -37,8 +48,11 @@ export class UserService {
   getOne(userId: number): Observable<UserDTO> {
     return from(
       this.userRepo
+
         .createQueryBuilder('user')
+
         .where('user.id = :id', { id: userId })
+
         .getOne(),
     );
   }
@@ -46,9 +60,13 @@ export class UserService {
   getOneById(userId: number): Observable<UserEntity> {
     return from(
       this.userRepo
+
         .createQueryBuilder('user')
+
         .select('user')
+
         .where('user.id = :id', { id: userId })
+
         .getOne(),
     );
   }
@@ -62,6 +80,13 @@ export class UserService {
   }
 
   updateSubscriptionId(userId: number, subId: string): Observable<any> {
-    return from(this.userRepo.createQueryBuilder('user').update(UserEntity).set({subscriptionId: subId}).where("id = :id", { id: userId }).execute());
+    return from(
+      this.userRepo
+        .createQueryBuilder('user')
+        .update(UserEntity)
+        .set({ subscriptionId: subId })
+        .where('id = :id', { id: userId })
+        .execute(),
+    );
   }
 }
