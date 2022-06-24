@@ -206,10 +206,11 @@
             >Details</span
           >
 
+          <!-- (click)="sendLastCall(order)" -->
           <button
             class="text-serapion-grey-100 hover:text-serapion-yellow"
             title="Last call {{ order?.restaurant?.name }}"
-            (click)="sendLastCall(order)"
+            (click)="sendLastCallToAll(order)"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
