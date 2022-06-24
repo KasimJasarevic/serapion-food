@@ -347,24 +347,8 @@ export class OrderListComponent implements OnInit, OnDestroy {
               })
             )
             .subscribe((item: IItem[]) => {
-              let ids: string[] = [];
-              item.forEach((data) => {
-                data.orderedItems?.forEach((oi) => {
-                  if (oi.user?.subscriptionId) {
-                    ids.push(oi.user.subscriptionId);
-                  }
-                });
-              });
-              const currentUser = JSON.parse(
-                localStorage.getItem(
-                  LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-                ) as string
-              );
-              ids = [...new Set(ids)];
-              if (currentUser && currentUser.subscriptionId) {
-                ids = ids.filter((id) => id != currentUser.subscriptionId);
-              }
-              if (!!ids.length && order.arrivalTime && order.type) {
+
+              if (order.arrivalTime && order.type) {
                 const formatTime = order.arrivalTime.toLocaleTimeString(
                   navigator.language,
                   {
@@ -377,7 +361,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
                     ? 'it will arrive'
                     : 'we depart'
                 } @${formatTime}!`;
-                this._notificationService.sendNotificationToUsers(ids, str);
+                this._notificationService.sendNotificationToSubscribedUsers(str);
               }
             });
         }
@@ -477,65 +461,9 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this._orderService.updateTypeById(id, type);
   }
 
-  sendLastCall(order: IOrder) {
-    this.subs.sink = this._orderService
-      .getOrderItems(order.id)
-      .subscribe((item: IItem[]) => {
-        let ids: string[] = [];
-
-        item.forEach((data) => {
-          data.orderedItems?.forEach((oi) => {
-            if (oi.user?.subscriptionId) {
-              ids.push(oi.user.subscriptionId);
-            }
-          });
-        });
-
-        const currentUser = JSON.parse(
-          localStorage.getItem(
-            LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-          ) as string
-        );
-        ids = [...new Set(ids)];
-        if (currentUser && currentUser.subscriptionId) {
-          ids = ids.filter((id) => id != currentUser.subscriptionId);
-        }
-
-        if (!!ids.length) {
-          const str = `Last call ${order?.restaurant.name}!`;
-          this._notificationService.sendNotificationToUsers(ids, str);
-        }
-      });
-  }
-
   sendLastCallToAll(order: IOrder) {
-    this.subs.sink = this._userService
-      .getAllUsers()
-      .subscribe((users: IUser[]) => {
-        const currentUser = JSON.parse(
-          localStorage.getItem(
-            LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-          ) as string
-        );
-
-        let ids: string[] = [];
-        if (currentUser && currentUser.subscriptionId) {
-          ids = users
-            .filter(
-              (user: IUser) =>
-                user.subscriptionId &&
-                user.subscriptionId !== currentUser.subscriptionId
-            )
-            .map((user: IUser) => user.subscriptionId)
-            .map(String);
-        }
-        ids = [...new Set(ids)];
-
-        if (!!ids.length) {
-          const str = `Last call ${order?.restaurant.name}!`;
-          this._notificationService.sendNotificationToUsers(ids, str);
-        }
-      });
+    const str = `Last call ${order?.restaurant.name}!`;
+    this._notificationService.sendLastCall(str);
   }
 
   isSidebarCollapsed() {
@@ -552,37 +480,10 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this.subs.sink = this._orderService
       .getOrderItems(order.id)
       .subscribe((item: IItem[]) => {
-        let ids: string[] = [];
-
-        item.forEach((data) => {
-          data.orderedItems?.forEach((oi) => {
-            if (oi.user?.subscriptionId) {
-              ids.push(oi.user.subscriptionId);
-            }
-          });
-        });
-
-        const currentUser = JSON.parse(
-          localStorage.getItem(
-            LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-          ) as string
-        );
-        ids = [...new Set(ids)];
-        if (currentUser && currentUser.subscriptionId) {
-          ids = ids.filter((id) => id != currentUser.subscriptionId);
-        }
-
-        if (!!ids.length) {
-          const str = `Order arrived ${order?.restaurant.name}!`;
-          this._notificationService.sendNotificationToUsers(ids, str);
-        }
+        const str = `Order arrived ${order?.restaurant.name}!`;
+        this._notificationService.sendNotificationToSubscribedUsers(str);
       });
   }
-
-  getOrderItems$ = (id: number) => {
-    return this._orderService.getOrderItems(id);
-    // .pipe(switchMap((order) => order.orderItems))
-  };
 
   private _populateOrders = (orders: IOrder[]) => {
     if (orders) {

@@ -39,25 +39,15 @@ export class NotificationService {
     });
   }
 
-  sendOpenRestaurantMessage(restaurant: string) {
-    const content = this.createContent(restaurant + ' is opened.');
-    this.sendNotification(content);
-  }
-
-  sendOrderItemAddedMessage(orderItem: string) {
-    const content = this.createContent(orderItem);
-    this.sendNotification(content);
-  }
-
-  sendCloseRestaurantMessage(restaurant: string) {
-    const content = this.createContent(restaurant + ' is closed.');
-    this.sendNotification(content);
-  }
-
   sendLastCall(restaurant: string) {
     const content = this.createContent(
       'Last call in ' + restaurant + ' order.'
     );
+    this.sendNotification(content);
+  }
+
+  sendNotificationToSubscribedUsers(message: string) {
+    const content = this.createContent(message);
     this.sendNotification(content);
   }
 
@@ -75,7 +65,7 @@ export class NotificationService {
     return {
       app_id: environment.notificationId,
       contents: {en: message},
-      included_segments: ['Active Users', 'Inactive Users'],
+      included_segments: ['Subscribed Users']
     };
   }
 

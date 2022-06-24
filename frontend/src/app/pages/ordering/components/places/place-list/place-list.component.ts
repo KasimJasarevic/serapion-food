@@ -117,33 +117,9 @@ export class PlaceListComponent implements OnInit, OnDestroy {
 
     this.subs.sink = this._orderService
       .addNewOrder(orderData)
-      .pipe(switchMap(() => this._userService.getAllUsers()))
-      .subscribe((users: IUser[]) => {
-        if (users && !!users.length) {
-          const currentUser = JSON.parse(
-            localStorage.getItem(
-              LocalStorageTypes.FOOD_ORDERING_CURRENT_USER
-            ) as string
-          );
-
-          if (currentUser && currentUser.subscriptionId) {
-            const ids: string[] = <string[]>(
-              users
-                .filter(
-                  ({subscriptionId}: IUser) =>
-                    subscriptionId !== currentUser.subscriptionId
-                )
-                .map(({subscriptionId}: IUser) => subscriptionId)
-            );
-
-            // console.log(ids);
-            if (!!ids.length) {
-              // const str = `Order ${order?.restaurant.name} completed! (${formatTime})`;
-              const str = `Restaurant ${place.name} opened!`;
-              this._notificationService.sendNotificationToUsers(ids, str);
-            }
-          }
-        }
+      .subscribe(() => {
+        const str = `Restaurant ${place.name} opened!`;
+        this._notificationService.sendNotificationToSubscribedUsers(str);
       });
   }
 
