@@ -90,18 +90,19 @@
             </p>
           </div>
 
-          <div
-            class="flex flex-row justify-start items-center space-x-2"
-            *ngIf="place.menu"
-          >
+          <div class="flex flex-row justify-start items-center space-x-2">
             <i class="fas fa-xs fa-map-marked pr-1"></i>
             <a
-              class="flex-1 flex flex-row items-center justify-between text-serapion-grey-200 cursor-pointer dark:text-serapion-grey-100 hover:text-serapion-grey-100 dark:hover:text-serapion-white"
+              class="flex-1 flex flex-row items-center justify-between text-serapion-grey-100 cursor-pointer dark:text-serapion-grey-100 hover:text-serapion-grey-200 dark:hover:text-serapion-white"
               [href]="place.menu"
               target="_blank"
+              *ngIf="place.menu; else noMenuContent"
             >
-              View Menu
+              Check out restaurant menu
             </a>
+            <ng-template #noMenuContent>
+              <p>Menu info not available</p>
+            </ng-template>
           </div>
         </div>
 
