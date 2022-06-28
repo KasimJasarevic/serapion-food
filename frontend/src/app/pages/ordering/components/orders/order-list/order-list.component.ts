@@ -35,6 +35,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
   orderArrivalArr!: FormArray;
   @ViewChild('cancelDialog') cancelDialog!: ModalComponent;
   @ViewChild('confirmDialog') confirmDialog!: ModalComponent;
+  updated: Date = new Date();
 
   constructor(
     private _orderService: OrderService,
@@ -81,12 +82,18 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this.subs.sink = this._websocketService
       .onRestaurantUpdated()
       .pipe(switchMap(() => this._orderService.getAllOrders()))
-      .subscribe((orders: IOrder[]) => this._populateOrders(orders));
+      .subscribe((orders: IOrder[]) => {
+        this._populateOrders(orders);
+        this.updated = new Date();
+      });
 
     this.subs.sink = this._websocketService
       .onRestaurantDeleted()
       .pipe(switchMap(() => this._orderService.getAllOrders()))
-      .subscribe((orders: IOrder[]) => this._populateOrders(orders));
+      .subscribe((orders: IOrder[]) => {
+        this._populateOrders(orders);
+        this.updated = new Date();
+      });
 
     // Change this
     this.subs.sink = this._websocketService
@@ -109,6 +116,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
           Validators.required
         );
         this.orderArrivalArr.push(orderArrivalTime);
+        this.updated = new Date();
       });
 
     // Fixed works fine now.
@@ -157,6 +165,8 @@ export class OrderListComponent implements OnInit, OnDestroy {
             this.orderArrivalArr.removeAt(index);
           }
         }
+
+        this.updated = new Date();
       });
 
     // This should be different
@@ -259,6 +269,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
           }
         });
 
+        this.updated = new Date();
         this._setOrderers();
       });
 
@@ -347,7 +358,6 @@ export class OrderListComponent implements OnInit, OnDestroy {
               })
             )
             .subscribe((item: IItem[]) => {
-
               if (order.arrivalTime && order.type) {
                 const formatTime = order.arrivalTime.toLocaleTimeString(
                   navigator.language,
@@ -361,7 +371,9 @@ export class OrderListComponent implements OnInit, OnDestroy {
                     ? 'it will arrive'
                     : 'we depart'
                 } @${formatTime}!`;
-                this._notificationService.sendNotificationToSubscribedUsers(str);
+                this._notificationService.sendNotificationToSubscribedUsers(
+                  str
+                );
               }
             });
         }
@@ -480,8 +492,20 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this.subs.sink = this._orderService
       .getOrderItems(order.id)
       .subscribe((item: IItem[]) => {
-        const str = `Order arrived ${order?.restaurant.name}!`;
+        // const str = `Order arrived ${order?.restaurant.name} ${
+        //   order.type === this.orderType.DELIVERY
+        //     ? 'it will arrive'
+        //     : 'we depart'
+        // }`;
+
+        const str = `${
+          order.type === this.orderType.DELIVERY
+            ? 'Order arrived from'
+            : 'We depart for'
+        } ${order?.restaurant.name}`;
+
         this._notificationService.sendNotificationToSubscribedUsers(str);
+        // const str = `Order arrived ${order?.restaurant.name}!`;
       });
   }
 

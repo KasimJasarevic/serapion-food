@@ -20,7 +20,11 @@
     <div class="mt-2">
       <img
         class="w-6 h-6 rounded-full"
-        src="{{ message.user?.photo }}"
+        src="{{
+          message.user?.photo
+            ? message.user?.photo
+            : '/assets/images/default-user.png'
+        }}"
         alt="{{
           message.user!.firstName +
             ' ' +
@@ -140,7 +144,7 @@
     <img
       class="rounded-full w-6 h-6"
       [ngClass]="{ 'opacity-0': item.photo === undefined }"
-      src="{{ item.photo }}"
+      src="{{ item.photo ? item.photo : '/assets/images/default-user.png' }}"
       alt=""
     />
     <span>{{ item.firstName }}</span>
