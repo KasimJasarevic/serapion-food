@@ -1,7 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { OrderStatus } from '../../models/order-status-types';
 import { IOrder } from '../../models/order.model';
-import { OrderChatComponent } from '../order-chat/order-chat.component';
 
 @Pipe({
   name: 'sortOrder',
