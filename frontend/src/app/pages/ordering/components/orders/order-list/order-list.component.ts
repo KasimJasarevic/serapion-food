@@ -584,7 +584,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
   private _populateOrders = (orders: IOrder[]) => {
     if (orders) {
       this.orders = orders;
-      this._sortOrders('date', 'desc');
+      this._sortOrders('date', 'asc');
 
       this.ordersForm = this._formBuilder.group({
         orders: this._formBuilder.array([]),
