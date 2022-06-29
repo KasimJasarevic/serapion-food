@@ -546,8 +546,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
   }
 
   sendLastCallToAll(order: IOrder) {
-    const str = `Last call ${order?.restaurant.name}!`;
-    this._notificationService.sendLastCall(str);
+    this._notificationService.sendLastCall(order?.restaurant.name);
   }
 
   isSidebarCollapsed() {
