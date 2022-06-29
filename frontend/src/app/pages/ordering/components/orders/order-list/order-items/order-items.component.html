@@ -67,7 +67,11 @@
       <div class="-space-x-2 ml-auto mr-1">
         <img
           class="relative z-30 inline object-cover w-5 h-5 border-2 border-serapion-white rounded-full dark:border-serapion-black-200"
-          src="{{ orderItem.user!.photo }}"
+          src="{{
+            orderItem.user!.photo
+              ? orderItem.user!.photo
+              : '/assets/images/default-user.png'
+          }}"
           alt="{{
             orderItem.user!.firstName +
               ' ' +

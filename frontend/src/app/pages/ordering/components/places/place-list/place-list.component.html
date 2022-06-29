@@ -71,6 +71,42 @@
         </div>
 
         <div
+          class="flex flex-col flex-1 pt-8 space-y-2 text-xs"
+          *ngIf="isExpanded((this.collapsedPlaces$ | async) || [], place.id)"
+        >
+          <p
+            class="uppercase pt-4 border-t border-opacity-25 border-serapion-grey-100 border-dashed"
+          >
+            Details
+          </p>
+          <div class="pt-2 flex flex-row justify-start items-center space-x-2">
+            <i class="fas fa-xs fa-phone pr-1"></i>
+            <p>
+              {{
+                place.phoneNumber
+                  ? place.phoneNumber
+                  : "Phone info not available"
+              }}
+            </p>
+          </div>
+
+          <div class="flex flex-row justify-start items-center space-x-2">
+            <i class="fas fa-xs fa-map-marked pr-1"></i>
+            <a
+              class="flex-1 flex flex-row items-center justify-between text-serapion-grey-100 cursor-pointer dark:text-serapion-grey-100 hover:text-serapion-grey-200 dark:hover:text-serapion-white"
+              [href]="place.menu"
+              target="_blank"
+              *ngIf="place.menu; else noMenuContent"
+            >
+              Check out restaurant menu
+            </a>
+            <ng-template #noMenuContent>
+              <p>Menu info not available</p>
+            </ng-template>
+          </div>
+        </div>
+
+        <div
           class="flex pt-8 space-x-2 justify-center"
           *ngIf="isExpanded((this.collapsedPlaces$ | async) || [], place.id)"
         >

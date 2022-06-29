@@ -26,7 +26,7 @@
   >
     <img
       class="w-12 h-12 rounded-full"
-      src="{{ user.photo }}"
+      src="{{ user.photo ? user.photo : '/assets/images/default-user.png' }}"
       alt="{{ user!.firstName + ' ' + user!.lastName + ' Profile Picture' }}"
       title="{{ user!.firstName + ' ' + user!.lastName }}"
       referrerpolicy="no-referrer"

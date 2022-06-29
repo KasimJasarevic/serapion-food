@@ -35,6 +35,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
   orderArrivalArr!: FormArray;
   @ViewChild('cancelDialog') cancelDialog!: ModalComponent;
   @ViewChild('confirmDialog') confirmDialog!: ModalComponent;
+  updated: Date = new Date();
 
   constructor(
     private _orderService: OrderService,
@@ -51,64 +52,88 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
     this.orderArrivalArr = this._formBuilder.array([]);
 
+    // // // This was changed !!!!!!!!
+    // this.subs.sink = this._orderService
+    //   .getAllOrders()
+    //   .subscribe((orders: IOrder[]) => {
+    //     this.orders = orders;
+
+    //     this.orders.forEach((order: IOrder) => {
+    //       (<FormArray>this.ordersForm?.get('orders')).push(
+    //         this._formBuilder.group({
+    //           orderType: [
+    //             {
+    //               value: order.type,
+    //               disabled: order.status === this.orderStatus.INACTIVE,
+    //             },
+    //           ],
+    //         })
+    //       );
+
+    //       const orderArrivalTime: FormControl = new FormControl(
+    //         null,
+    //         Validators.required
+    //       );
+    //       this.orderArrivalArr.push(orderArrivalTime);
+    //     });
+
+    //     this._setOrderers();
+    //   });
+
     this.subs.sink = this._orderService
       .getAllOrders()
       .subscribe((orders: IOrder[]) => {
-        this.orders = orders;
-
-        this.orders.forEach((order: IOrder) => {
-          (<FormArray>this.ordersForm?.get('orders')).push(
-            this._formBuilder.group({
-              orderType: [
-                {
-                  value: order.type,
-                  disabled: order.status === this.orderStatus.INACTIVE,
-                },
-              ],
-            })
-          );
-
-          const orderArrivalTime: FormControl = new FormControl(
-            null,
-            Validators.required
-          );
-          this.orderArrivalArr.push(orderArrivalTime);
-        });
-
-        this._setOrderers();
+        this._populateOrders(orders);
+        this.updated = new Date();
       });
 
     this.subs.sink = this._websocketService
       .onRestaurantUpdated()
       .pipe(switchMap(() => this._orderService.getAllOrders()))
-      .subscribe((orders: IOrder[]) => this._populateOrders(orders));
+      .subscribe((orders: IOrder[]) => {
+        this._populateOrders(orders);
+        this.updated = new Date();
+      });
 
     this.subs.sink = this._websocketService
       .onRestaurantDeleted()
       .pipe(switchMap(() => this._orderService.getAllOrders()))
-      .subscribe((orders: IOrder[]) => this._populateOrders(orders));
+      .subscribe((orders: IOrder[]) => {
+        this._populateOrders(orders);
+        this.updated = new Date();
+      });
 
+    // // // This was changed !!!!!!!!
     // Change this
+    // this.subs.sink = this._websocketService
+    //   .onOrderOpened()
+    //   .subscribe((data: any) => {
+    //     this.orders.push(data);
+    //     (<FormArray>this.ordersForm?.get('orders')).push(
+    //       this._formBuilder.group({
+    //         orderType: [
+    //           {
+    //             value: data.type,
+    //             disabled: data.status === this.orderStatus.INACTIVE,
+    //           },
+    //         ],
+    //       })
+    //     );
+
+    //     const orderArrivalTime: FormControl = new FormControl(
+    //       null,
+    //       Validators.required
+    //     );
+    //     this.orderArrivalArr.push(orderArrivalTime);
+    //     this.updated = new Date();
+    //   });
+
     this.subs.sink = this._websocketService
       .onOrderOpened()
-      .subscribe((data: any) => {
-        this.orders.push(data);
-        (<FormArray>this.ordersForm?.get('orders')).push(
-          this._formBuilder.group({
-            orderType: [
-              {
-                value: data.type,
-                disabled: data.status === this.orderStatus.INACTIVE,
-              },
-            ],
-          })
-        );
-
-        const orderArrivalTime: FormControl = new FormControl(
-          null,
-          Validators.required
-        );
-        this.orderArrivalArr.push(orderArrivalTime);
+      .pipe(switchMap(() => this._orderService.getAllOrders()))
+      .subscribe((orders: IOrder[]) => {
+        this._populateOrders(orders);
+        this.updated = new Date();
       });
 
     // Fixed works fine now.
@@ -145,33 +170,53 @@ export class OrderListComponent implements OnInit, OnDestroy {
         }
       });
 
+    // // // This was changed!!!!
+    // this.subs.sink = this._websocketService
+    //   .onOrderClosed()
+    //   .subscribe((next: IOrder) => {
+    //     if (next) {
+    //       const index = this.orders.findIndex((order) => order.id === next.id);
+
+    //       if (index !== -1) {
+    //         this.orders.splice(index, 1);
+    //         (<FormArray>this.ordersForm?.get('orders')).removeAt(index);
+    //         this.orderArrivalArr.removeAt(index);
+    //       }
+    //     }
+
+    //     this.updated = new Date();
+    //   });
+
     this.subs.sink = this._websocketService
       .onOrderClosed()
-      .subscribe((next: IOrder) => {
-        if (next) {
-          const index = this.orders.findIndex((order) => order.id === next.id);
-
-          if (index !== -1) {
-            this.orders.splice(index, 1);
-            (<FormArray>this.ordersForm?.get('orders')).removeAt(index);
-            this.orderArrivalArr.removeAt(index);
-          }
-        }
+      .pipe(switchMap(() => this._orderService.getAllOrders()))
+      .subscribe((orders: IOrder[]) => {
+        this._populateOrders(orders);
+        this.updated = new Date();
       });
 
+    // // // This was changed
     // This should be different
+    // this.subs.sink = this._websocketService
+    //   .onRestaurantAdded()
+    //   .subscribe((next: any) => {
+    //     const index = this.orders.findIndex(
+    //       (order) => order.restaurant.id === next.id
+    //     );
+
+    //     if (index !== -1) {
+    //       this.orders.splice(index, 1);
+    //       (<FormArray>this.ordersForm?.get('orders')).removeAt(index);
+    //       this.orderArrivalArr.removeAt(index);
+    //     }
+    //   });
+
     this.subs.sink = this._websocketService
       .onRestaurantAdded()
-      .subscribe((next: any) => {
-        const index = this.orders.findIndex(
-          (order) => order.restaurant.id === next.id
-        );
-
-        if (index !== -1) {
-          this.orders.splice(index, 1);
-          (<FormArray>this.ordersForm?.get('orders')).removeAt(index);
-          this.orderArrivalArr.removeAt(index);
-        }
+      .pipe(switchMap(() => this._orderService.getAllOrders()))
+      .subscribe((orders: IOrder[]) => {
+        this._populateOrders(orders);
+        this.updated = new Date();
       });
 
     // Fixed works fine now.
@@ -219,6 +264,51 @@ export class OrderListComponent implements OnInit, OnDestroy {
         });
       });
 
+    // // // This was changed!!!!!
+    // this.subs.sink = this._websocketService
+    //   .onOrderCompleted()
+    //   .pipe(
+    //     switchMap((order: any) => {
+    //       this.orders[this.orders.findIndex((el) => el.id === order.id)] =
+    //         order;
+
+    //       (<FormArray>this.ordersForm?.get('orders')).controls[
+    //         this.orders.findIndex((el) => el.id === order.id)
+    //       ]
+    //         .get('orderType')
+    //         ?.disable();
+
+    //       const orderer: IUser = order.orderer;
+    //       return this._userService.getById(orderer.id).pipe(
+    //         switchMap((user: IUser) => {
+    //           user.lastOrder = new Date();
+    //           return this._userService.updateOne(user);
+    //         })
+    //       );
+    //     })
+    //   )
+    //   .subscribe((updatedUser: IUser) => {
+    //     this.orders.forEach((order: IOrder) => {
+    //       if (order.status === this.orderStatus.ACTIVE) {
+    //         if (order.orderItems) {
+    //           order.orderItems.forEach((data) => {
+    //             if (data.orderedItems) {
+    //               data.orderedItems?.forEach((item) => {
+    //                 item.user =
+    //                   item.user!.id === updatedUser.id
+    //                     ? updatedUser
+    //                     : item.user;
+    //               });
+    //             }
+    //           });
+    //         }
+    //       }
+    //     });
+
+    //     this.updated = new Date();
+    //     this._setOrderers();
+    //   });
+
     this.subs.sink = this._websocketService
       .onOrderCompleted()
       .pipe(
@@ -241,25 +331,10 @@ export class OrderListComponent implements OnInit, OnDestroy {
           );
         })
       )
-      .subscribe((updatedUser: IUser) => {
-        this.orders.forEach((order: IOrder) => {
-          if (order.status === this.orderStatus.ACTIVE) {
-            if (order.orderItems) {
-              order.orderItems.forEach((data) => {
-                if (data.orderedItems) {
-                  data.orderedItems?.forEach((item) => {
-                    item.user =
-                      item.user!.id === updatedUser.id
-                        ? updatedUser
-                        : item.user;
-                  });
-                }
-              });
-            }
-          }
-        });
-
-        this._setOrderers();
+      .pipe(switchMap(() => this._orderService.getAllOrders()))
+      .subscribe((orders: IOrder[]) => {
+        this._populateOrders(orders);
+        this.updated = new Date();
       });
 
     this.subs.sink = this._websocketService
@@ -275,6 +350,14 @@ export class OrderListComponent implements OnInit, OnDestroy {
           return order;
         });
       });
+
+    // this.subs.sink = this._websocketService
+    //   .onOrderTypeUpdate()
+    //   .pipe(switchMap(() => this._orderService.getAllOrders()))
+    //   .subscribe((orders: IOrder[]) => {
+    //     this._populateOrders(orders);
+    //     this.updated = new Date();
+    //   });
 
     this.subs.sink = this._websocketService.onCleanUp().subscribe(() => {
       // console.log('Clean');
@@ -347,7 +430,6 @@ export class OrderListComponent implements OnInit, OnDestroy {
               })
             )
             .subscribe((item: IItem[]) => {
-
               if (order.arrivalTime && order.type) {
                 const formatTime = order.arrivalTime.toLocaleTimeString(
                   navigator.language,
@@ -361,7 +443,9 @@ export class OrderListComponent implements OnInit, OnDestroy {
                     ? 'it will arrive'
                     : 'we depart'
                 } @${formatTime}!`;
-                this._notificationService.sendNotificationToSubscribedUsers(str);
+                this._notificationService.sendNotificationToSubscribedUsers(
+                  str
+                );
               }
             });
         }
@@ -480,14 +564,33 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this.subs.sink = this._orderService
       .getOrderItems(order.id)
       .subscribe((item: IItem[]) => {
-        const str = `Order arrived ${order?.restaurant.name}!`;
+        // const str = `Order arrived ${order?.restaurant.name} ${
+        //   order.type === this.orderType.DELIVERY
+        //     ? 'it will arrive'
+        //     : 'we depart'
+        // }`;
+
+        const str = `${
+          order.type === this.orderType.DELIVERY
+            ? 'Order arrived from'
+            : 'We depart for'
+        } ${order?.restaurant.name}`;
+
         this._notificationService.sendNotificationToSubscribedUsers(str);
+        // const str = `Order arrived ${order?.restaurant.name}!`;
       });
   }
 
   private _populateOrders = (orders: IOrder[]) => {
     if (orders) {
       this.orders = orders;
+      this._sortOrders('date', 'asc');
+
+      this.ordersForm = this._formBuilder.group({
+        orders: this._formBuilder.array([]),
+      });
+
+      this.orderArrivalArr = this._formBuilder.array([]);
 
       this.orders.forEach((order: IOrder) => {
         (<FormArray>this.ordersForm?.get('orders')).push(
@@ -510,5 +613,34 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
       this._setOrderers();
     }
+  };
+
+  private _sortOrders = (
+    fieldCriteria: string,
+    sortDirection: string
+  ): void => {
+    let direction = sortDirection !== 'desc' ? 1 : -1;
+
+    this.orders.sort((a: IOrder, b: IOrder) => {
+      const firstRestaurantOpenedAt = a.openedAt!;
+      const secondRestaurantOpenedAt = b.openedAt!;
+
+      if (firstRestaurantOpenedAt < secondRestaurantOpenedAt) {
+        return -1 * direction;
+      } else if (firstRestaurantOpenedAt > secondRestaurantOpenedAt) {
+        return 1 * direction;
+      } else {
+        return 0;
+      }
+    });
+
+    this.orders = [
+      ...this.orders.filter(
+        (order: IOrder) => order.status === OrderStatus.ACTIVE
+      ),
+      ...this.orders.filter(
+        (order: IOrder) => order.status === OrderStatus.INACTIVE
+      ),
+    ];
   };
 }
