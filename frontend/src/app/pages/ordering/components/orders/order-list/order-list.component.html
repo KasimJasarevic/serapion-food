@@ -1,6 +1,6 @@
 <div
-  class="overflow-orders p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-200 bg-opacity-5 bg-hero bg-cover bg-no-repeat dark:bg-opacity-95 bg-blend-lighten shadow-md dark:bg-serapion-black-100"
-  [ngClass]="{ 'lg:grid-cols-3 2xl:grid-cols-4': isSidebarCollapsed() }"
+  class="overflow-orders p-4 lg:pt-8 grid grid-cols-1 gap-2 lg:grid-cols-2 2xl:grid-cols-2 lg:gap-4 z-10 2xl:pt-12 bg-serapion-blue-200 bg-opacity-5 bg-hero bg-cover bg-no-repeat dark:bg-opacity-95 bg-blend-lighten shadow-md dark:bg-serapion-black-100"
+  [ngClass]="{ 'lg:grid-cols-3 2xl:grid-cols-3': isSidebarCollapsed() }"
 >
   <!-- ORDER -->
   <div *ngFor="let order of orders; let i = index" class="place-self-strech">

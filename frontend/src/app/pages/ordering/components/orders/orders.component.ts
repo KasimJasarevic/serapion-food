@@ -42,4 +42,10 @@ export class OrdersComponent {
   changeTheme() {
     this._themeService.toggleTheme();
   }
+
+  public defaultOrUserPhoto = (imageUrl: string | undefined) => {
+    const defaultUserPhoto = '/assets/images/default-user.pngas';
+
+    return imageUrl ? imageUrl : defaultUserPhoto;
+  };
 }

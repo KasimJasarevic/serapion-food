@@ -26,10 +26,12 @@
   >
     <img
       class="w-12 h-12 rounded-full"
-      src="{{ user.photo ? user.photo : '/assets/images/default-user.png' }}"
+      [src]="defaultOrUserPhoto(user.photo)"
+      (error)="img.src = '/assets/images/default-user.png'"
       alt="{{ user!.firstName + ' ' + user!.lastName + ' Profile Picture' }}"
       title="{{ user!.firstName + ' ' + user!.lastName }}"
       referrerpolicy="no-referrer"
+      #img
     />
 
     <div class="text-xs">

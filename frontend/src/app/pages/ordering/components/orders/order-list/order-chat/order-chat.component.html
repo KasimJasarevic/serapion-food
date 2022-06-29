@@ -20,11 +20,12 @@
     <div class="mt-2">
       <img
         class="w-6 h-6 rounded-full"
-        src="{{
+        [src]="
           message.user?.photo
             ? message.user?.photo
             : '/assets/images/default-user.png'
-        }}"
+        "
+        (error)="img.src = '/assets/images/default-user.png'"
         alt="{{
           message.user!.firstName +
             ' ' +
@@ -33,6 +34,7 @@
         }}"
         title="{{ message.user!.firstName + ' ' + message.user!.lastName }}"
         referrerpolicy="no-referrer"
+        #img
       />
     </div>
     <div class="flex-1 flex flex-col justify-start items-start space-y-1">
@@ -144,8 +146,10 @@
     <img
       class="rounded-full w-6 h-6"
       [ngClass]="{ 'opacity-0': item.photo === undefined }"
-      src="{{ item.photo ? item.photo : '/assets/images/default-user.png' }}"
+      [src]="item.photo ? item.photo : '/assets/images/default-user.png'"
+      (error)="mentionImg.src = '/assets/images/default-user.png'"
       alt=""
+      #mentionImg
     />
     <span>{{ item.firstName }}</span>
   </div>
