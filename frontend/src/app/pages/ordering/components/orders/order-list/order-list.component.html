@@ -277,12 +277,15 @@
           class="btn flex-1"
           [ngClass]="{
             'btn-secondary':
-              isOrderOwner(order) || order.status === orderStatus.INACTIVE,
+              (isOrderOwner(order) && order.status === orderStatus.INACTIVE) ||
+              (isOrderOwner(order) && order.status === orderStatus.ACTIVE),
             'btn-disabled':
-              !isOrderOwner(order) && order.status === orderStatus.ACTIVE
+              (!isOrderOwner(order) && order.status === orderStatus.ACTIVE) ||
+              (!isOrderOwner(order) && order.status === orderStatus.INACTIVE)
           }"
           [disabled]="
-            !isOrderOwner(order) && order.status === orderStatus.ACTIVE
+            (!isOrderOwner(order) && order.status === orderStatus.ACTIVE) ||
+            (!isOrderOwner(order) && order.status === orderStatus.INACTIVE)
           "
           (click)="closeRestaurant(order)"
         >
