@@ -59,7 +59,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     );
 
     this.subs.sink = lastCallButtonDebounced.subscribe((order: IOrder) => {
-      console.log('Sending last call...');
+      // console.log('Sending last call...');
       this.sendLastCallToAll(order);
     });
 
@@ -68,7 +68,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     );
 
     this.subs.sink = arrivedCallButtonDebounced.subscribe((order: IOrder) => {
-      console.log('Sending arrived call...');
+      // console.log('Sending arrived call...');
       this.sendArrivedCall(order);
     });
 
