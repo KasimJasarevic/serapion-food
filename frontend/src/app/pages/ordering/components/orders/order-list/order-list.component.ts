@@ -12,7 +12,7 @@ import { IUser } from '@core/models/user.model';
 import { NotificationService } from '@core/services/notification.service';
 import { UserService } from '@core/services/user.service';
 import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
-import { switchMap } from 'rxjs';
+import { debounceTime, Subject, switchMap } from 'rxjs';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { OrderStatus } from '../models/order-status-types';
 import { OrderType } from '../models/order-type-types';
@@ -36,6 +36,8 @@ export class OrderListComponent implements OnInit, OnDestroy {
   @ViewChild('cancelDialog') cancelDialog!: ModalComponent;
   @ViewChild('confirmDialog') confirmDialog!: ModalComponent;
   updated: Date = new Date();
+  private lastCallButton = new Subject<IOrder>();
+  private arrivedCallButton = new Subject<IOrder>();
 
   constructor(
     private _orderService: OrderService,
@@ -51,6 +53,24 @@ export class OrderListComponent implements OnInit, OnDestroy {
     });
 
     this.orderArrivalArr = this._formBuilder.array([]);
+
+    const lastCallButtonDebounced = this.lastCallButton.pipe(
+      debounceTime(2000)
+    );
+
+    this.subs.sink = lastCallButtonDebounced.subscribe((order: IOrder) => {
+      console.log('Sending last call...');
+      this.sendLastCallToAll(order);
+    });
+
+    const arrivedCallButtonDebounced = this.arrivedCallButton.pipe(
+      debounceTime(2000)
+    );
+
+    this.subs.sink = arrivedCallButtonDebounced.subscribe((order: IOrder) => {
+      console.log('Sending arrived call...');
+      this.sendArrivedCall(order);
+    });
 
     // // // This was changed !!!!!!!!
     // this.subs.sink = this._orderService
@@ -641,5 +661,13 @@ export class OrderListComponent implements OnInit, OnDestroy {
         (order: IOrder) => order.status === OrderStatus.INACTIVE
       ),
     ];
+  };
+
+  public sendLastCallToAllDebounced = (order: IOrder) => {
+    this.lastCallButton.next(order);
+  };
+
+  public sendArrivedCallDebounced = (order: IOrder) => {
+    this.arrivedCallButton.next(order);
   };
 }

@@ -159,10 +159,11 @@
             class="py-2 pt-0 flex flex-row space-x-2 justify-between items-center text-xs font-normal text-serapion-purple"
             *ngIf="order?.status === orderStatus.INACTIVE && order.arrivalTime"
           >
+            <!-- (click)="sendArrivedCall(order)" -->
             <button
               class="hover:text-serapion-yellow"
               title="Food Arrived {{ order?.restaurant?.name }}"
-              (click)="sendArrivedCall(order)"
+              (click)="sendArrivedCallDebounced(order)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -207,10 +208,11 @@
           >
 
           <!-- (click)="sendLastCall(order)" -->
+          <!-- (click)="sendLastCallToAll(order)" -->
           <button
             class="text-serapion-grey-100 hover:text-serapion-yellow"
             title="Last call {{ order?.restaurant?.name }}"
-            (click)="sendLastCallToAll(order)"
+            (click)="sendLastCallToAllDebounced(order)"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
