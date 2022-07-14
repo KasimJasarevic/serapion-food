@@ -5,11 +5,7 @@
   <!-- ORDER -->
   <div *ngFor="let order of orders; let i = index" class="place-self-strech">
     <div
-      class="rounded-md bg-serapion-white p-4 z-10 lg:transform{{
-        order.status === orderStatus.ACTIVE
-          ? 'border-serapion-green'
-          : 'border-serapion-purple'
-      }} border-t-0 lg:hover:scale-102 dark:bg-serapion-black-200"
+      class="rounded-md bg-serapion-white p-4 z-10 border-t-0 lg:hover:scale-102 dark:bg-serapion-black-200"
     >
       <!-- CARD HEADER -->
       <div class="flex flex-row items-start justify-items-between z-10">

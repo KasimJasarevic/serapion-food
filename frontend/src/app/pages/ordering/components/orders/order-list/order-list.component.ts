@@ -666,7 +666,9 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
     this.orders = [
       ...this.orders.filter(
-        (order: IOrder) => order.status === OrderStatus.ACTIVE
+        (order: IOrder) =>
+          order.status === OrderStatus.ACTIVE ||
+          order.status === OrderStatus.LOCKED
       ),
       ...this.orders.filter(
         (order: IOrder) => order.status === OrderStatus.INACTIVE
