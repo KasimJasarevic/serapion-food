@@ -13,4 +13,5 @@ export enum WebsocketMessageTypes {
   ORDER_TYPE_EVENT = 'orderTypeUpdatedEvent',
   CLEAN_UP_EVENT = 'cleanUpEvent',
   COMMENT_DELETED = 'commentDeletedEvent',
+  ORDER_STATUS_UPDATED = 'orderStatusUpdatedEvent',
 }

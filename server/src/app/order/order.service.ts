@@ -5,6 +5,7 @@ import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
 import { OrderDTO } from './order.dto';
 import { OrderEntity } from './order.entity';
+import { OrderStatus } from './order.interface';
 
 @Injectable()
 export class OrderService {
@@ -80,6 +81,13 @@ export class OrderService {
   updateTypeById(id: number, payload: any): Observable<any> {
     return from(this._orderRepo.update(id, payload));
   }
+
+  public updateOrderStatus = (
+    id: number,
+    order: OrderDTO,
+  ): Observable<OrderDTO> => {
+    return from(this._orderRepo.save(order));
+  };
 
   @Cron('0 17 * * *')
   deleteAllOrders() {

@@ -270,6 +270,17 @@ export class OrderListComponent implements OnInit, OnDestroy {
         });
       });
 
+    // Order locking
+    this.subs.sink = this._websocketService
+      .onOrderStatusUpdated()
+      .subscribe((order: IOrder) => {
+        this.orders.forEach((_order: IOrder) => {
+          if (order.id === _order.id) {
+            _order = order;
+          }
+        });
+      });
+
     // Fixed works fine now.
     this.subs.sink = this._websocketService
       .onOrderItemDeleted()
@@ -669,5 +680,19 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
   public sendArrivedCallDebounced = (order: IOrder) => {
     this.arrivedCallButton.next(order);
+  };
+
+  public lockOrder = (order: IOrder) => {
+    console.log('Current order status: ' + order.status);
+
+    if (order.status === OrderStatus.LOCKED) {
+      order.status = OrderStatus.ACTIVE;
+    } else if (order.status === OrderStatus.ACTIVE) {
+      order.status = OrderStatus.LOCKED;
+    }
+
+    this.subs.sink = this._orderService
+      .updateOrderStatus(order.id, order)
+      .subscribe();
   };
 }
