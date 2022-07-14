@@ -15,13 +15,18 @@
           >
             <div
               class="{{
-                order.status === orderStatus.ACTIVE
-                  ? 'bg-serapion-green'
-                  : 'bg-serapion-purple'
+                (order.status === orderStatus.ACTIVE && 'bg-serapion-green') ||
+                  (order.status === orderStatus.INACTIVE &&
+                    'bg-serapion-purple') ||
+                  (order.status === orderStatus.LOCKED && 'bg-serapion-red')
               }}
               rounded-md px-6 py-1 font-normal tracking-widest uppercase text-serapion-grey-200"
             >
-              {{ order.status === orderStatus.ACTIVE ? "active" : "finished" }}
+              {{
+                (order.status === orderStatus.ACTIVE && "active") ||
+                  (order.status === orderStatus.INACTIVE && "finished") ||
+                  (order.status === orderStatus.LOCKED && "locked")
+              }}
             </div>
             <a
               class="group flex-1 flex flex-row items-center justify-between text-serapion-grey-200 cursor-pointer dark:text-serapion-grey-100"
@@ -46,9 +51,23 @@
                 />
               </svg> -->
             </a>
-            <button class="btn btn-primary" (click)="lockOrder(order)">
-              <i class="fas fa-lock fa-xs pr-1"></i>
-              Lock
+            <button
+              class="btn btn-primary"
+              (click)="lockOrder(order)"
+              *ngIf="
+                order.status === orderStatus.ACTIVE ||
+                order.status === orderStatus.LOCKED
+              "
+            >
+              <i
+                class="fas fa-lock fa-xs pr-1"
+                *ngIf="order.status === orderStatus.ACTIVE"
+              ></i>
+              <i
+                class="fas fa-unlock fa-xs pr-1"
+                *ngIf="order.status === orderStatus.LOCKED"
+              ></i>
+              {{ order.status === orderStatus.ACTIVE ? "Lock" : "Unlock" }}
             </button>
           </div>
           <div class="flex flex-row space-x-2 items-center mt-4">
@@ -82,7 +101,10 @@
           </div>
           <div
             class="pt-2 flex flex-row space-x-2 justify-between items-center text-xs text-serapion-red font-normal"
-            *ngIf="order.orderer && order?.status === orderStatus.ACTIVE"
+            *ngIf="
+              (order.orderer && order?.status === orderStatus.ACTIVE) ||
+              (order.orderer && order?.status === orderStatus.LOCKED)
+            "
           >
             <i class="fas fa-xs fa-car pr-1"></i>
             <p class="flex-1">
@@ -100,7 +122,7 @@
           >
             <form
               *ngIf="
-                isOrderOwner(order) && order?.status === orderStatus.ACTIVE
+                isOrderOwner(order) && order?.status !== orderStatus.INACTIVE
               "
               (change)="onOrderTypeChange(order)"
               [formGroup]="ordersForm!"

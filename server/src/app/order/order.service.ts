@@ -5,7 +5,6 @@ import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
 import { OrderDTO } from './order.dto';
 import { OrderEntity } from './order.entity';
-import { OrderStatus } from './order.interface';
 
 @Injectable()
 export class OrderService {
@@ -17,6 +16,7 @@ export class OrderService {
   getAllOrders(): Observable<OrderDTO[]> {
     const date = new Date();
     date.setHours(0, 0, 0, 0);
+    // order.openedAt error?
     return from(
       this._orderRepo
         .createQueryBuilder('order')
@@ -25,7 +25,7 @@ export class OrderService {
         .leftJoinAndSelect('order.orderItems', 'orderItems')
         .leftJoinAndSelect('orderItems.orderedItems', 'orderedItems')
         .leftJoinAndSelect('orderedItems.user', 'users')
-        .where('order.openedAt >= :date', { date: date })
+        .where('order.opened_at >= :date', { date: date })
         .getMany(),
     );
   }

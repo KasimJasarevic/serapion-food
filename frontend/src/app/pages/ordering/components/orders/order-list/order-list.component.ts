@@ -544,7 +544,10 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
   private _setNewOrderer(thisOrder: IOrder) {
     this.orders.forEach((order) => {
-      if (order.status === OrderStatus.ACTIVE && order.id === thisOrder.id) {
+      if (
+        order.status === OrderStatus.ACTIVE ||
+        (order.status === OrderStatus.LOCKED && order.id === thisOrder.id)
+      ) {
         this.subs.sink = this._orderService
           .getOrderOrderer(order.id)
           .subscribe((next) => {
@@ -685,7 +688,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
   };
 
   public lockOrder = (order: IOrder) => {
-    console.log('Current order status: ' + order.status);
+    // console.log('Current order status: ' + order.status);
 
     if (order.status === OrderStatus.LOCKED) {
       order.status = OrderStatus.ACTIVE;
