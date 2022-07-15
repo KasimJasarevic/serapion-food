@@ -1,15 +1,19 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {LocalStorageTypes} from '@core/enums/local-storage-types';
-import {SubSink} from '@core/helpers/sub-sink';
-import {WebsocketMessagesService} from '@core/services/websocket-messages.service';
-import {ToastrService} from 'ngx-toastr';
-import {catchError, of} from 'rxjs';
-import {OrderStatus} from '../../models/order-status-types';
-import {IOrder} from '../../models/order.model';
-import {OrderService} from '../../services/order.service';
-import {AddOrderItem, IAddItemEx, IItem, IRemoveOrderItemUser,} from './models/order-item.model';
-
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LocalStorageTypes } from '@core/enums/local-storage-types';
+import { SubSink } from '@core/helpers/sub-sink';
+import { WebsocketMessagesService } from '@core/services/websocket-messages.service';
+import { ToastrService } from 'ngx-toastr';
+import { catchError, of } from 'rxjs';
+import { OrderStatus } from '../../models/order-status-types';
+import { IOrder } from '../../models/order.model';
+import { OrderService } from '../../services/order.service';
+import {
+  AddOrderItem,
+  IAddItemEx,
+  IItem,
+  IRemoveOrderItemUser,
+} from './models/order-item.model';
 
 @Component({
   selector: 'app-order-items',
@@ -35,8 +39,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
     private _orderService: OrderService,
     private _websocketService: WebsocketMessagesService,
     private _toastr: ToastrService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     if (this.order!.id) {
@@ -99,6 +102,15 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
         if (next.id === this.order?.id) {
           this.order = next;
           this.items = next.orderItems;
+        }
+      });
+
+    this.subs.sink = this._websocketService
+      .onOrderStatusUpdated()
+      .subscribe((order: IOrder) => {
+        if (order.id === this.order?.id) {
+          this.order = order;
+          this.items = order.orderItems;
         }
       });
   }

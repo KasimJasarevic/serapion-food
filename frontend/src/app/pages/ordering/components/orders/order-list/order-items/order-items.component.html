@@ -24,9 +24,16 @@
           formControlName="item"
           class="flex-1 p-2 pl-0 text-xs bg-transparent border-0 placeholder-serapion-grey-100 focus:ring-0"
           [ngClass]="{
-            'cursor-not-allowed': order?.status === orderStatus.INACTIVE
+            'cursor-not-allowed':
+              order?.status === orderStatus.INACTIVE ||
+              order?.status === orderStatus.LOCKED
           }"
-          [attr.disabled]="order?.status === orderStatus.INACTIVE ? '' : null"
+          [attr.disabled]="
+            order?.status === orderStatus.INACTIVE ||
+            order?.status === orderStatus.LOCKED
+              ? ''
+              : null
+          "
         />
       </div>
     </div>
@@ -37,9 +44,15 @@
           'btn-primary':
             !itemForm.invalid && order?.status === orderStatus.ACTIVE,
           'btn-disabled':
-            itemForm.invalid || order?.status === orderStatus.INACTIVE
+            itemForm.invalid ||
+            order?.status === orderStatus.INACTIVE ||
+            order?.status === orderStatus.LOCKED
         }"
-        [disabled]="itemForm.invalid || order?.status === orderStatus.INACTIVE"
+        [disabled]="
+          itemForm.invalid ||
+          order?.status === orderStatus.INACTIVE ||
+          order?.status === orderStatus.LOCKED
+        "
         type="submit"
       >
         <i class="fas fa-plus fa-xs pr-1"></i>
@@ -148,7 +161,9 @@
         <button
           (click)="removeItem(item)"
           [disabled]="
-            order?.status === orderStatus.INACTIVE || !haveThisItem(item)
+            order?.status === orderStatus.INACTIVE ||
+            order?.status === orderStatus.LOCKED ||
+            !haveThisItem(item)
           "
         >
           <i
@@ -156,21 +171,32 @@
             [ngClass]="{}"
             [ngClass]="{
               'text-serapion-grey-100':
-                !haveThisItem(item) || order?.status === orderStatus.INACTIVE,
-              'cursor-not-allowed': order?.status === orderStatus.INACTIVE
+                !haveThisItem(item) ||
+                order?.status === orderStatus.INACTIVE ||
+                order?.status === orderStatus.LOCKED,
+              'cursor-not-allowed':
+                order?.status === orderStatus.INACTIVE ||
+                order?.status === orderStatus.LOCKED
             }"
           ></i>
         </button>
         <span>{{ item.orderedItems!.length }}x</span>
         <button
           (click)="addItem(item)"
-          [disabled]="order?.status === orderStatus.INACTIVE"
+          [disabled]="
+            order?.status === orderStatus.INACTIVE ||
+            order?.status === orderStatus.LOCKED
+          "
         >
           <i
             class="fas fa-angle-right fa-sm pl-1 cursor-pointer"
             [ngClass]="{
-              'text-serapion-grey-100': order?.status === orderStatus.INACTIVE,
-              'cursor-not-allowed': order?.status === orderStatus.INACTIVE
+              'text-serapion-grey-100':
+                order?.status === orderStatus.INACTIVE ||
+                order?.status === orderStatus.LOCKED,
+              'cursor-not-allowed':
+                order?.status === orderStatus.INACTIVE ||
+                order?.status === orderStatus.LOCKED
             }"
           ></i>
         </button>

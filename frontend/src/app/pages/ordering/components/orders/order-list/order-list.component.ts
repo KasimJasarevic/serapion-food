@@ -78,7 +78,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     );
 
     this.subs.sink = lockOrderButtonDebounced.subscribe((order: IOrder) => {
-      console.log('Locking order...');
+      // console.log('Locking order...');
       this.lockOrder(order);
     });
 
@@ -448,6 +448,11 @@ export class OrderListComponent implements OnInit, OnDestroy {
               o.orderItems = items;
             }
           });
+
+          if (order.status === OrderStatus.ACTIVE) {
+            this.lockOrder(order);
+          }
+
           return this.confirmDialog.toggleModal(`confirm-${order.id}`);
         })
       )
@@ -498,6 +503,9 @@ export class OrderListComponent implements OnInit, OnDestroy {
                 );
               }
             });
+        } else {
+          // Unlock it!
+          this.lockOrder(order);
         }
       });
   }
