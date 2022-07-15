@@ -97,7 +97,7 @@ export class OrderService {
     this._orderRepo
       .createQueryBuilder('order')
       .delete()
-      .where('order.openedAt <= :date', { date: yesterday })
+      .where('order.opened_at <= :date', { date: yesterday })
       .execute();
   }
 

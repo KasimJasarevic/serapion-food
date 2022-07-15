@@ -53,10 +53,11 @@
             </a>
             <button
               class="btn btn-primary"
-              (click)="lockOrder(order)"
+              (click)="lockOrderDebounced(order)"
               *ngIf="
-                order.status === orderStatus.ACTIVE ||
-                order.status === orderStatus.LOCKED
+                isOrderOrderer(order) &&
+                (order.status === orderStatus.ACTIVE ||
+                  order.status === orderStatus.LOCKED)
               "
             >
               <i
@@ -221,7 +222,10 @@
       <!-- SOMETHING -->
       <div
         class="mt-8 py-4 border-t border-opacity-25 border-serapion-grey-100 border-dashed"
-        *ngIf="isOrderOrderer(order) && order?.status === orderStatus.ACTIVE"
+        *ngIf="
+          (isOrderOrderer(order) && order?.status === orderStatus.ACTIVE) ||
+          (isOrderOrderer(order) && order.status === orderStatus.LOCKED)
+        "
       >
         <div class="flex flex-row items-center justify-between">
           <span
@@ -283,12 +287,13 @@
       >
         <button
           class="btn flex-1 ml-1"
-          *ngIf="order.status === orderStatus.ACTIVE"
+          *ngIf="
+            order.status === orderStatus.ACTIVE ||
+            order.status === orderStatus.LOCKED
+          "
           [ngClass]="{
             'btn-primary':
-              isOrderOrderer(order) &&
-              order.status === orderStatus.ACTIVE &&
-              !orderArrivalArr.at(i).invalid,
+              isOrderOrderer(order) && !orderArrivalArr.at(i).invalid,
             'btn-disabled': orderArrivalArr.at(i).invalid
           }"
           [disabled]="orderArrivalArr.at(i).invalid"
@@ -302,13 +307,16 @@
           [ngClass]="{
             'btn-secondary':
               (isOrderOwner(order) && order.status === orderStatus.INACTIVE) ||
+              (isOrderOwner(order) && order.status === orderStatus.LOCKED) ||
               (isOrderOwner(order) && order.status === orderStatus.ACTIVE),
             'btn-disabled':
               (!isOrderOwner(order) && order.status === orderStatus.ACTIVE) ||
+              (!isOrderOwner(order) && order.status === orderStatus.LOCKED) ||
               (!isOrderOwner(order) && order.status === orderStatus.INACTIVE)
           }"
           [disabled]="
             (!isOrderOwner(order) && order.status === orderStatus.ACTIVE) ||
+            (!isOrderOwner(order) && order.status === orderStatus.LOCKED) ||
             (!isOrderOwner(order) && order.status === orderStatus.INACTIVE)
           "
           (click)="closeRestaurant(order)"
