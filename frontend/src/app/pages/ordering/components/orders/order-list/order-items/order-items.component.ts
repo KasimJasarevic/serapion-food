@@ -110,7 +110,7 @@ export class OrderItemsComponent implements OnInit, OnDestroy {
       .subscribe((order: IOrder) => {
         if (order.id === this.order?.id) {
           this.order = order;
-          this.items = order.orderItems;
+          // this.items = order.orderItems;
         }
       });
   }
