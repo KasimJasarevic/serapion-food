@@ -134,4 +134,11 @@ export class OrderService {
   deleteMessageWithId(id: number) {
     return this._http.delete<number>(environment.api_url + `/comments/${id}`);
   }
+
+  public updateOrderStatus = (id: number, order: IOrder) => {
+    return this._http.put<IOrder>(
+      environment.api_url + `/orders/status/${id}`,
+      order
+    );
+  };
 }

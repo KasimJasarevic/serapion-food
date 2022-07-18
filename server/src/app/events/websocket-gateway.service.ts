@@ -83,6 +83,10 @@ export class WebsocketGatewayService {
     this.server.emit('orderTypeUpdatedEvent', orderId);
   }
 
+  sendOrderStatusUpdatedMessage(order: OrderDTO) {
+    this.server.emit('orderStatusUpdatedEvent', order);
+  }
+
   // @Cron('*/30 * * * * *')
   @Cron('0 17 * * *')
   sendCleanUpMessage() {

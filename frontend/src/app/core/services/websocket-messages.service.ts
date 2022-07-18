@@ -45,6 +45,12 @@ export class WebsocketMessagesService {
     );
   }
 
+  onOrderStatusUpdated() {
+    return this._socket.fromEvent<IOrder>(
+      WebsocketMessageTypes.ORDER_STATUS_UPDATED
+    );
+  }
+
   onOrderClosed() {
     return this._socket.fromEvent<IOrder>(
       WebsocketMessageTypes.ORDER_CLOSED_EVENT

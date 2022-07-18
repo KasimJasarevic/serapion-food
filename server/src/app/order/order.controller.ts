@@ -78,6 +78,15 @@ export class OrderController {
     );
   }
 
+  @Put('status/:id')
+  updateOrderStatus(@Param('id') id: number, @Body() order: any) {
+    return this._orderService.updateOrderStatus(id, order).pipe(
+      tap((next: OrderDTO) => {
+        this._websocketGatewayService.sendOrderStatusUpdatedMessage(next);
+      }),
+    );
+  }
+
   @Put('type/:id')
   updateTypeById(
     @Param('id') id: number,

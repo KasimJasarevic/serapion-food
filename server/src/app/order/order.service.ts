@@ -16,6 +16,7 @@ export class OrderService {
   getAllOrders(): Observable<OrderDTO[]> {
     const date = new Date();
     date.setHours(0, 0, 0, 0);
+    // order.openedAt error?
     return from(
       this._orderRepo
         .createQueryBuilder('order')
@@ -24,7 +25,7 @@ export class OrderService {
         .leftJoinAndSelect('order.orderItems', 'orderItems')
         .leftJoinAndSelect('orderItems.orderedItems', 'orderedItems')
         .leftJoinAndSelect('orderedItems.user', 'users')
-        .where('order.openedAt >= :date', { date: date })
+        .where('order.opened_at >= :date', { date: date })
         .getMany(),
     );
   }
@@ -81,6 +82,13 @@ export class OrderService {
     return from(this._orderRepo.update(id, payload));
   }
 
+  public updateOrderStatus = (
+    id: number,
+    order: OrderDTO,
+  ): Observable<OrderDTO> => {
+    return from(this._orderRepo.save(order));
+  };
+
   @Cron('0 17 * * *')
   deleteAllOrders() {
     const today = new Date();
@@ -89,7 +97,7 @@ export class OrderService {
     this._orderRepo
       .createQueryBuilder('order')
       .delete()
-      .where('order.openedAt <= :date', { date: yesterday })
+      .where('order.opened_at <= :date', { date: yesterday })
       .execute();
   }
 

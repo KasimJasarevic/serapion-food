@@ -5,6 +5,7 @@ export enum OrderType {
 
 export enum OrderStatus {
   INACTIVE = 'INACTIVE',
+  LOCKED = 'LOCKED',
   ACTIVE = 'ACTIVE',
 }
 

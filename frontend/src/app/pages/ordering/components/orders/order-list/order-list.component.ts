@@ -38,6 +38,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
   updated: Date = new Date();
   private lastCallButton = new Subject<IOrder>();
   private arrivedCallButton = new Subject<IOrder>();
+  private lockOrderButton = new Subject<IOrder>();
 
   constructor(
     private _orderService: OrderService,
@@ -70,6 +71,15 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this.subs.sink = arrivedCallButtonDebounced.subscribe((order: IOrder) => {
       // console.log('Sending arrived call...');
       this.sendArrivedCall(order);
+    });
+
+    const lockOrderButtonDebounced = this.lockOrderButton.pipe(
+      debounceTime(500)
+    );
+
+    this.subs.sink = lockOrderButtonDebounced.subscribe((order: IOrder) => {
+      // console.log('Locking order...');
+      this.lockOrder(order);
     });
 
     // // // This was changed !!!!!!!!
@@ -185,6 +195,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
           this.orders.forEach((order: IOrder) => {
             if (order.id === updateOrder.id) {
               order = updateOrder;
+              this.updated = new Date();
             }
           });
         }
@@ -269,6 +280,25 @@ export class OrderListComponent implements OnInit, OnDestroy {
             });
         });
       });
+
+    // Order locking
+    this.subs.sink = this._websocketService
+      .onOrderStatusUpdated()
+      .subscribe((order: IOrder) => {
+        this.orders.forEach((_order: IOrder) => {
+          if (order.id === _order.id) {
+            _order = order;
+          }
+        });
+      });
+
+    // this.subs.sink = this._websocketService
+    //   .onOrderStatusUpdated()
+    //   .pipe(switchMap(() => this._orderService.getAllOrders()))
+    //   .subscribe((orders: IOrder[]) => {
+    //     this._populateOrders(orders);
+    //     this.updated = new Date();
+    //   });
 
     // Fixed works fine now.
     this.subs.sink = this._websocketService
@@ -418,6 +448,11 @@ export class OrderListComponent implements OnInit, OnDestroy {
               o.orderItems = items;
             }
           });
+
+          if (order.status === OrderStatus.ACTIVE) {
+            this.lockOrder(order);
+          }
+
           return this.confirmDialog.toggleModal(`confirm-${order.id}`);
         })
       )
@@ -468,6 +503,9 @@ export class OrderListComponent implements OnInit, OnDestroy {
                 );
               }
             });
+        } else {
+          // Unlock it!
+          this.lockOrder(order);
         }
       });
   }
@@ -513,7 +551,10 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
   private _setOrderers() {
     this.orders.forEach((order) => {
-      if (order.status === OrderStatus.ACTIVE) {
+      if (
+        order.status === OrderStatus.ACTIVE ||
+        order.status === OrderStatus.LOCKED
+      ) {
         this.subs.sink = this._orderService
           .getOrderOrderer(order.id)
           .subscribe((next) => {
@@ -533,7 +574,11 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
   private _setNewOrderer(thisOrder: IOrder) {
     this.orders.forEach((order) => {
-      if (order.status === OrderStatus.ACTIVE && order.id === thisOrder.id) {
+      if (
+        (order.status === OrderStatus.ACTIVE ||
+          order.status === OrderStatus.LOCKED) &&
+        order.id === thisOrder.id
+      ) {
         this.subs.sink = this._orderService
           .getOrderOrderer(order.id)
           .subscribe((next) => {
@@ -655,7 +700,9 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
     this.orders = [
       ...this.orders.filter(
-        (order: IOrder) => order.status === OrderStatus.ACTIVE
+        (order: IOrder) =>
+          order.status === OrderStatus.ACTIVE ||
+          order.status === OrderStatus.LOCKED
       ),
       ...this.orders.filter(
         (order: IOrder) => order.status === OrderStatus.INACTIVE
@@ -669,5 +716,23 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
   public sendArrivedCallDebounced = (order: IOrder) => {
     this.arrivedCallButton.next(order);
+  };
+
+  public lockOrder = (order: IOrder) => {
+    // console.log('Current order status: ' + order.status);
+
+    if (order.status === OrderStatus.LOCKED) {
+      order.status = OrderStatus.ACTIVE;
+    } else if (order.status === OrderStatus.ACTIVE) {
+      order.status = OrderStatus.LOCKED;
+    }
+
+    this.subs.sink = this._orderService
+      .updateOrderStatus(order.id, order)
+      .subscribe();
+  };
+
+  public lockOrderDebounced = (order: IOrder) => {
+    this.lockOrderButton.next(order);
   };
 }
