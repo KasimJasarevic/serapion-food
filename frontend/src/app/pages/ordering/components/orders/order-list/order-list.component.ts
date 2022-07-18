@@ -285,10 +285,11 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this.subs.sink = this._websocketService
       .onOrderStatusUpdated()
       .subscribe((order: IOrder) => {
-        this.orders.forEach((_order: IOrder) => {
+        this.orders = this.orders.map((_order: IOrder) => {
           if (order.id === _order.id) {
             _order = order;
           }
+          return _order;
         });
       });
 
